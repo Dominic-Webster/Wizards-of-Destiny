@@ -1,0 +1,6 @@
+Health: 10
+Damage: 1
+Fire: 0
+Ice: 0
+Heal: 0
+Coins: 0
