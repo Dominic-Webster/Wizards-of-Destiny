@@ -8,6 +8,3 @@ Spell::Spell(string nm, string tp, int eff){
     effect = eff > 0 ? eff : 0;
 }
 
-string Spell::getName(){return name;}
-string Spell::getType(){return type;}
-int Spell::getEffect(){return effect;}
