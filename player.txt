@@ -2,5 +2,7 @@ Health: 10
 Damage: 1
 Fire: 0
 Ice: 0
+Poison: 0
 Heal: 0
 Coins: 0
+Progress: 0
