@@ -713,32 +713,32 @@ void level_up(){
     cout << "    - LEVEL UP -" << endl << endl;
     cout << "Select stat to increase by 1" << endl;
     cout << "COINS: " << COINS << endl << endl;
-    cout << " (1): Health: " << HP << " [";
+    cout << " (1): Health: " << HP << "   [";
     if(HP < 16){cout << "50 Coins]" << endl;}
     else if(HP < 21){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
-    cout << " (2): Damage: " << DMG << " [";
+    cout << " (2): Damage: " << DMG << "   [";
     if(DMG < 6){cout << "50 Coins]" << endl;}
     else if(DMG < 11){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
-    cout << " (3): Fire: " << FIRE << " [";
+    cout << " (3): Fire: " << FIRE << "   [";
     if(FIRE < 6){cout << "50 Coins]" << endl;}
     else if(FIRE < 11){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
-    cout << " (4): Ice: " << ICE << " [";
+    cout << " (4): Ice: " << ICE << "   [";
     if(ICE < 6){cout << "50 Coins]" << endl;}
     else if(ICE < 11){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
-    cout << " (5): Posion: " << POISON << " [";
+    cout << " (5): Posion: " << POISON << "   [";
     if(POISON < 6){cout << "50 Coins]" << endl;}
     else if(POISON < 11){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
-    cout << " (6): Heal: " << HEAL << " [";
+    cout << " (6): Heal: " << HEAL << "   [";
     if(HEAL < 6){cout << "50 Coins]" << endl;}
     else if(HEAL < 11){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
