@@ -3,21 +3,15 @@
 #include <fstream>
 #include <thread>
 
-void menu();
-void battle();
-void store();
-void how_to();
+void menu(); void battle(); void store(); void how_to();
 void fight(string factor);
-void level_up();
-void settings();
-void update();
+void level_up(); void settings(); void update();
 void make_enemy(string factor, int level);
 void output_level(string factor, int level);
 void show_card(Spell card);
 void player(string factor, int level);
 void enemy(string factor, int level);
-void calculate(Spell card);
-void calculate_enemy();
+void calculate(Spell card); void calculate_enemy();
 
 Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1;
