@@ -22,7 +22,7 @@ void calculate_enemy();
 Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, 
-eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed;
+eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, DIAMONDS;
 
 int main(int argc, char const *argv[]){
     srand(time(0));
@@ -41,6 +41,8 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; PROGRESS = stoi(temp);
     infile >> waste >> temp; game_speed = stoi(temp);
     infile >> waste >> temp; store1 = temp;
+    infile >> waste >> temp; DIAMONDS = stoi(temp);
+
     infile.close();
 
     string command = ""; //dev commands
@@ -49,7 +51,7 @@ int main(int argc, char const *argv[]){
     }
     if(command == "-reset"){
         HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
-        game_speed = 1000; store1 = "no";
+        game_speed = 1000; store1 = "no"; DIAMONDS = 0;
         update();
         exit(0);
     }
@@ -100,7 +102,7 @@ void battle(){
 }
 
 void fight(string factor){
-    int level = 1, turn = 0;
+    int level = 1, turn = 0, random;
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL;
     
     //Misty Dungeon
@@ -124,6 +126,9 @@ void fight(string factor){
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*10 << " coins!\n" << endl;
                 COINS += (level*10);
+                random = (rand() % 10);
+                if(random == 0){DIAMONDS++;
+                cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 battle();
             }
@@ -161,6 +166,9 @@ void fight(string factor){
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 250 Coins\n" << endl;
                     COINS += 250;
+                    random = (rand() % 5);
+                    if(random == 0){DIAMONDS++;
+                    cout << "You have found a diamond!\n" << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 0){
                         cout << "Ruined Castle: unlocked!\n" << endl;
@@ -197,6 +205,9 @@ void fight(string factor){
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*15 << " coins!\n" << endl;
                 COINS += (level*15);
+                random = (rand() % 9);
+                if(random == 0){DIAMONDS++;
+                cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 battle();
             }
@@ -230,10 +241,13 @@ void fight(string factor){
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
-                    cout << "You've cleared the MRuined Castle!\n" << endl;
+                    cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 350 Coins\n" << endl;
                     COINS += 350;
+                    random = (rand() % 4);
+                    if(random == 0){DIAMONDS += 2;
+                        cout << "You have found 2 diamonds!\n" << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 1){
                         cout << "Mountain of Despair: unlocked!\n" << endl;
@@ -270,6 +284,9 @@ void fight(string factor){
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*20 << " coins!\n" << endl;
                 COINS += (level*20);
+                random = (rand() % 8);
+                if(random == 0){DIAMONDS += 2;
+                cout << " You have found 2 diamonds\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 battle();
             }
@@ -307,6 +324,9 @@ void fight(string factor){
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 500 Coins\n" << endl;
                     COINS += 500;
+                    random = (rand() % 4);
+                    if(random == 0){DIAMONDS += 2;
+                    cout << "You have found 2 diamonds!\n" << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     battle();
                 }
@@ -912,13 +932,14 @@ void store(){
     do{
         system("clear");
         cout << "  - STORE -\n" << endl;
-        cout << "COINS: " << COINS << endl;
+        cout << "COINS: " << COINS << endl << "DIAMONDS: " << DIAMONDS << endl << endl;
         cout << " (1): Game Speed Increase ";
-        if(store1 == "no"){cout << "[1,000 Coins]\n";}
+        if(store1 == "no"){cout << " [1,000 Coins]\n";}
         else{cout << "*Already Purchased*\n";}
+        cout << " (2): All Stats +3  [5 Diamonds]\n";
         cout << " (0): Back to Menu\n\n -> ";
         cin >> X;
-    }while(stoi(X) < 0 || stoi(X) > 1);
+    }while(stoi(X) < 0 || stoi(X) > 2);
     if(X == "1"){
         if(store1 == "yes"){
             system("clear"); cout << "You already own this item\n";
@@ -933,6 +954,16 @@ void store(){
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); store();
             }
+        }
+    }
+    else if(X == "2"){
+        if(DIAMONDS > 4){
+            DIAMONDS -= 5; HP += 3; DMG += 3; FIRE += 3; ICE +=3; POISON += 3; HEAL += 3;
+            update(); store();
+        }
+        else{
+            system("clear"); cout << "You don't have enough diamonds\n";
+            this_thread::sleep_for(chrono::seconds(1)); store();
         }
     }
     else{menu();}
@@ -971,7 +1002,7 @@ void settings(){
         }while(stoi(X) < 0 || stoi(X) > 1);
         if(X == "1"){
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
-            game_speed = 1000; store1 = "no"; update(); settings();
+            game_speed = 1000; store1 = "no"; update(); settings(); DIAMONDS = 0;
         }
         else{settings();}
     }
@@ -985,6 +1016,7 @@ void update(){
     outfile << "Health: " << HP << endl << "Damage: " << DMG << endl <<
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
     "Heal: " << HEAL << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
-    endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl;
+    endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
+    "Diamonds: " << DIAMONDS << endl;
     outfile.close();
 }

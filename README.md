@@ -26,6 +26,12 @@
 
 ### Update History
 
+#### UPDATE 1.0.2
+03/10/2025
+- Diamonds added
+
+#### _______________________________________
+
 #### UPDATE 1.0.1
 03/09/2025
 - Reset Save option implemented
@@ -37,4 +43,5 @@
 - Game Launched
 - 3 Adventures: Misty Dungeon, Ruined Castle, Mountain of Despair
 - 5 Enemy Types: Evil Wizard, Fire Mage, Ice Sorcerer, Necromancer, Defender
+- 6 Player Stats: Health, Damage, Fire, Ice, Poison, Heal
 - Level Up, Store, and Settings
