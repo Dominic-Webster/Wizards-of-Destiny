@@ -337,7 +337,7 @@ void player(string factor, int level){
     cout << " 1) "; show_card(CARD1);
     cout << " 2) "; show_card(CARD2);
     cout << " 3) "; show_card(CARD3);
-    cout << " -> ";
+    cout << "\n -> ";
     cin >> X;
     }while(stoi(X) < 1 || stoi(X) > 3);
     this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -783,7 +783,7 @@ void how_to(){
     cout << "* Spend coins in the \"Level Up\" menu to increase your base stats\n";
     cout << "* Continue to battle and level up to become the greatest wizard of all time!\n" << endl;
     cout << "* Now go on an adventure, and find your destiny!\n" << endl;
-    cout << " (0): Menu\n -> ";
+    cout << " (0): Menu\n\n -> ";
     cin >> X;
     menu();
 }
@@ -796,7 +796,7 @@ void store(){
         cout << " (1): Game Speed Increase ";
         if(store1 == "no"){cout << "[1,000 Coins]\n";}
         else{cout << "*Already Purchased*\n";}
-        cout << " (0): Back to Menu\n -> ";
+        cout << " (0): Back to Menu\n\n -> ";
         cin >> X;
     }while(stoi(X) < 0 || stoi(X) > 1);
     if(X == "1"){
@@ -826,7 +826,7 @@ void settings(){
         if(game_speed == 1000){cout << "normal]";}
         else{cout << "fast]";}
         if(store1 == "no"){cout << " *Unlock in store*";}
-        cout << endl << " (0): Back to Menu\n -> ";
+        cout << endl << " (0): Back to Menu\n\n -> ";
         cin >> X;
     }while(stoi(X) < 0 || stoi(X) > 1);
     if(X == "1"){
