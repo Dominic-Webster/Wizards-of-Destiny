@@ -90,11 +90,11 @@ void battle(){
     cout << " (0): [Menu]" << endl << endl << " -> ";
     cin >> X;
     system("clear");
+    if(X == "0"){menu();}
     this_thread::sleep_for(chrono::seconds(1));
     if(X == "1"){fight(X);}
     else if(X == "2" && PROGRESS > 0){fight(X);}
     else if(X == "3" && PROGRESS > 1){fight(X);}
-    else if(X == "0"){menu();}
     else{battle();}
 }
 
@@ -131,28 +131,28 @@ void fight(string factor){
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(level == 5){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){damage++; cout << " Damage increased!\n";}
-                    else{health++; tempHP++; cout << " Health increased!\n";}
+                    if(X == "1"){damage++; cout << " Damage increased!\n\n";}
+                    else{health++; tempHP++; cout << " Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n ->n";
                     cin >> X;
-                    if(X == "1"){ice++; cout << " Ice increased!\n";}
-                    else if(X == "2"){fire++; cout << " Fire increased!\n";}
-                    else{poison++; cout << " Poison increased!\n";}
+                    if(X == "1"){ice++; cout << " Ice increased!\n\n";}
+                    else if(X == "2"){fire++; cout << " Fire increased!\n\n";}
+                    else{poison++; cout << " Poison increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 15){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){damage += 2; cout << " Damage increased!\n";}
-                    else{health += 2; tempHP += 2; cout << " Health increased!\n";}
+                    if(X == "1"){damage += 2; cout << " Damage increased!\n\n";}
+                    else{health += 2; tempHP += 2; cout << " Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
@@ -204,28 +204,28 @@ void fight(string factor){
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(level == 5){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){damage += 2; cout << " Damage increased!\n";}
-                    else{health += 2; tempHP += 2; cout << " Health increased!\n";}
+                    if(X == "1"){damage += 2; cout << " Damage increased!\n\n";}
+                    else{health += 2; tempHP += 2; cout << " Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){ice += 2; cout << " Ice increased!\n";}
-                    else if(X == "2"){fire += 2; cout << " Fire increased!\n";}
-                    else{poison += 2; cout << " Poison increased!\n";}
+                    if(X == "1"){ice += 2; cout << " Ice increased!\n\n";}
+                    else if(X == "2"){fire += 2; cout << " Fire increased!\n\n";}
+                    else{poison += 2; cout << " Poison increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 15){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){damage += 4; cout << " Damage increased!\n";}
-                    else{health += 2; tempHP += 4; cout << " Health increased!\n";}
+                    if(X == "1"){damage += 4; cout << " Damage increased!\n\n";}
+                    else{health += 2; tempHP += 4; cout << " Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
@@ -277,28 +277,28 @@ void fight(string factor){
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(level == 5){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){damage += 4; cout << " Damage increased!\n";}
-                    else{health += 4; tempHP += 4; cout << " Health increased!\n";}
+                    if(X == "1"){damage += 4; cout << " Damage increased!\n\n";}
+                    else{health += 4; tempHP += 4; cout << " Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
                     cin >> X;
-                    if(X == "1"){ice += 4; cout << " Ice increased!\n";}
-                    else if(X == "2"){fire += 4; cout << " Fire increased!\n";}
-                    else{poison += 4; cout << " Poison increased!\n";}
+                    if(X == "1"){ice += 4; cout << " Ice increased!\n\n";}
+                    else if(X == "2"){fire += 4; cout << " Fire increased!\n\n";}
+                    else{poison += 4; cout << " Poison increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 15){
-                    cout << "Choose upgrade:\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n ->";
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n - >";
                     cin >> X;
-                    if(X == "1"){damage += 6; cout << " Damage increased!\n";}
-                    else{health += 6; tempHP += 6; cout << " Health increased!\n";}
+                    if(X == "1"){damage += 6; cout << " Damage increased!\n\n";}
+                    else{health += 6; tempHP += 6; cout << " Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
