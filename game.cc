@@ -711,59 +711,178 @@ void level_up(){
     system("clear");
     do{
     cout << "    - LEVEL UP -" << endl << endl;
-    cout << "Select stat to increase by 1 [50 coins]" << endl;
+    cout << "Select stat to increase by 1" << endl;
     cout << "COINS: " << COINS << endl << endl;
-    cout << " (1): Health [" << HP << "]" << endl; 
-    cout << " (2): Damage [" << DMG << "]" << endl; 
-    cout << " (3): Fire [" << FIRE << "]" << endl; 
-    cout << " (4): Ice [" << ICE << "]" << endl; 
-    cout << " (5): Posion [" << POISON << "]" << endl;
-    cout << " (6): Heal [" << HEAL << "]" << endl;
+    cout << " (1): Health: " << HP << " [";
+    if(HP < 16){cout << "50 Coins]" << endl;}
+    else if(HP < 21){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;}
+
+    cout << " (2): Damage: " << DMG << " [";
+    if(DMG < 6){cout << "50 Coins]" << endl;}
+    else if(DMG < 11){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;}
+
+    cout << " (3): Fire: " << FIRE << " [";
+    if(FIRE < 6){cout << "50 Coins]" << endl;}
+    else if(FIRE < 11){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;} 
+
+    cout << " (4): Ice: " << ICE << " [";
+    if(ICE < 6){cout << "50 Coins]" << endl;}
+    else if(ICE < 11){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;} 
+
+    cout << " (5): Posion: " << POISON << " [";
+    if(POISON < 6){cout << "50 Coins]" << endl;}
+    else if(POISON < 11){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;}
+
+    cout << " (6): Heal: " << HEAL << " [";
+    if(HEAL < 6){cout << "50 Coins]" << endl;}
+    else if(HEAL < 11){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;}
     cout << " (0): [Menu]" << endl << endl;
     cout << " -> "; 
     cin >> X;
     system("clear");
     }while(stoi(X) < 0 || stoi(X) > 6);
     if(X == "1"){
-        if(COINS > 49){COINS -= 50; HP += 1; update();}
+        if(HP < 16){
+            if(COINS > 49){COINS -= 50; HP += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(HP < 21){
+            if(COINS > 99){COINS -= 100; HP += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
         else{
-            system("clear"); cout << "You don't have enough coins\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up();
+            if(COINS > 199){COINS -= 200; HP += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
         }
     }
     else if(X == "2"){
-        if(COINS > 49){COINS -= 50; DMG += 1; update();}
+        if(DMG < 6){
+            if(COINS > 49){COINS -= 50; DMG += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(DMG < 11){
+            if(COINS > 99){COINS -= 100; DMG += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
         else{
-            system("clear"); cout << "You don't have enough coins\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up();
+            if(COINS > 199){COINS -= 200; DMG += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
         }
     }
     else if(X == "3"){
-        if(COINS > 49){COINS -= 50; FIRE += 1; update();}
+        if(FIRE < 6){
+            if(COINS > 49){COINS -= 50; FIRE += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(FIRE < 11){
+            if(COINS > 99){COINS -= 100; FIRE += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
         else{
-            system("clear"); cout << "You don't have enough coins\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up();
+            if(COINS > 199){COINS -= 200; FIRE += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
         }
     }
     else if(X == "4"){
-        if(COINS > 49){COINS -= 50; ICE += 1; update();}
+        if(ICE < 6){
+            if(COINS > 49){COINS -= 50; ICE += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(ICE < 11){
+            if(COINS > 99){COINS -= 100; ICE += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
         else{
-            system("clear"); cout << "You don't have enough coins\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up();
+            if(COINS > 199){COINS -= 200; ICE += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
         }
     }
     else if(X == "5"){
-        if(COINS > 49){COINS -= 50; POISON += 1; update();}
+        if(POISON < 6){
+            if(COINS > 49){COINS -= 50; POISON += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(POISON < 11){
+            if(COINS > 99){COINS -= 100; POISON += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
         else{
-            system("clear"); cout << "You don't have enough coins\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up();
+            if(COINS > 199){COINS -= 200; POISON += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
         }
     }
     else if(X == "6"){
-        if(COINS > 49){COINS -= 50; HEAL += 1; update();}
+        if(HEAL < 6){
+            if(COINS > 49){COINS -= 50; HEAL += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(HEAL < 11){
+            if(COINS > 99){COINS -= 100; HEAL += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
         else{
-            system("clear"); cout << "You don't have enough coins\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up();
+            if(COINS > 199){COINS -= 200; HEAL += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
         }
     }
     else{menu();}
