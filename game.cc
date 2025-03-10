@@ -714,33 +714,33 @@ void level_up(){
     cout << "Select stat to increase by 1" << endl;
     cout << "COINS: " << COINS << endl << endl;
     cout << " (1): Health: " << HP << "   [";
-    if(HP < 16){cout << "50 Coins]" << endl;}
-    else if(HP < 21){cout << "100 Coins]" << endl;}
+    if(HP < 15){cout << "50 Coins]" << endl;}
+    else if(HP < 20){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
     cout << " (2): Damage: " << DMG << "   [";
-    if(DMG < 6){cout << "50 Coins]" << endl;}
-    else if(DMG < 11){cout << "100 Coins]" << endl;}
+    if(DMG < 5){cout << "50 Coins]" << endl;}
+    else if(DMG < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
     cout << " (3): Fire: " << FIRE << "     [";
-    if(FIRE < 6){cout << "50 Coins]" << endl;}
-    else if(FIRE < 11){cout << "100 Coins]" << endl;}
+    if(FIRE < 5){cout << "50 Coins]" << endl;}
+    else if(FIRE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
     cout << " (4): Ice: " << ICE << "      [";
-    if(ICE < 6){cout << "50 Coins]" << endl;}
-    else if(ICE < 11){cout << "100 Coins]" << endl;}
+    if(ICE < 5){cout << "50 Coins]" << endl;}
+    else if(ICE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
     cout << " (5): Posion: " << POISON << "   [";
-    if(POISON < 6){cout << "50 Coins]" << endl;}
-    else if(POISON < 11){cout << "100 Coins]" << endl;}
+    if(POISON < 5){cout << "50 Coins]" << endl;}
+    else if(POISON < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
     cout << " (6): Heal: " << HEAL << "     [";
-    if(HEAL < 6){cout << "50 Coins]" << endl;}
-    else if(HEAL < 11){cout << "100 Coins]" << endl;}
+    if(HEAL < 5){cout << "50 Coins]" << endl;}
+    else if(HEAL < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
     cout << " (0): [Menu]" << endl << endl;
     cout << " -> "; 
@@ -748,14 +748,14 @@ void level_up(){
     system("clear");
     }while(stoi(X) < 0 || stoi(X) > 6);
     if(X == "1"){
-        if(HP < 16){
+        if(HP < 15){
             if(COINS > 49){COINS -= 50; HP += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
-        else if(HP < 21){
+        else if(HP < 20){
             if(COINS > 99){COINS -= 100; HP += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
@@ -771,14 +771,14 @@ void level_up(){
         }
     }
     else if(X == "2"){
-        if(DMG < 6){
+        if(DMG < 5){
             if(COINS > 49){COINS -= 50; DMG += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
-        else if(DMG < 11){
+        else if(DMG < 10){
             if(COINS > 99){COINS -= 100; DMG += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
@@ -794,14 +794,14 @@ void level_up(){
         }
     }
     else if(X == "3"){
-        if(FIRE < 6){
+        if(FIRE < 5){
             if(COINS > 49){COINS -= 50; FIRE += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
-        else if(FIRE < 11){
+        else if(FIRE < 10){
             if(COINS > 99){COINS -= 100; FIRE += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
@@ -817,14 +817,14 @@ void level_up(){
         }
     }
     else if(X == "4"){
-        if(ICE < 6){
+        if(ICE < 5){
             if(COINS > 49){COINS -= 50; ICE += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
-        else if(ICE < 11){
+        else if(ICE < 10){
             if(COINS > 99){COINS -= 100; ICE += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
@@ -840,14 +840,14 @@ void level_up(){
         }
     }
     else if(X == "5"){
-        if(POISON < 6){
+        if(POISON < 5){
             if(COINS > 49){COINS -= 50; POISON += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
-        else if(POISON < 11){
+        else if(POISON < 10){
             if(COINS > 99){COINS -= 100; POISON += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
@@ -863,14 +863,14 @@ void level_up(){
         }
     }
     else if(X == "6"){
-        if(HEAL < 6){
+        if(HEAL < 5){
             if(COINS > 49){COINS -= 50; HEAL += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
-        else if(HEAL < 11){
+        else if(HEAL < 10){
             if(COINS > 99){COINS -= 100; HEAL += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
