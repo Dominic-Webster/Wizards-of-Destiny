@@ -70,7 +70,7 @@ void menu(){
         cout << " -> ";
         cin >> X;
         system("clear");
-    }while(stoi(X) < 0 || stoi(X) > 3);
+    }while(stoi(X) < 0 || stoi(X) > 5);
 
     if(X == "1"){battle();}
     else if(X == "2"){level_up();}
