@@ -49,6 +49,7 @@ int main(int argc, char const *argv[]){
     }
     if(command == "-reset"){
         HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
+        game_speed = 1000; store1 = "no";
         update();
         exit(0);
     }
@@ -436,7 +437,7 @@ void calculate_enemy(){
         }
         else{ //ice
             tempHP -= (eDMG + eICE);
-            cout << " EIce Sorcerer deals " << eDMG + eICE << " ice damage!\n";
+            cout << " Ice Sorcerer deals " << eDMG + eICE << " ice damage!\n";
         }
     }
     else if(eTYPE == "Necro"){
@@ -826,9 +827,10 @@ void settings(){
         if(game_speed == 1000){cout << "normal]";}
         else{cout << "fast]";}
         if(store1 == "no"){cout << " *Unlock in store*";}
+        cout << " (2): Reset Save *Permanent*";
         cout << endl << " (0): Back to Menu\n\n -> ";
         cin >> X;
-    }while(stoi(X) < 0 || stoi(X) > 1);
+    }while(stoi(X) < 0 || stoi(X) > 2);
     if(X == "1"){
         if(store1 == "yes"){
             if(game_speed == 1000){game_speed = 500;}
@@ -839,6 +841,20 @@ void settings(){
             system("clear"); cout << "Unlock this settting in store\n";
             this_thread::sleep_for(chrono::seconds(1)); settings();
         }
+    }
+    else if(X == "2"){
+        do{
+            system("clear");
+            cout << " RESET SAVE\n" << endl;
+            cout << "Are you sure you want to reset? All progress will be lost\n" << endl;
+            cout << " (1): Reset\n (0): Back to Settings\n\n -> ";
+            cin >> X;
+        }while(stoi(X) < 0 || stoi(X) > 1);
+        if(X == "1"){
+            HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
+            game_speed = 1000; store1 = "no"; update(); settings();
+        }
+        else{settings();}
     }
     else{menu();}
 }

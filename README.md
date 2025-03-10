@@ -22,13 +22,17 @@
 - Run the command "make".
 - To start the game, run "./play".
 
-##### (To reset your save file, run the command "./play -reset")
-
 ---
 
 ### Update History
 
-#### UPDATE 1.0.0
+#### UPDATE 1.0.1
+03/09/2025
+- Reset Save option implemented
+
+#### _______________________________________
+
+#### VERSION 1.0.0
 03/09/2025
 - Game Launched
 - 3 Adventures: Misty Dungeon, Ruined Castle, Mountain of Despair
