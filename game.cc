@@ -141,7 +141,7 @@ void fight(string factor){
                 }
                 if(level == 10){
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n ->n";
+                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
                     cin >> X;
                     if(X == "1"){ice++; cout << "\n Ice increased!\n\n";}
                     else if(X == "2"){fire++; cout << "\n Fire increased!\n\n";}
