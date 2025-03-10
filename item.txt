@@ -1,0 +1,6 @@
+AoU 1 1
+RoL 2 1
+SoP 1 1
+GoS 2 1
+RoD 1 1
+CoP 1 1

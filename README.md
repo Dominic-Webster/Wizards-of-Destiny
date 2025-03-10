@@ -1,4 +1,5 @@
 # WIZARDS OF DESTINY
+## Version 2.0.0
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -25,6 +26,15 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.0.0
+03/10/2025
+- Items added to game
+- 4 items: Amulet of Undying, Ring of Life, Staff of Power, Gauntlets of Strength
+- Enemy name generator
+- Code tidied up
+
+#### _______________________________________
 
 #### UPDATE 1.1.0
 03/10/2025
