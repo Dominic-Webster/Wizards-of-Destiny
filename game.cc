@@ -835,6 +835,10 @@ void settings(){
             else{game_speed = 1000;}
             update(); settings();
         }
+        else{
+            system("clear"); cout << "Unlock this settting in store\n";
+            this_thread::sleep_for(chrono::seconds(1)); settings();
+        }
     }
     else{menu();}
 }
