@@ -977,7 +977,7 @@ void settings(){
         if(game_speed == 1000){cout << "normal]";}
         else{cout << "fast]";}
         if(store1 == "no"){cout << " *Unlock in store*";}
-        cout << " (2): Reset Save *Permanent*";
+        cout << endl << " (2): Reset Save *Permanent*";
         cout << endl << " (0): Back to Menu\n\n -> ";
         cin >> X;
     }while(stoi(X) < 0 || stoi(X) > 2);
