@@ -16,10 +16,11 @@ void Spell::get_card(int hp, int dmg, int fire, int ice, int poison, int heal){
     factor = rand() % 20;
     if(factor < 6){ //attack card
         tp = "attack";
-        factor = rand() % 3;
-        if(factor == 0){nm = "HEX"; eff = (1 + dmg);}
-        else if(factor == 1){nm = "JINX"; eff = (2 + dmg);}
-        else{nm = "STRIKE"; eff = (3 + dmg);}
+        factor = rand() % 6;
+        if(factor < 2){nm = "HEX"; eff = dmg;}
+        else if(factor < 4){nm = "JINX"; eff = (1 + dmg);}
+        else if(factor < 5){nm = "STRIKE"; eff = (2 + dmg);}
+        else{tp = "atk-stun"; nm = "STUNNING STRIKE"; eff = (1 + dmg) / 2;}
     }
     else if(factor < 9){ //fire
         tp = "fire";

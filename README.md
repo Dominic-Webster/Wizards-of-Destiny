@@ -26,6 +26,13 @@
 
 ### Update History
 
+#### UPDATE 1.1.0
+03/10/2025
+- New Spell added: Stunning Strike
+- Visual updates and bug fixes
+
+#### _______________________________________
+
 #### UPDATE 1.0.2
 03/10/2025
 - Diamonds added

@@ -21,7 +21,7 @@ void calculate_enemy();
 
 Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1;
-int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, 
+int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, DIAMONDS;
 
 int main(int argc, char const *argv[]){
@@ -102,8 +102,8 @@ void battle(){
 }
 
 void fight(string factor){
-    int level = 1, turn = 0, random;
-    health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL;
+    int level = 1, random;
+    health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0;
     
     //Misty Dungeon
     if(factor == "1"){
@@ -111,13 +111,14 @@ void fight(string factor){
             make_enemy(factor, level);
             eTempHP = eHP;
             while(tempHP > 0 && eTempHP > 0){
-                if(turn == 0){
+                if(TURN == 0){
                     player(factor, level);
-                    turn = 1;
+                    if(TURN == 2){TURN = 0;}
+                    else{TURN = 1;}
                 }
                 else{
                     enemy(factor, level);
-                    turn = 0;
+                    TURN = 0;
                 }
             }
             if(tempHP < 1){
@@ -179,7 +180,7 @@ void fight(string factor){
                 }
                 cout << " Descending further into the dungeon...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                level++; turn = 0;
+                level++; TURN = 0;
             }
         }
     }
@@ -190,13 +191,14 @@ void fight(string factor){
             make_enemy(factor, level);
             eTempHP = eHP;
             while(tempHP > 0 && eTempHP > 0){
-                if(turn == 0){
+                if(TURN == 0){
                     player(factor, level);
-                    turn = 1;
+                    if(TURN == 2){TURN = 0;}
+                    else{TURN = 1;}
                 }
                 else{
                     enemy(factor, level);
-                    turn = 0;
+                    TURN = 0;
                 }
             }
             if(tempHP < 1){
@@ -258,7 +260,7 @@ void fight(string factor){
                 }
                 cout << " Descending further into the ruins...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                level++; turn = 0;
+                level++; TURN = 0;
             }
         }
     }
@@ -269,13 +271,14 @@ void fight(string factor){
             make_enemy(factor, level);
             eTempHP = eHP;
             while(tempHP > 0 && eTempHP > 0){
-                if(turn == 0){
+                if(TURN == 0){
                     player(factor, level);
-                    turn = 1;
+                    if(TURN == 2){TURN = 0;}
+                    else{TURN = 1;}
                 }
                 else{
                     enemy(factor, level);
-                    turn = 0;
+                    TURN = 0;
                 }
             }
             if(tempHP < 1){
@@ -332,7 +335,7 @@ void fight(string factor){
                 }
                 cout << " Descending further into the mountain...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                level++; turn = 0;
+                level++; TURN = 0;
             }
         }
     }
@@ -401,6 +404,10 @@ void calculate(Spell card){
         tempHP += e;
         if(tempHP > health){tempHP = health;}
         cout << endl << " You heal yourself for " << e << " health!\n";
+    }
+    else if(t == "atk-stun"){
+        eTempHP -= e; TURN = 2;
+        cout << endl << " You stun your enemy, dealing " << e << " damage!\n";
     }
     else{
         eTempHP -= e;
@@ -512,6 +519,9 @@ void show_card(Spell card){
     cout << card.getName() << ": ";
     if(card.getType() == "attack"){
         cout << "Deal " << card.getEffect() << " damage\n";
+    }
+    else if(card.getType() == "atk-stun"){
+        cout << "Deal " << card.getEffect() << " damage and stun the enemy\n";
     }
     else if(card.getType() == "fire"){
         cout << "Deal " << card.getEffect() << " fire damage\n";
