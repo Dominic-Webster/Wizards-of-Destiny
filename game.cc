@@ -846,6 +846,6 @@ void update(){
     outfile << "Health: " << HP << endl << "Damage: " << DMG << endl <<
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
     "Heal: " << HEAL << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
-    endl << "Gamespeed:" << game_speed << endl << "store1: " << store1 << endl;
+    endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl;
     outfile.close();
 }
