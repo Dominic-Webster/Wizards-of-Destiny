@@ -5,9 +5,11 @@
 
 void menu();
 void battle();
+void store();
 void how_to();
 void fight(string factor);
 void level_up();
+void settings();
 void update();
 void make_enemy(string factor, int level);
 void output_level(string factor, int level);
@@ -18,8 +20,9 @@ void calculate(Spell card);
 void calculate_enemy();
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE;
-int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal;
+string X, eTYPE, store1;
+int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, 
+eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed;
 
 int main(int argc, char const *argv[]){
     srand(time(0));
@@ -36,6 +39,8 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; HEAL = stoi(temp);
     infile >> waste >> temp; COINS = stoi(temp);
     infile >> waste >> temp; PROGRESS = stoi(temp);
+    infile >> waste >> temp; game_speed = stoi(temp);
+    infile >> waste >> temp; store1 = temp;
     infile.close();
 
     string command = ""; //dev commands
@@ -58,7 +63,9 @@ void menu(){
         cout << "    - MENU -" << endl << endl;
         cout << " (1): Play Game" << endl;
         cout << " (2): Level Up" << endl;
-        cout << " (3): How To Play" << endl;
+        cout << " (3): Store" << endl;
+        cout << " (4): How To Play" << endl;
+        cout << " (5): Settings" << endl;
         cout << " (0): [Exit Game]" << endl << endl;
         cout << " -> ";
         cin >> X;
@@ -67,7 +74,9 @@ void menu(){
 
     if(X == "1"){battle();}
     else if(X == "2"){level_up();}
-    else if(X == "3"){how_to();}
+    else if(X == "3"){store();}
+    else if(X == "4"){how_to();}
+    else if(X == "5"){settings();}
     else{update(); exit(0);}
 }
 
@@ -111,23 +120,23 @@ void fight(string factor){
             if(tempHP < 1){
                 system("clear");
                 cout << " You have been defeated\n" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*10 << " coins!\n" << endl;
                 COINS += (level*10);
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 battle();
             }
             else{
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(level == 5){
                     cout << "Choose upgrade:\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n ->";
                     cin >> X;
                     if(X == "1"){damage++; cout << " Damage increased!\n";}
                     else{health++; tempHP++; cout << " Health increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){
                     cout << "Choose upgrade:\n";
@@ -136,7 +145,7 @@ void fight(string factor){
                     if(X == "1"){ice++; cout << " Ice increased!\n";}
                     else if(X == "2"){fire++; cout << " Fire increased!\n";}
                     else{poison++; cout << " Poison increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 15){
                     cout << "Choose upgrade:\n";
@@ -144,23 +153,23 @@ void fight(string factor){
                     cin >> X;
                     if(X == "1"){damage += 2; cout << " Damage increased!\n";}
                     else{health += 2; tempHP += 2; cout << " Health increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
                     cout << "You've cleared the Misty Dungeon!\n" << endl;
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 250 Coins\n" << endl;
                     COINS += 250;
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 0){
                         cout << "Ruined Castle: unlocked!\n" << endl;
                         PROGRESS = 1;
-                        this_thread::sleep_for(chrono::seconds(1));
+                        this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
                     battle();
                 }
                 cout << " Descending further into the dungeon...\n";
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; turn = 0;
             }
         }
@@ -184,23 +193,23 @@ void fight(string factor){
             if(tempHP < 1){
                 system("clear");
                 cout << " You have been defeated\n" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*15 << " coins!\n" << endl;
                 COINS += (level*15);
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 battle();
             }
             else{
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(level == 5){
                     cout << "Choose upgrade:\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n ->";
                     cin >> X;
                     if(X == "1"){damage += 2; cout << " Damage increased!\n";}
                     else{health += 2; tempHP += 2; cout << " Health increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){
                     cout << "Choose upgrade:\n";
@@ -209,7 +218,7 @@ void fight(string factor){
                     if(X == "1"){ice += 2; cout << " Ice increased!\n";}
                     else if(X == "2"){fire += 2; cout << " Fire increased!\n";}
                     else{poison += 2; cout << " Poison increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 15){
                     cout << "Choose upgrade:\n";
@@ -217,23 +226,23 @@ void fight(string factor){
                     cin >> X;
                     if(X == "1"){damage += 4; cout << " Damage increased!\n";}
                     else{health += 2; tempHP += 4; cout << " Health increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
                     cout << "You've cleared the MRuined Castle!\n" << endl;
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 350 Coins\n" << endl;
                     COINS += 350;
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 1){
                         cout << "Mountain of Despair: unlocked!\n" << endl;
                         PROGRESS = 2;
-                        this_thread::sleep_for(chrono::seconds(1));
+                        this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
                     battle();
                 }
                 cout << " Descending further into the ruins...\n";
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; turn = 0;
             }
         }
@@ -257,23 +266,23 @@ void fight(string factor){
             if(tempHP < 1){
                 system("clear");
                 cout << " You have been defeated\n" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*20 << " coins!\n" << endl;
                 COINS += (level*20);
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 battle();
             }
             else{
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(level == 5){
                     cout << "Choose upgrade:\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n ->";
                     cin >> X;
                     if(X == "1"){damage += 4; cout << " Damage increased!\n";}
                     else{health += 4; tempHP += 4; cout << " Health increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){
                     cout << "Choose upgrade:\n";
@@ -282,7 +291,7 @@ void fight(string factor){
                     if(X == "1"){ice += 4; cout << " Ice increased!\n";}
                     else if(X == "2"){fire += 4; cout << " Fire increased!\n";}
                     else{poison += 4; cout << " Poison increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 15){
                     cout << "Choose upgrade:\n";
@@ -290,18 +299,18 @@ void fight(string factor){
                     cin >> X;
                     if(X == "1"){damage += 6; cout << " Damage increased!\n";}
                     else{health += 6; tempHP += 6; cout << " Health increased!\n";}
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){
                     cout << "You've cleared the Mountain of Despair!\n" << endl;
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 500 Coins\n" << endl;
                     COINS += 500;
-                    this_thread::sleep_for(chrono::seconds(1));
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
                     battle();
                 }
                 cout << " Descending further into the mountain...\n";
-                this_thread::sleep_for(chrono::seconds(1));
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; turn = 0;
             }
         }
@@ -322,20 +331,20 @@ void player(string factor, int level){
     cout << "[Health: " << eTempHP << "]" << endl << endl;
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
     ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl;
-    this_thread::sleep_for(chrono::seconds(1));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
     cout << " Your turn\n" << endl;
-    this_thread::sleep_for(chrono::seconds(1));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
     cout << " 1) "; show_card(CARD1);
     cout << " 2) "; show_card(CARD2);
     cout << " 3) "; show_card(CARD3);
     cout << " -> ";
     cin >> X;
     }while(stoi(X) < 1 || stoi(X) > 3);
-    this_thread::sleep_for(chrono::seconds(1));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
     if(X == "1"){calculate(CARD1);}
     else if(X == "2"){calculate(CARD2);}
     else{calculate(CARD3);}
-    this_thread::sleep_for(chrono::seconds(1));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
 }
 
 void enemy(string factor, int level){
@@ -347,11 +356,11 @@ void enemy(string factor, int level){
     cout << "[Health: " << eTempHP << "]" << endl << endl;
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
     ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl;
-    this_thread::sleep_for(chrono::seconds(1));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
     cout << " Enemy's turn\n" << endl;
-    this_thread::sleep_for(chrono::seconds(1));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
     calculate_enemy();
-    this_thread::sleep_for(chrono::seconds(2));
+    this_thread::sleep_for(chrono::milliseconds(game_speed));
 }
 
 void calculate(Spell card){
@@ -716,21 +725,45 @@ void level_up(){
     }while(stoi(X) < 0 || stoi(X) > 6);
     if(X == "1"){
         if(COINS > 49){COINS -= 50; HP += 1; update();}
+        else{
+            system("clear"); cout << "You don't have enough coins\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
     }
     else if(X == "2"){
         if(COINS > 49){COINS -= 50; DMG += 1; update();}
+        else{
+            system("clear"); cout << "You don't have enough coins\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
     }
     else if(X == "3"){
         if(COINS > 49){COINS -= 50; FIRE += 1; update();}
+        else{
+            system("clear"); cout << "You don't have enough coins\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
     }
     else if(X == "4"){
         if(COINS > 49){COINS -= 50; ICE += 1; update();}
+        else{
+            system("clear"); cout << "You don't have enough coins\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
     }
     else if(X == "5"){
         if(COINS > 49){COINS -= 50; POISON += 1; update();}
+        else{
+            system("clear"); cout << "You don't have enough coins\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
     }
     else if(X == "6"){
         if(COINS > 49){COINS -= 50; HEAL += 1; update();}
+        else{
+            system("clear"); cout << "You don't have enough coins\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
     }
     else{menu();}
 
@@ -755,12 +788,64 @@ void how_to(){
     menu();
 }
 
+void store(){
+    do{
+        system("clear");
+        cout << "  - STORE -\n" << endl;
+        cout << "COINS: " << COINS << endl;
+        cout << " (1): Game Speed Increase ";
+        if(store1 == "no"){cout << "[1,000 Coins]\n";}
+        else{cout << "*Already Purchased*\n";}
+        cout << " (0): Back to Menu\n -> ";
+        cin >> X;
+    }while(stoi(X) < 0 || stoi(X) > 1);
+    if(X == "1"){
+        if(store1 == "yes"){
+            system("clear"); cout << "You already own this item\n";
+            this_thread::sleep_for(chrono::seconds(1)); store();
+        }
+        else{
+            if(COINS > 999){
+                COINS -= 1000; store1 = "yes"; game_speed = 500;
+                update(); store();
+            }
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); store();
+            }
+        }
+    }
+    else{menu();}
+}
+
+void settings(){
+    do{
+        system("clear");
+        cout << "  - SETTINGS -\n" << endl;
+        cout << " (1): Change Game Speed [";
+        if(game_speed == 1000){cout << "normal]";}
+        else{cout << "fast]";}
+        if(store1 == "no"){cout << " *Unlock in store*";}
+        cout << endl << " (0): Back to Menu\n -> ";
+        cin >> X;
+    }while(stoi(X) < 0 || stoi(X) > 1);
+    if(X == "1"){
+        if(store1 == "yes"){
+            if(game_speed == 1000){game_speed = 500;}
+            else{game_speed = 1000;}
+            update(); settings();
+        }
+    }
+    else{menu();}
+}
+
 void update(){
     ofstream outfile;
     outfile.open("player.txt");
     if(outfile.fail()){cout<<"FILE ERROR"<<endl; exit(0);}
     outfile << "Health: " << HP << endl << "Damage: " << DMG << endl <<
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
-    "Heal: " << HEAL << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << endl;
+    "Heal: " << HEAL << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
+    endl << "Gamespeed:" << game_speed << endl << "store1: " << store1 << endl;
     outfile.close();
 }

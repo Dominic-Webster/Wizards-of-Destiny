@@ -6,3 +6,5 @@ Poison: 0
 Heal: 0
 Coins: 0
 Progress: 0
+Gamespeed: 1000
+store1: no
