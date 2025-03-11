@@ -1074,7 +1074,7 @@ void update(){ //send player data to text file
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
     "Heal: " << HEAL << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
-    "Diamonds: " << DIAMONDS << endl << "Rod: " << ownRoD << endl << "CoP: " << ownCoP << endl;
+    "Diamonds: " << DIAMONDS << endl << "RoD: " << ownRoD << endl << "CoP: " << ownCoP << endl;
     outfile.close();
 }
 
