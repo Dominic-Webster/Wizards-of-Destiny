@@ -23,4 +23,6 @@ class Item{
         int stat, level;
 };
 
+string get_item(string RoD, string CoP);
+
 #endif
