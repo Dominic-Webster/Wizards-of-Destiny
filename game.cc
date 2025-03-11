@@ -392,16 +392,7 @@ void player(string factor){ //player turn
     CARD3.get_card(health, damage, fire, ice, poison, heal); //generate third spell
     do{
     system("clear");
-    output_level(factor); //show level name and info
-    cout << "  " << eName; //show enemy name
-    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
-    else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
-    else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
-    else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
-    else{cout << " - Defender: ";}
-    cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
-    cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl; //player info
+    output_level(factor); //show level, enemy, and player info
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
     cout << " Your turn\n" << endl;
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
@@ -420,16 +411,7 @@ void player(string factor){ //player turn
 
 void enemy(string factor){ //enemy turn
     system("clear");
-    output_level(factor); //show level info
-    cout << "  " << eName; //show enemy name
-    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
-    else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
-    else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
-    else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
-    else{cout << " - Defender: ";}
-    cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
-    cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl; //show player stats
+    output_level(factor); //show level, enemy, and player info
     this_thread::sleep_for(chrono::milliseconds(game_speed));
     cout << " Enemy's turn\n" << endl;
     this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -603,9 +585,18 @@ void output_level(string factor){ //show level player is on
     }
     else{ //mountain of despair
         cout << "    - MOUNTAIN OF DESPAIR: LEVEL " << level << " -\n" << endl;
-        if(level == 10){cout << "  - GWatcher of the Pass -\n";}
+        if(level == 10){cout << "  - Watcher of the Pass -\n";}
         if(level == 20){cout << "  - Dweller in the Deep -\n";}
     }
+    cout << "  " << eName; //show enemy name
+    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
+    else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
+    else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
+    else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
+    else{cout << " - Defender: ";}
+    cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
+    cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
+    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl; //player info
 }
 
 void make_enemy(string factor){ //generate enemy stats
@@ -1122,12 +1113,13 @@ void pick_item(){ //get new item
     for(int i = 0; i < 6; i++){ //reset items
         items[i] = 0;
     }
-    Item x, y, z; int a, b, c;
+    Item x, y, z; int a, b, c; string d, e, f;
     string info = get_item(ownRoD, ownCoP); //return three items
-    a = info.at(0); b = info.at(1); c = info.at(2);
-    if(a == 0){x == AoU;} else if(a == 1){x == RoL;} else if(a == 2){x == SoP;} else{x == GoS;}
-    if(b == 0){y == AoU;} else if(b == 1){y == RoL;} else if(b == 2){y == SoP;} else{y == GoS;}
-    if(c == 0){z == AoU;} else if(c == 1){z == RoL;} else if(c == 2){z == SoP;} else{z == GoS;}
+    d = info.at(0); e = info.at(1); f = info.at(2);
+    a = stoi(d); b = stoi(e); c = stoi(f);
+    if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;} else{x = GoS;}
+    if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} else{y = GoS;}
+    if(c == 0){z = AoU;} else if(c == 1){z = RoL;} else if(c == 2){z = SoP;} else{z = GoS;}
     do{
         system("clear");
         cout << " Select Starting Item\n" << endl;
