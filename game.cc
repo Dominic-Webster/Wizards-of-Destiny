@@ -11,7 +11,7 @@ void make_enemy(string factor);
 void output_level(string factor);
 void show_card(Spell card);
 void player(string factor);
-void enemy(string factor);
+void enemy(string factor); void reset_items();
 void calculate(Spell card); void calculate_enemy();
 void enemy_name(); void pick_item(); void update_items();
 
@@ -778,7 +778,7 @@ void make_enemy(string factor){ //generate enemy stats
     }
 }
 
-void level_up(){ //levl up menu
+void level_up(){ //level up menu
     system("clear");
     do{
     cout << "    - LEVEL UP -" << endl << endl;
@@ -1053,7 +1053,7 @@ void settings(){ //settings menu
         }while(stoi(X) < 0 || stoi(X) > 1);
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
-            game_speed = 1000; store1 = "no"; DIAMONDS = 0; update(); settings();
+            game_speed = 1000; store1 = "no"; DIAMONDS = 0; update(); reset_items(); settings();
         }
         else{settings();}
     }
@@ -1083,6 +1083,16 @@ void update_items(){ //send item data to text file
     outfile << "RoD " << RoD.getStat() << " " << RoD.getLevel() << endl; //Rune of Death
     outfile << "CoP " << CoP.getStat() << " " << CoP.getLevel() << endl; //Cloak of Protection
     outfile.close();
+}
+
+void reset_items(){
+    AoU.setStat(1); AoU.setLevel(1);
+    RoL.setStat(2); RoL.setLevel(1);
+    SoP.setStat(1); SoP.setLevel(1);
+    GoS.setStat(2); GoS.setLevel(1);
+    RoD.setStat(1); RoD.setLevel(1);
+    CoP.setStat(1); CoP.setLevel(1);
+    update_items();
 }
 
 void enemy_name(){ //generate enemy name
