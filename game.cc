@@ -52,12 +52,12 @@ int main(int argc, char const *argv[]){
 
     infile.open("item.txt"); //get item info
     if(infile.fail()){cout << "FILE ERROR\n"; exit(0);}
-    infile>>waste>>temp>>waste; AoU.setStat(stoi(temp)); AoU.setLevel(stoi(waste));
-    infile>>waste>>temp>>waste; RoL.setStat(stoi(temp)); RoL.setLevel(stoi(waste));
-    infile>>waste>>temp>>waste; SoP.setStat(stoi(temp)); SoP.setLevel(stoi(waste));
-    infile>>waste>>temp>>waste; GoS.setStat(stoi(temp)); GoS.setLevel(stoi(waste));
-    infile>>waste>>temp>>waste; RoD.setStat(stoi(temp)); RoD.setLevel(stoi(waste));
-    infile>>waste>>temp>>waste; CoP.setStat(stoi(temp)); CoP.setLevel(stoi(waste));
+    infile>>waste>>temp>>waste; AoU.setStat(stoi(temp)); AoU.setLevel(stoi(waste)); //Amulet of Undying
+    infile>>waste>>temp>>waste; RoL.setStat(stoi(temp)); RoL.setLevel(stoi(waste)); //Ring of Life
+    infile>>waste>>temp>>waste; SoP.setStat(stoi(temp)); SoP.setLevel(stoi(waste)); //Staff of Power
+    infile>>waste>>temp>>waste; GoS.setStat(stoi(temp)); GoS.setLevel(stoi(waste)); //Gauntlets of Strength
+    infile>>waste>>temp>>waste; RoD.setStat(stoi(temp)); RoD.setLevel(stoi(waste)); //Rune of Death
+    infile>>waste>>temp>>waste; CoP.setStat(stoi(temp)); CoP.setLevel(stoi(waste)); //Cloak of Protection
     infile.close();
 
     string command = ""; //dev commands
@@ -81,38 +81,38 @@ void menu(){ //game menu
         system("clear");
     }while(stoi(X) < 0 || stoi(X) > 5);
 
-    if(X == "1"){battle();}
-    else if(X == "2"){level_up();}
-    else if(X == "3"){store();}
-    else if(X == "4"){how_to();}
-    else if(X == "5"){settings();}
-    else{update(); update_items(); exit(0);}
+    if(X == "1"){battle();} //play the game
+    else if(X == "2"){level_up();} //go to level up menu
+    else if(X == "3"){store();} //go to store
+    else if(X == "4"){how_to();} //how to play
+    else if(X == "5"){settings();} //go to settings
+    else{update(); update_items(); exit(0);} //save and exit
 }
 
 void battle(){ //adventure menu
-    system("clear");
-    cout << "    - PLAY -" << endl << endl;
-    cout << " Select Adventure" << endl << endl;
-    cout << " (1): Misty Dungeon" << endl;
-    if(PROGRESS > 0){cout << " (2): Ruined Castle" << endl;}
-    if(PROGRESS > 1){cout << " (3): Mountain of Despair" << endl;}
-    cout << " (0): [Menu]" << endl << endl << " -> ";
-    cin >> X;
-    system("clear");
+    do{
+        system("clear");
+        cout << "    - PLAY -" << endl << endl;
+        cout << " Select Adventure" << endl << endl;
+        cout << " (1): Misty Dungeon" << endl;
+        if(PROGRESS > 0){cout << " (2): Ruined Castle" << endl;} //only show after misty dungeon completed
+        if(PROGRESS > 1){cout << " (3): Mountain of Despair" << endl;} //only show after ruined castle completed
+        cout << " (0): [Menu]" << endl << endl << " -> ";
+        cin >> X;
+    }while(stoi(X) < 0 || stoi(X) > 3);
     if(X == "0"){menu();}
-    this_thread::sleep_for(chrono::seconds(1));
-    if(X == "1"){fight(X);}
-    else if(X == "2" && PROGRESS > 0){fight(X);}
-    else if(X == "3" && PROGRESS > 1){fight(X);}
-    else{battle();}
+    this_thread::sleep_for(chrono::seconds(1)); //wait briefly
+    if(X == "1"){fight(X);} //misty dungeon
+    else if(X == "2" && PROGRESS > 0){fight(X);} //ruined castle
+    else if(X == "3" && PROGRESS > 1){fight(X);} //mountain of despair
 }
 
 void fight(string factor){ //fight function
     int random;
+    //set play stats equal to base stats (they can be modified without messing with base stats)
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0; level = 1;
     
-    //get starting item
-    pick_item();
+    pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
         health += RoL.getStat();
         tempHP = health;
@@ -125,18 +125,105 @@ void fight(string factor){ //fight function
         ice += SoP.getStat();
         poison += SoP.getStat();
     }
-    this_thread::sleep_for(chrono::milliseconds(game_speed));
+    this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
 
     //Misty Dungeon
     if(factor == "1"){
         while(level < 21){ //runs through dungeon
-            make_enemy(factor);
-            enemy_name();
-            eTempHP = eHP;
+            make_enemy(factor); //create this level's enemy
+            enemy_name(); //create the enemy name
+            eTempHP = eHP; //set enemy temp health
             while(tempHP > 0 && eTempHP > 0){ //runs through battle
                 if(TURN == 0){ //player turn
                     player(factor);
-                    if(TURN == 2){TURN = 0;} //stuns
+                    if(TURN == 2){TURN = 0;} //when enemy is stunned
+                    else{TURN = 1;}
+                }
+                else{ //enemy turn
+                    enemy(factor);
+                    TURN = 0;
+                }
+            }
+            if(tempHP < 1){ //player lost
+                system("clear");
+                cout << " You have been defeated\n" << endl;
+                this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
+                cout << " Reward: " << level*10 << " coins!\n" << endl; //give player reward
+                COINS += (level*10);
+                random = (rand() % 10); //player has chance to get a diamond
+                if(random == 0){DIAMONDS++;
+                cout << " You have found a diamond!\n";}
+                this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
+                update(); battle(); //back to play menu
+            }
+            else{ //proceed to next level
+                system("clear");
+                cout << " Enemy defeated!\n" << endl;
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+                if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
+                    cout << " Amulet of Undying activates\n" << endl;
+                    tempHP += AoU.getStat();
+                    if(tempHP > health){tempHP = health;} //make sure doesn't go over max hp
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 5){ //level 5 cleared gives stat boost
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cin >> X;
+                    if(X == "1"){damage++; cout << "\n Damage increased!\n\n";}
+                    else{health++; tempHP+=2; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 10){ //level 10 cleared stat boost
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
+                    cin >> X;
+                    if(X == "1"){ice++; cout << "\n Ice increased!\n\n";}
+                    else if(X == "2"){fire++; cout << "\n Fire increased!\n\n";}
+                    else{poison++; cout << "\n Poison increased!\n\n";}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 15){ //level 15 cleared stat boost
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cin >> X;
+                    if(X == "1"){damage += 2; cout << "\n Damage increased!\n\n";}
+                    else{health += 2; tempHP += 4; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 20){ //dungeon cleared
+                    cout << "You've cleared the Misty Dungeon!\n" << endl;
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                    cout << "Reward: 250 Coins\n" << endl; //completion reward
+                    COINS += 250;
+                    random = (rand() % 5); //diamond chance
+                    if(random == 0){DIAMONDS++;
+                    cout << "You have found a diamond!\n" << endl;}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                    if(PROGRESS == 0){ //if first time completing
+                        cout << "Ruined Castle: unlocked!\n" << endl;
+                        PROGRESS = 1; //unlock ruined castle
+                        this_thread::sleep_for(chrono::milliseconds(game_speed));
+                    }
+                    update(); battle(); //save and return to play menu
+                }
+                cout << " Descending further into the dungeon...\n"; 
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+                level++; TURN = 0; //set turn to players, increase dungeon level
+            }
+        }
+    }
+
+    //Ruined Castle
+    if(factor == "2"){
+        while(level < 21){ //runs until reaches end
+            make_enemy(factor); //create enemy for the level
+            enemy_name(); //enemy name
+            eTempHP = eHP; //set temp health
+            while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+                if(TURN == 0){ //player turn
+                    player(factor);
+                    if(TURN == 2){TURN = 0;} //enemy stunned
                     else{TURN = 1;}
                 }
                 else{ //enemy turn
@@ -148,119 +235,33 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*10 << " coins!\n" << endl;
-                COINS += (level*10);
-                random = (rand() % 10);
-                if(random == 0){DIAMONDS++;
-                cout << " You have found a diamond!\n";}
-                this_thread::sleep_for(chrono::milliseconds(game_speed));
-                battle();
-            }
-            else{
-                system("clear");
-                cout << " Enemy defeated!\n" << endl;
-                this_thread::sleep_for(chrono::milliseconds(game_speed));
-                if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
-                    cout << " Amulet of Undying activates\n" << endl;
-                    tempHP += AoU.getStat();
-                    if(tempHP > health){tempHP = health;}
-                    this_thread::sleep_for(chrono::milliseconds(game_speed));
-                }
-                if(level == 5){
-                    cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
-                    cin >> X;
-                    if(X == "1"){damage++; cout << "\n Damage increased!\n\n";}
-                    else{health++; tempHP++; cout << "\n Health increased!\n\n";}
-                    this_thread::sleep_for(chrono::milliseconds(game_speed));
-                }
-                if(level == 10){
-                    cout << "Choose upgrade:\n\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
-                    cin >> X;
-                    if(X == "1"){ice++; cout << "\n Ice increased!\n\n";}
-                    else if(X == "2"){fire++; cout << "\n Fire increased!\n\n";}
-                    else{poison++; cout << "\n Poison increased!\n\n";}
-                    this_thread::sleep_for(chrono::milliseconds(game_speed));
-                }
-                if(level == 15){
-                    cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
-                    cin >> X;
-                    if(X == "1"){damage += 2; cout << "\n Damage increased!\n\n";}
-                    else{health += 2; tempHP += 2; cout << "\n Health increased!\n\n";}
-                    this_thread::sleep_for(chrono::milliseconds(game_speed));
-                }
-                if(level == 20){
-                    cout << "You've cleared the Misty Dungeon!\n" << endl;
-                    this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 250 Coins\n" << endl;
-                    COINS += 250;
-                    random = (rand() % 5);
-                    if(random == 0){DIAMONDS++;
-                    cout << "You have found a diamond!\n" << endl;}
-                    this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    if(PROGRESS == 0){
-                        cout << "Ruined Castle: unlocked!\n" << endl;
-                        PROGRESS = 1;
-                        this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    }
-                    battle();
-                }
-                cout << " Descending further into the dungeon...\n";
-                this_thread::sleep_for(chrono::milliseconds(game_speed));
-                level++; TURN = 0;
-            }
-        }
-    }
-
-    //Ruined Castle
-    if(factor == "2"){
-        while(level < 21){
-            make_enemy(factor);
-            eTempHP = eHP;
-            while(tempHP > 0 && eTempHP > 0){
-                if(TURN == 0){
-                    player(factor);
-                    if(TURN == 2){TURN = 0;}
-                    else{TURN = 1;}
-                }
-                else{
-                    enemy(factor);
-                    TURN = 0;
-                }
-            }
-            if(tempHP < 1){
-                system("clear");
-                cout << " You have been defeated\n" << endl;
-                this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*15 << " coins!\n" << endl;
+                cout << " Reward: " << level*15 << " coins!\n" << endl; //give reward
                 COINS += (level*15);
-                random = (rand() % 9);
+                random = (rand() % 9); //diamond chance
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                battle();
+                update(); battle(); //save and return to menu
             }
-            else{
+            else{ //player beat level
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
                     cout << " Amulet of Undying activates\n" << endl;
                     tempHP += AoU.getStat();
-                    if(tempHP > health){tempHP = health;}
+                    if(tempHP > health){tempHP = health;} //make sure health doesn't go over
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 5){
+                if(level == 5){ //level 5 stat boost
                     cout << "Choose upgrade:\n\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 2; cout << "\n Damage increased!\n\n";}
-                    else{health += 2; tempHP += 2; cout << "\n Health increased!\n\n";}
+                    else{health += 2; tempHP += 4; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 10){
+                if(level == 10){ //level 10 stat boost
                     cout << "Choose upgrade:\n\n";
                     cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
                     cin >> X;
@@ -269,66 +270,67 @@ void fight(string factor){ //fight function
                     else{poison += 2; cout << "\n Poison increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 15){
+                if(level == 15){ //level 15 stat boost
                     cout << "Choose upgrade:\n\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 4; cout << "\n Damage increased!\n\n";}
-                    else{health += 2; tempHP += 4; cout << "\n Health increased!\n\n";}
+                    else{health += 3; tempHP += 6; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 20){
+                if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 350 Coins\n" << endl;
+                    cout << "Reward: 350 Coins\n" << endl; //player reward
                     COINS += 350;
-                    random = (rand() % 4);
+                    random = (rand() % 4); //diamond chance
                     if(random == 0){DIAMONDS += 2;
                         cout << "You have found 2 diamonds!\n" << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    if(PROGRESS == 1){
+                    if(PROGRESS == 1){ //first time completed
                         cout << "Mountain of Despair: unlocked!\n" << endl;
-                        PROGRESS = 2;
+                        PROGRESS = 2; //unlock mountain of despaiir
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
-                    battle();
+                    update(); battle(); //save and exit to menu
                 }
                 cout << " Descending further into the ruins...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                level++; TURN = 0;
+                level++; TURN = 0; //go to next level, set turn to player
             }
         }
     }
 
     //Mountain of Despair
     if(factor == "3"){
-        while(level < 21){
-            make_enemy(factor);
-            eTempHP = eHP;
-            while(tempHP > 0 && eTempHP > 0){
-                if(TURN == 0){
+        while(level < 21){ //runs to end of adventure
+            make_enemy(factor); //create enemy for level
+            enemy_name(); //enemy name
+            eTempHP = eHP; //set enemy temp helth
+            while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+                if(TURN == 0){ //player turn
                     player(factor);
-                    if(TURN == 2){TURN = 0;}
+                    if(TURN == 2){TURN = 0;} //enemy stunned
                     else{TURN = 1;}
                 }
-                else{
+                else{ //enemy turn
                     enemy(factor);
                     TURN = 0;
                 }
             }
-            if(tempHP < 1){
+            if(tempHP < 1){ //player lost
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*20 << " coins!\n" << endl;
+                cout << " Reward: " << level*20 << " coins!\n" << endl; //player reward
                 COINS += (level*20);
-                random = (rand() % 8);
+                random = (rand() % 8); //diamond chance
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                battle();
+                update(); battle(); //save and return to menu
             }
-            else{
+            else{ //player defeated level
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -338,15 +340,15 @@ void fight(string factor){ //fight function
                     if(tempHP > health){tempHP = health;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 5){
+                if(level == 5){ //level 5 stat boost
                     cout << "Choose upgrade:\n\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 4; cout << "\n Damage increased!\n\n";}
-                    else{health += 4; tempHP += 4; cout << "\n Health increased!\n\n";}
+                    else{health += 4; tempHP += 6; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 10){
+                if(level == 10){ //level 10 stat boost
                     cout << "Choose upgrade:\n\n";
                     cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
                     cin >> X;
@@ -355,28 +357,29 @@ void fight(string factor){ //fight function
                     else{poison += 4; cout << "\n Poison increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 15){
+                if(level == 15){ //level 15 stat boost
                     cout << "Choose upgrade:\n\n";
                     cout << " 1) Damage Boost\n 2) Health Boost\n\n - >";
                     cin >> X;
                     if(X == "1"){damage += 6; cout << "\n Damage increased!\n\n";}
-                    else{health += 6; tempHP += 6; cout << "\n Health increased!\n\n";}
+                    else{health += 6; tempHP += 9; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
-                if(level == 20){
+                if(level == 20){ //mountain cleared
                     cout << "You've cleared the Mountain of Despair!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 500 Coins\n" << endl;
+                    cout << "Reward: 500 Coins\n" << endl; //player reward
                     COINS += 500;
                     random = (rand() % 4);
                     if(random == 0){DIAMONDS += 2;
                     cout << "You have found 2 diamonds!\n" << endl;}
+                    if(PROGRESS == 2){PROGRESS = 3;} //if first time completed
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    battle();
+                    update(); battle(); //save and go to menu
                 }
                 cout << " Descending further into the mountain...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                level++; TURN = 0;
+                level++; TURN = 0; //level increase and turn set to player
             }
         }
     }
@@ -384,32 +387,32 @@ void fight(string factor){ //fight function
 }
 
 void player(string factor){ //player turn
-    CARD1.get_card(health, damage, fire, ice, poison, heal);
-    CARD2.get_card(health, damage, fire, ice, poison, heal);
-    CARD3.get_card(health, damage, fire, ice, poison, heal);
+    CARD1.get_card(health, damage, fire, ice, poison, heal); //generate first spell
+    CARD2.get_card(health, damage, fire, ice, poison, heal); //generate second spell
+    CARD3.get_card(health, damage, fire, ice, poison, heal); //generate third spell
     do{
     system("clear");
-    output_level(factor);
-    cout << "  " << eName;
-    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";}
+    output_level(factor); //show level name and info
+    cout << "  " << eName; //show enemy name
+    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
     else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
     else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
     else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
     else{cout << " - Defender: ";}
-    cout << "[Health: " << eTempHP << "]" << endl << endl;
+    cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl;
-    this_thread::sleep_for(chrono::milliseconds(game_speed));
+    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl; //player info
+    this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
     cout << " Your turn\n" << endl;
-    this_thread::sleep_for(chrono::milliseconds(game_speed));
-    cout << " 1) "; show_card(CARD1);
+    this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+    cout << " 1) "; show_card(CARD1); //these show the spells
     cout << " 2) "; show_card(CARD2);
     cout << " 3) "; show_card(CARD3);
     cout << "\n -> ";
     cin >> X;
-    }while(stoi(X) < 1 || stoi(X) > 3);
-    this_thread::sleep_for(chrono::milliseconds(game_speed));
-    if(X == "1"){calculate(CARD1);}
+    }while(stoi(X) < 1 || stoi(X) > 3); //until player selects spell
+    this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+    if(X == "1"){calculate(CARD1);} //calculate spell player chose
     else if(X == "2"){calculate(CARD2);}
     else{calculate(CARD3);}
     this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -417,56 +420,56 @@ void player(string factor){ //player turn
 
 void enemy(string factor){ //enemy turn
     system("clear");
-    output_level(factor);
-    cout << "  " << eName;
-    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";}
+    output_level(factor); //show level info
+    cout << "  " << eName; //show enemy name
+    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
     else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
     else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
     else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
     else{cout << " - Defender: ";}
-    cout << "[Health: " << eTempHP << "]" << endl << endl;
+    cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl;
+    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl; //show player stats
     this_thread::sleep_for(chrono::milliseconds(game_speed));
     cout << " Enemy's turn\n" << endl;
     this_thread::sleep_for(chrono::milliseconds(game_speed));
-    calculate_enemy();
+    calculate_enemy(); //calculate what spell enemy casts
     this_thread::sleep_for(chrono::milliseconds(game_speed));
 }
 
 void calculate(Spell card){ //calculate player spell results
     string t = card.getType(); int e = card.getEffect();
-    if(t == "attack" || t == "fire" || t == "ice" || t == "poison"){
-        if(t == "fire" && eTYPE == "Ice"){e++;} //fire defeats ice
-        if(t == "fire" && eTYPE == "Fire"){e--;} //fire resistance
-        if(t == "ice" && eTYPE == "Fire"){e++;} //ice defeats fire
-        if(t == "ice" && eTYPE == "Ice"){e--;} //ice resistance
-        if(t == "poison" && eTYPE == "Necro"){e--;} //Necro is poison resistant
-        if(t == "poison" && eTYPE == "Defend"){e++;} //weak to poison
-        eTempHP -= e;
-        if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";}
-        else{cout << endl << " You deal " << e << " " << t << " damage!\n";}
+    if(t == "attack" || t == "fire" || t == "ice" || t == "poison"){ //attack spell
+        if(t == "fire" && eTYPE == "Ice"){e++;} //fire defeats ice sorcerer
+        if(t == "fire" && eTYPE == "Fire"){e-=fire;} //fire mage is fire resistant
+        if(t == "ice" && eTYPE == "Fire"){e++;} //ice defeats fire mage
+        if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
+        if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
+        if(t == "poison" && eTYPE == "Defend"){e++;} //defender is weak to poison
+        eTempHP -= e; //decrease enemy health
+        if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
+        else{cout << endl << " You deal " << e << " " << t << " damage!\n";} //show results
     }
-    else if(t == "heal"){
+    else if(t == "heal"){ //healing spell
         tempHP += e;
-        if(tempHP > health){tempHP = health;}
+        if(tempHP > health){tempHP = health;} //can't go over max
         cout << endl << " You heal yourself for " << e << " health!\n";
     }
-    else if(t == "atk-stun"){
-        eTempHP -= e; TURN = 2;
+    else if(t == "atk-stun"){ //attack(stun) spell
+        eTempHP -= e; TURN = 2; //deal damage, trigger stun
         cout << endl << " You stun your enemy, dealing " << e << " damage!\n";
     }
-    else{
-        eTempHP -= e;
-        tempHP += e;
-        if(tempHP > health){tempHP = health;}
+    else{ //drain spell
+        eTempHP -= e; //damage
+        tempHP += e; //heal
+        if(tempHP > health){tempHP = health;} //can't go over max
         cout << endl << " You drain " << e << " life from the enemy!\n";
     }
 }
 
 void calculate_enemy(){ //calculate what spell enemy casts
     int factor = rand() % 10;
-    if(eTYPE == "Wizard"){
+    if(eTYPE == "Wizard"){ //evil wizard
         if(factor < 6){ //attack
             tempHP -= eDMG;
             cout << " " << eName << " deals " << eDMG << " damage!\n";
@@ -489,7 +492,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
     }
-    else if(eTYPE == "Fire"){
+    else if(eTYPE == "Fire"){ //fire mage
         if(factor < 3){ //attack
             tempHP -= eDMG;
             cout << " " << eName << " deals " << eDMG << " damage!\n";
@@ -504,7 +507,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             cout << " " << eName << " heals themself!\n";
         }
     }
-    else if(eTYPE == "Ice"){
+    else if(eTYPE == "Ice"){ //ice sorcerer
         if(factor < 4){ //attack
             tempHP -= eDMG;
             cout << " " << eName << " deals " << eDMG << " damage!\n";
@@ -514,7 +517,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";
         }
     }
-    else if(eTYPE == "Necro"){
+    else if(eTYPE == "Necro"){ //necromancer
         if(factor < 1){ //attack
             tempHP -= eDMG;
             cout << " " << eName << " deals " << eDMG << " damage!\n";
@@ -535,7 +538,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             cout << " " << eName << " drains " << (1 + ((eDMG + eHEAL) / 2)) << " life from you!\n";
         }
     }
-    else if(eTYPE == "Defend"){
+    else if(eTYPE == "Defend"){ //defender
         if(factor < 1){ //attack
             tempHP -= eDMG;
             cout << " " << eName << " deals " << eDMG << " damage!\n";
@@ -564,41 +567,41 @@ void calculate_enemy(){ //calculate what spell enemy casts
 
 void show_card(Spell card){ //display spell
     cout << card.getName() << ": ";
-    if(card.getType() == "attack"){
+    if(card.getType() == "attack"){ //attack spell
         cout << "Deal " << card.getEffect() << " damage\n";
     }
-    else if(card.getType() == "atk-stun"){
+    else if(card.getType() == "atk-stun"){ //atack(stun) spell
         cout << "Deal " << card.getEffect() << " damage and stun the enemy\n";
     }
-    else if(card.getType() == "fire"){
+    else if(card.getType() == "fire"){ //fire spell
         cout << "Deal " << card.getEffect() << " fire damage\n";
     }
-    else if(card.getType() == "ice"){
+    else if(card.getType() == "ice"){ //ice spell
         cout << "Deal " << card.getEffect() << " ice damage\n";
     }
-    else if(card.getType() == "poison"){
+    else if(card.getType() == "poison"){ //poison spell
         cout << "Deal " << card.getEffect() << " poison damage\n";
     }
-    else if(card.getType() == "heal"){
+    else if(card.getType() == "heal"){ //healing spell
         cout << "Gain " << card.getEffect() << " health\n";
-    }
-    else{
+    } 
+    else{ //drain spell
         cout << "Drain " << card.getEffect() << " health from enemy\n";
     }
 }
 
 void output_level(string factor){ //show level player is on
-    if(factor == "1"){
+    if(factor == "1"){ //misty dungeon
         cout << "    - MISTY DUNGEON: LEVEL " << level << " -\n" << endl;
         if(level == 10){cout << "  - Guardian of the Tomb -\n";}
         if(level == 20){cout << "  - Master of the Dungeon -\n";}
     }
-    else if(factor == "2"){
+    else if(factor == "2"){ //ruined castle
         cout << "    - RUINED CASTLE: LEVEL " << level << " -\n" << endl;
         if(level == 10){cout << "  - Upholder of Justice -\n";}
         if(level == 20){cout << "  - Lord of the Tower -\n";}
     }
-    else{
+    else{ //mountain of despair
         cout << "    - MOUNTAIN OF DESPAIR: LEVEL " << level << " -\n" << endl;
         if(level == 10){cout << "  - GWatcher of the Pass -\n";}
         if(level == 20){cout << "  - Dweller in the Deep -\n";}
@@ -610,51 +613,51 @@ void make_enemy(string factor){ //generate enemy stats
     if(factor == "1"){
         //get enemy type
         int type = (rand() % 4);
-        if(type < 2){eTYPE = "Wizard";}
-        else if(type == 2){eTYPE = "Fire";}
-        else{eTYPE = "Ice";}
+        if(type < 2){eTYPE = "Wizard";} //evil wizard
+        else if(type == 2){eTYPE = "Fire";} //fire mage 
+        else{eTYPE = "Ice";} //ice sorcerer
 
-        //set stats
-        if(level < 5){
+        //set stats based on adventure level
+        if(level < 5){ //levels 1-4
             eHP = 4 + (rand() % 5); eDMG = 1 + (rand() % 2);
             eICE = 0; eFIRE = 0; ePOISON = 0; eHEAL = 1;
-            if(eTYPE == "Fire"){eFIRE = 1;}
-            if(eTYPE == "Ice"){eICE = 1;}
+            if(eTYPE == "Fire"){eFIRE = 1;} //fire mage buff
+            if(eTYPE == "Ice"){eICE = 1;} //ice sorcerer buff
         }
-        else if(level < 10){
+        else if(level < 10){ //levels 5-9
             eHP = 6 + (rand() % 6); eDMG = 2 + (rand() % 3);
             eICE = (rand() % 2); eFIRE = (rand() % 2); 
             ePOISON = 1; eHEAL = 2;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
+            if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
+            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
-        else if(level == 10){ //mini boss
+        else if(level == 10){ //level 10 mini boss
             eHP = 10 + (rand() % 6); eDMG = 4 + (rand() % 4);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
             ePOISON = 3; eHEAL = 4;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
+            if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
+            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
-        else if(level < 15){
+        else if(level < 15){ //levels 11-14
             eHP = 8 + (rand() % 6); eDMG = 3 + (rand() % 3);
             eICE = 1 + (rand() % 2); eFIRE = 1 + (rand() % 2); 
             ePOISON = 2; eHEAL = 3;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
+            if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
+            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
-        else if(level < 20){
+        else if(level < 20){ //levels 15-19
             eHP = 9 + (rand() % 7); eDMG = 3 + (rand() % 5);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
             ePOISON = 3; eHEAL = 4;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Ice"){eICE += 3;}
+            if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
+            if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
         else{ //level 20 final boss
             eHP = 14 + (rand() % 7); eDMG = 5 + (rand() % 5);
             eICE = 3 + (rand() % 2); eFIRE = 3 + (rand() % 2); 
             ePOISON = 3; eHEAL = 4;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Ice"){eICE += 3;}
+            if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
+            if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
     }
 
@@ -662,20 +665,20 @@ void make_enemy(string factor){ //generate enemy stats
     if(factor == "2"){
         //get enemy type
         int type = (rand() % 20);
-        if(type < 8){eTYPE = "Wizard";}
-        else if(type < 13){eTYPE = "Fire";}
-        else if(type < 18){eTYPE = "Ice";}
-        else{eTYPE = "Necro";}
+        if(type < 8){eTYPE = "Wizard";} //evil wizard
+        else if(type < 13){eTYPE = "Fire";} //fire mage
+        else if(type < 18){eTYPE = "Ice";} //ice sorcerer
+        else{eTYPE = "Necro";} //necromancer
 
         //set stats
-        if(level < 5){
+        if(level < 5){ //levels 1-4
             eHP = 6 + (rand() % 5); eDMG = 2 + (rand() % 4);
             eICE = 1; eFIRE = 1; ePOISON = 1; eHEAL = 2;
-            if(eTYPE == "Fire"){eFIRE = 2;}
-            if(eTYPE == "Ice"){eICE = 2;}
-            if(eTYPE == "Necro"){ePOISON = 2;}
+            if(eTYPE == "Fire"){eFIRE = 2;} //fire mage buff
+            if(eTYPE == "Ice"){eICE = 2;} //ice sorcerer buff
+            if(eTYPE == "Necro"){ePOISON = 2;} //necromancer buff
         }
-        else if(level < 10){
+        else if(level < 10){ //levels 5-9
             eHP = 6 + (rand() % 7); eDMG = 3 + (rand() % 4);
             eICE = (rand() % 3); eFIRE = (rand() % 3); 
             ePOISON = (rand() % 3); eHEAL = 2;
@@ -683,7 +686,7 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Ice"){eICE += 1;}
             if(eTYPE == "Necro"){ePOISON += 1;}
         }
-        else if(level == 10){ //mini boss
+        else if(level == 10){ //level 10 mini boss
             eHP = 15 + (rand() % 8); eDMG = 4 + (rand() % 4);
             eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
             ePOISON = 3 + (rand() % 3); eHEAL = 5;
@@ -691,7 +694,7 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
         }
-        else if(level < 15){
+        else if(level < 15){ //levels 11-14
             eHP = 10 + (rand() % 6); eDMG = 4 + (rand() % 3);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
             ePOISON = 1 + (rand() % 3); eHEAL = 3;
@@ -699,7 +702,7 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
         }
-        else if(level < 20){
+        else if(level < 20){ //levels 15-19
             eHP = 11 + (rand() % 7); eDMG = 4 + (rand() % 5);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
             ePOISON = 2 + (rand() % 3); eHEAL = 4;
@@ -721,22 +724,22 @@ void make_enemy(string factor){ //generate enemy stats
     if(factor == "3"){
         //get enemy type
         int type = (rand() % 20);
-        if(type < 2){eTYPE = "Wizard";}
-        else if(type < 6){eTYPE = "Fire";}
-        else if(type < 10){eTYPE = "Ice";}
-        else if(type < 15){eTYPE = "Necro";}
-        else{eTYPE = "Defend";}
+        if(type < 2){eTYPE = "Wizard";} //evil wizard
+        else if(type < 6){eTYPE = "Fire";} //fire mage
+        else if(type < 10){eTYPE = "Ice";} //ice sorcerer
+        else if(type < 15){eTYPE = "Necro";} //necromancer
+        else{eTYPE = "Defend";} //defender
 
         //set stats
-        if(level < 5){
+        if(level < 5){ //levels 1-4
             eHP = 8 + (rand() % 6); eDMG = 4 + (rand() % 4);
             eICE = 2; eFIRE = 2; ePOISON = 2; eHEAL = 2;
-            if(eTYPE == "Fire"){eFIRE = 3;}
-            if(eTYPE == "Ice"){eICE = 3;}
-            if(eTYPE == "Necro"){ePOISON = 3;}
-            if(eTYPE == "Defend"){eHEAL = 4;}
+            if(eTYPE == "Fire"){eFIRE = 3;} //fire mage buff
+            if(eTYPE == "Ice"){eICE = 3;} //ice sorcerer buff
+            if(eTYPE == "Necro"){ePOISON = 3;} //necromancer buff
+            if(eTYPE == "Defend"){eHEAL = 4;} //defender buff
         }
-        else if(level < 10){
+        else if(level < 10){ //levels 5-9
             eHP = 9 + (rand() % 7); eDMG = 5 + (rand() % 4);
             eICE = 1 + (rand() % 4); eFIRE = 1 + (rand() % 4); 
             ePOISON = 1 + (rand() % 4); eHEAL = 3;
@@ -745,7 +748,7 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Necro"){ePOISON += 2;}
             if(eTYPE == "Defend"){eHEAL = 6;}
         }
-        else if(level == 10){ //mini boss
+        else if(level == 10){ //level 10 mini boss
             eHP = 17 + (rand() % 9); eDMG = 6 + (rand() % 5);
             eICE = 3 + (rand() % 4); eFIRE = 3 + (rand() % 4); 
             ePOISON = 3 + (rand() % 4); eHEAL = 5;
@@ -754,7 +757,7 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Necro"){ePOISON += 2;}
             if(eTYPE == "Defend"){eHEAL = 8;}
         }
-        else if(level < 15){
+        else if(level < 15){ //levels 11-14
             eHP = 13 + (rand() % 6); eDMG = 5 + (rand() % 5);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
             ePOISON = 1 + (rand() % 3); eHEAL = 5;
@@ -763,7 +766,7 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Necro"){ePOISON += 2;}
             if(eTYPE == "Defend"){eHEAL = 7;}
         }
-        else if(level < 20){
+        else if(level < 20){ //levels 15-19
             eHP = 15 + (rand() % 7); eDMG = 6 + (rand() % 5);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
             ePOISON = 2 + (rand() % 3); eHEAL = 6;
