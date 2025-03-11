@@ -422,12 +422,12 @@ void enemy(string factor){ //enemy turn
 void calculate(Spell card){ //calculate player spell results
     string t = card.getType(); int e = card.getEffect();
     if(t == "attack" || t == "fire" || t == "ice" || t == "poison"){ //attack spell
-        if(t == "fire" && eTYPE == "Ice"){e++;} //fire defeats ice sorcerer
+        if(t == "fire" && eTYPE == "Ice"){e+=fire;} //ice sorcerer is weak to fire
         if(t == "fire" && eTYPE == "Fire"){e-=fire;} //fire mage is fire resistant
-        if(t == "ice" && eTYPE == "Fire"){e++;} //ice defeats fire mage
+        if(t == "ice" && eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
-        if(t == "poison" && eTYPE == "Defend"){e++;} //defender is weak to poison
+        if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
         eTempHP -= e; //decrease enemy health
         if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
         else{cout << endl << " You deal " << e << " " << t << " damage!\n";} //show results
