@@ -156,7 +156,7 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                if(items[0] == 1 && level != 20){ //Amulet of Undying
+                if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
                     cout << " Amulet of Undying activates\n" << endl;
                     tempHP += AoU.getStat();
                     if(tempHP > health){tempHP = health;}
@@ -242,7 +242,7 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                if(items[0] == 1 && level != 20){ //Amulet of Undying
+                if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
                     cout << " Amulet of Undying activates\n" << endl;
                     tempHP += AoU.getStat();
                     if(tempHP > health){tempHP = health;}
@@ -328,7 +328,7 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                if(items[0] == 1 && level != 20){ //Amulet of Undying
+                if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
                     cout << " Amulet of Undying activates\n" << endl;
                     tempHP += AoU.getStat();
                     if(tempHP > health){tempHP = health;}
@@ -386,7 +386,7 @@ void player(string factor){ //player turn
     do{
     system("clear");
     output_level(factor);
-    cout << " " << eName;
+    cout << "  " << eName;
     if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";}
     else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
     else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
@@ -414,7 +414,7 @@ void player(string factor){ //player turn
 void enemy(string factor){ //enemy turn
     system("clear");
     output_level(factor);
-    cout << " " << eName;
+    cout << "  " << eName;
     if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";}
     else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
     else if(eTYPE == "Ice"){cout << " - Ice Sorcerer: ";}
@@ -482,7 +482,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else{ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself!\n";
+            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
     }
     else if(eTYPE == "Fire"){
