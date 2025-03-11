@@ -19,6 +19,10 @@ string FNAME[20] = {"Yarno", "Belloc", "Soma", "Yeen", "Marcuus", "Liol", "Quand
 "Wernda", "Helena", "Astan", "Lucia", "Ferdinand", "Orp", "Oogga", "Ray", "Rendolf", "Portian"};
 string LNAME[20] = {"Hellfire", "Wedlok", "Hona", "Perf", "Orelius", "The Slayer", "The Butcher", "Doombringer", "The Savage", "The Destroyer",
 "Hogtie", "Far-Wanderer", "Oathbreaker", "Kindy", "Wok", "Erp", "King Killer", "Nightwalker", "Pain-Bringer", "Xondoloxa"};
+string FNAME2[20] = {"Holga", "Waine", "Harkken", "Folda", "Swinn", "Varis", "Galdaf", "Halfdan", "Eldar", "Roirand",
+"Germaine", "Zandar", "Kieran", "Noss", "Theoran", "Juju", "Yymigg", "Deathman", "Cildas", "Inhilla"};
+string LNAME2[20] = {"Westbound", "The Dead", "The Lost", "The Old", "The Young", "Gillian", "The Fallen", "Bell", "Jund", "Ungundo",
+"The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu"};
 
 Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost starting health", 0, 0), 
 SoP("Staff of Power", "Boost elements", 0, 0), GoS("Gauntlets of Strength", "Boost starting damage", 0, 0), 
@@ -1090,11 +1094,25 @@ void update_items(){ //send item data to text file
 void enemy_name(){ //generate enemy name
     eName = "";
     int random;
-    random = (rand() % 20);
-    eName += FNAME[random];
+    random = (rand() % 2);
+    if(random == 0){
+        random = (rand() % 20);
+        eName += FNAME[random];
+    }
+    else{
+        random = (rand() % 20);
+        eName += FNAME2[random];
+    }
     eName += " ";
-    random = (rand() % 20);
-    eName += LNAME[random];
+    random = (rand() % 2);
+    if(random == 0){
+        random = (rand() % 20);
+        eName += LNAME[random];
+    }
+    else{
+        random = (rand() % 20);
+        eName += LNAME2[random];
+    }
 }
 
 void pick_item(){ //get new item
