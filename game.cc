@@ -79,7 +79,7 @@ void menu(){ //game menu
         cout << " -> ";
         cin >> X;
         system("clear");
-    }while(stoi(X) < 0 || stoi(X) > 5);
+    }while(X < "0" || X > "5");
 
     if(X == "1"){battle();} //play the game
     else if(X == "2"){level_up();} //go to level up menu
@@ -99,7 +99,7 @@ void battle(){ //adventure menu
         if(PROGRESS > 1){cout << " (3): Mountain of Despair" << endl;} //only show after ruined castle completed
         cout << " (0): [Menu]" << endl << endl << " -> ";
         cin >> X;
-    }while(stoi(X) < 0 || stoi(X) > 3);
+    }while(X < "0" || X > "3");
     if(X == "0"){menu();}
     this_thread::sleep_for(chrono::seconds(1)); //wait briefly
     if(X == "1"){fight(X);} //misty dungeon
@@ -401,7 +401,7 @@ void player(string factor){ //player turn
     cout << " 3) "; show_card(CARD3);
     cout << "\n -> ";
     cin >> X;
-    }while(stoi(X) < 1 || stoi(X) > 3); //until player selects spell
+    }while(X < "1" || X > "3"); //until player selects spell
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
     if(X == "1"){calculate(CARD1);} //calculate spell player chose
     else if(X == "2"){calculate(CARD2);}
@@ -817,7 +817,7 @@ void level_up(){ //level up menu
     cout << " -> "; 
     cin >> X;
     system("clear");
-    }while(stoi(X) < 0 || stoi(X) > 6);
+    }while(X < "0" || X > "6");
     if(X == "1"){ //health
         if(HP < 15){ 
             if(COINS > 49){COINS -= 50; HP += 1; update();}
@@ -990,7 +990,7 @@ void store(){ //store menu
         cout << " (2): All Stats +3  [5 Diamonds]\n";
         cout << " (0): Back to Menu\n\n -> ";
         cin >> X;
-    }while(stoi(X) < 0 || stoi(X) > 2);
+    }while(X < "0" || X > "2");
     if(X == "1"){
         if(store1 == "yes"){ //already own game speed upgrade
             system("clear"); cout << "You already own this item\n";
@@ -1031,7 +1031,7 @@ void settings(){ //settings menu
         cout << endl << " (2): Reset Save *Permanent*";
         cout << endl << " (0): Back to Menu\n\n -> ";
         cin >> X;
-    }while(stoi(X) < 0 || stoi(X) > 2);
+    }while(X < "0" || X > "2");
     if(X == "1"){
         if(store1 == "yes"){ //if game speed has been bought
             if(game_speed == 1000){game_speed = 500;}
@@ -1050,7 +1050,7 @@ void settings(){ //settings menu
             cout << "Are you sure you want to reset? All progress will be lost\n" << endl;
             cout << " (1): Reset\n (0): Back to Settings\n\n -> ";
             cin >> X;
-        }while(stoi(X) < 0 || stoi(X) > 1);
+        }while(X < "0" || X > "1");
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
             game_speed = 1000; store1 = "no"; DIAMONDS = 0; update(); reset_items(); settings();
@@ -1138,7 +1138,7 @@ void pick_item(){ //get new item
         cout << "\n (3): "; z.print();
         cout << "\n -> ";
         cin >> X;
-    }while(stoi(X) < 1 || stoi(X) > 3);
+    }while(X < "1" || X > "3");
     if(X == "1"){items[a] = 1;}
     else if(X == "2"){items[b] = 1;}
     else{items[c] = 1;}
