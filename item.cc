@@ -21,11 +21,11 @@ string get_item(string RoD, string CoP){ //sends three items for user to pick
     int random;
     string result = "";
     if(CoP == "no" && RoD == "no"){ //first four items
-        random = rand()%2;
-        if(random == 0){result += "0";} else{result += "1";} //first item
-        random = rand()%2;
-        if(random == 0 && result == "0"){result += "1";} //second item
-        else if(random == 0 && result == "1"){result += "0";}
+        random = rand()%4;
+        if(random < 2){result += "0";} else{result += "1";} //first item
+        random = rand()%6;
+        if(random < 3 && result == "0"){result += "1";} //second item
+        else if(random < 3 && result == "1"){result += "0";}
         else{result += "2";}
         random = rand()%2;
         if(random == 0 && result.at(1) != '2'){result += "2";} //third item
