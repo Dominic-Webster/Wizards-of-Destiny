@@ -30,6 +30,8 @@
 #### UPDATE 2.0.1
 03/13/2025
 - Balance changes
+- Item added: Rune of Death
+- Item shop added
 - Bug fixes
 - Code tidied up
 

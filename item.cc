@@ -33,5 +33,24 @@ string get_item(string RoD, string CoP){ //sends three items for user to pick
         else if(random == 1 && result.at(1) == '1' && result.at(0) == '0'){result += "2";}
         else{result += "3";}
     }
+    if(CoP == "no" && RoD == "yes"){ //first five items
+        random = rand()%6;
+        if(random < 2){result += "0";} //first item
+        else if(random < 4){result += "2";}
+        else{result += "1";} 
+        random = rand()%3;
+        if(random == 0 && result == "0"){result += "1";} //second item
+        else if(random == 0 && (result == "1" || result == "2")){result += "0";}
+        else if(random == 1 && result == "0"){result += "2";}
+        else if(random == 1 && result == "1"){result += "3";}
+        else if(random == 1 && result == "2"){result += "1";}
+        else if(random == 2 && result == "0"){result += "2";}
+        else{result += "3";}
+        random = rand()%2;
+        if(random == 0 && result.at(1) != '3'){result += "3";} //third item
+        else if(random == 0 && result.at(1) == '3'){result += "4";}
+        else if(random == 1 && result.at(1) == '1'){result += "3";}
+        else{result += "4";}
+    }
     return result;
 }

@@ -10,7 +10,7 @@ void level_up(); void settings(); void update();
 void make_enemy(string factor);
 void output_level(string factor);
 void show_card(Spell card);
-void player(string factor);
+void player(string factor); void item_shop();
 void enemy(string factor); void reset_items();
 void calculate(Spell card); void calculate_enemy();
 void enemy_name(); void pick_item(); void update_items();
@@ -776,6 +776,8 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Defend"){eHEAL = 15; eHP += 15; eDMG -= 2;}
         }
     }
+
+    if(items[4] == 1){eHP--;} //rune of death
 }
 
 void level_up(){ //level up menu
@@ -1004,9 +1006,10 @@ void store(){ //store menu
         if(store1 == "no"){cout << " [20 Diamonds]\n";} //can be bought
         else{cout << "*Already Purchased*\n";} //already bought
         cout << " (2): All Stats +3  [5 Diamonds]\n";
+        cout << " (3): Buy Items\n";
         cout << " (0): Back to Menu\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "2");
+    }while(X < "0" || X > "3");
     if(X == "1"){
         if(store1 == "yes"){ //already own game speed upgrade
             system("clear"); cout << "You already own this item\n";
@@ -1033,6 +1036,7 @@ void store(){ //store menu
             this_thread::sleep_for(chrono::seconds(1)); store();
         }
     }
+    else if(X == "3"){item_shop();}
     else{menu();}
 }
 
@@ -1143,19 +1147,52 @@ void pick_item(){ //get new item
     string info = get_item(ownRoD, ownCoP); //return three items
     d = info.at(0); e = info.at(1); f = info.at(2);
     a = stoi(d); b = stoi(e); c = stoi(f);
-    if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;} else{x = GoS;}
-    if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} else{y = GoS;}
-    if(c == 0){z = AoU;} else if(c == 1){z = RoL;} else if(c == 2){z = SoP;} else{z = GoS;}
+    if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
+    else if(a == 3){x = GoS;} else{x = RoD;}
+    if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
+    else if(b == 3){y = GoS;} else{y = RoD;}
+    if(c == 0){z = AoU;} else if(c == 1){z = RoL;} else if(c == 2){z = SoP;} 
+    else if(c == 3){z = GoS;} else{z = RoD;}
     do{
         system("clear");
         cout << " Select Starting Item\n" << endl;
         cout << " (1): "; x.print();
         cout << "\n (2): "; y.print();
         cout << "\n (3): "; z.print();
-        cout << "\n -> ";
+        cout << "\n\n -> ";
         cin >> X;
     }while(X < "1" || X > "3");
     if(X == "1"){items[a] = 1;}
     else if(X == "2"){items[b] = 1;}
     else{items[c] = 1;}
+}
+
+void item_shop(){
+    do{
+        system("clear");
+        cout << "  - ITEM SHOP -\n" << endl;
+        cout << "DIAMONDS: " << DIAMONDS << endl << endl;
+        cout << " (1): Rune of Death ";
+        if(ownRoD == "no"){cout << " [5 Diamonds]\n";} //can be bought
+        else{cout << "*Already Owned*\n";} //already bought
+        cout << " (0): Back to Store\n\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "1");
+    if(X == "1"){
+        if(ownRoD == "yes"){ //already own item
+            system("clear"); cout << "You already own this item\n";
+            this_thread::sleep_for(chrono::seconds(1)); item_shop();
+        }
+        else{
+            if(DIAMONDS > 4){ //buy game speed upgrade
+                DIAMONDS -= 5; ownRoD = "yes";;
+                update(); item_shop();
+            }
+            else{ //too poor
+                system("clear"); cout << "You don't have enough diamonds\n";
+                this_thread::sleep_for(chrono::seconds(1)); item_shop();
+            }
+        }
+    }
+    else{store();}
 }
