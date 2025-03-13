@@ -148,9 +148,9 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
-                cout << " Reward: " << level*10 << " coins!\n" << endl; //give player reward
-                COINS += (level*10);
-                random = (rand() % 10); //player has chance to get a diamond
+                cout << " Reward: " << level*5 << " coins!\n" << endl; //give player reward
+                COINS += (level*5);
+                random = (rand() % 4); //player has chance to get a diamond
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
@@ -196,7 +196,7 @@ void fight(string factor){ //fight function
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     cout << "Reward: 250 Coins\n" << endl; //completion reward
                     COINS += 250;
-                    random = (rand() % 5); //diamond chance
+                    random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS++;
                     cout << "You have found a diamond!\n" << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -235,9 +235,9 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*15 << " coins!\n" << endl; //give reward
-                COINS += (level*15);
-                random = (rand() % 9); //diamond chance
+                cout << " Reward: " << level*10 << " coins!\n" << endl; //give reward
+                COINS += (level*10);
+                random = (rand() % 4); //diamond chance
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -281,9 +281,9 @@ void fight(string factor){ //fight function
                 if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 350 Coins\n" << endl; //player reward
-                    COINS += 350;
-                    random = (rand() % 4); //diamond chance
+                    cout << "Reward: 500 Coins\n" << endl; //player reward
+                    COINS += 500;
+                    random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS += 2;
                         cout << "You have found 2 diamonds!\n" << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -324,7 +324,7 @@ void fight(string factor){ //fight function
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << " Reward: " << level*20 << " coins!\n" << endl; //player reward
                 COINS += (level*20);
-                random = (rand() % 8); //diamond chance
+                random = (rand() % 4); //diamond chance
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -368,9 +368,9 @@ void fight(string factor){ //fight function
                 if(level == 20){ //mountain cleared
                     cout << "You've cleared the Mountain of Despair!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 500 Coins\n" << endl; //player reward
-                    COINS += 500;
-                    random = (rand() % 4);
+                    cout << "Reward: 750 Coins\n" << endl; //player reward
+                    COINS += 750;
+                    random = (rand() % 2);
                     if(random == 0){DIAMONDS += 2;
                     cout << "You have found 2 diamonds!\n" << endl;}
                     if(PROGRESS == 2){PROGRESS = 3;} //if first time completed
@@ -616,37 +616,37 @@ void make_enemy(string factor){ //generate enemy stats
             if(eTYPE == "Ice"){eICE = 1;} //ice sorcerer buff
         }
         else if(level < 10){ //levels 5-9
-            eHP = 6 + (rand() % 6); eDMG = 2 + (rand() % 3);
+            eHP = 8 + (rand() % 6); eDMG = 1 + (rand() % 3);
             eICE = (rand() % 2); eFIRE = (rand() % 2); 
             ePOISON = 1; eHEAL = 2;
-            if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
-            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
+            if(eTYPE == "Fire"){eFIRE += 1;} //fire mage buff
+            if(eTYPE == "Ice"){eICE += 1;} //ice sorcerer buff
         }
         else if(level == 10){ //level 10 mini boss
-            eHP = 10 + (rand() % 6); eDMG = 4 + (rand() % 4);
+            eHP = 15 + (rand() % 6); eDMG = 3 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 4;
+            ePOISON = 3; eHEAL = 5;
             if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
         else if(level < 15){ //levels 11-14
-            eHP = 8 + (rand() % 6); eDMG = 3 + (rand() % 3);
+            eHP = 12 + (rand() % 6); eDMG = 2 + (rand() % 3);
             eICE = 1 + (rand() % 2); eFIRE = 1 + (rand() % 2); 
-            ePOISON = 2; eHEAL = 3;
+            ePOISON = 2; eHEAL = 4;
             if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
         else if(level < 20){ //levels 15-19
-            eHP = 9 + (rand() % 7); eDMG = 3 + (rand() % 5);
+            eHP = 15 + (rand() % 7); eDMG = 3 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 4;
+            ePOISON = 3; eHEAL = 5;
             if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
         else{ //level 20 final boss
-            eHP = 14 + (rand() % 7); eDMG = 5 + (rand() % 5);
-            eICE = 3 + (rand() % 2); eFIRE = 3 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 4;
+            eHP = 22 + (rand() % 10); eDMG = 4 + (rand() % 3);
+            eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
+            ePOISON = 3; eHEAL = 7;
             if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
@@ -663,48 +663,48 @@ void make_enemy(string factor){ //generate enemy stats
 
         //set stats
         if(level < 5){ //levels 1-4
-            eHP = 6 + (rand() % 5); eDMG = 2 + (rand() % 4);
-            eICE = 1; eFIRE = 1; ePOISON = 1; eHEAL = 2;
+            eHP = 8 + (rand() % 5); eDMG = 2 + (rand() % 3);
+            eICE = 1; eFIRE = 1; ePOISON = 1; eHEAL = 4;
             if(eTYPE == "Fire"){eFIRE = 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE = 2;} //ice sorcerer buff
             if(eTYPE == "Necro"){ePOISON = 2;} //necromancer buff
         }
         else if(level < 10){ //levels 5-9
-            eHP = 6 + (rand() % 7); eDMG = 3 + (rand() % 4);
+            eHP = 12 + (rand() % 8); eDMG = 3 + (rand() % 3);
             eICE = (rand() % 3); eFIRE = (rand() % 3); 
-            ePOISON = (rand() % 3); eHEAL = 2;
+            ePOISON = (rand() % 3); eHEAL = 5;
             if(eTYPE == "Fire"){eFIRE += 1;}
             if(eTYPE == "Ice"){eICE += 1;}
             if(eTYPE == "Necro"){ePOISON += 1;}
         }
         else if(level == 10){ //level 10 mini boss
-            eHP = 15 + (rand() % 8); eDMG = 4 + (rand() % 4);
-            eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            ePOISON = 3 + (rand() % 3); eHEAL = 5;
+            eHP = 20 + (rand() % 8); eDMG = 3 + (rand() % 4);
+            eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
+            ePOISON = 1 + (rand() % 3); eHEAL = 8;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
         }
         else if(level < 15){ //levels 11-14
-            eHP = 10 + (rand() % 6); eDMG = 4 + (rand() % 3);
+            eHP = 16 + (rand() % 6); eDMG = 3 + (rand() % 3);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 3;
+            ePOISON = 1 + (rand() % 3); eHEAL = 6;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
         }
         else if(level < 20){ //levels 15-19
-            eHP = 11 + (rand() % 7); eDMG = 4 + (rand() % 5);
+            eHP = 20 + (rand() % 7); eDMG = 4 + (rand() % 3);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eHEAL = 4;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Ice"){eICE += 3;}
-            if(eTYPE == "Necro"){ePOISON += 3;}
+            ePOISON = 2 + (rand() % 3); eHEAL = 7;
+            if(eTYPE == "Fire"){eFIRE += 2;}
+            if(eTYPE == "Ice"){eICE += 2;}
+            if(eTYPE == "Necro"){ePOISON += 2;}
         }
         else{ //level 20 final boss
-            eHP = 20 + (rand() % 7); eDMG = 7 + (rand() % 5);
-            eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            ePOISON = 3 + (rand() % 3); eHEAL = 6;
+            eHP = 30 + (rand() % 10); eDMG = 4 + (rand() % 5);
+            eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
+            ePOISON = 2 + (rand() % 3); eHEAL = 9;
             if(eTYPE == "Fire"){eFIRE += 3;}
             if(eTYPE == "Ice"){eICE += 3;}
             if(eTYPE == "Necro"){ePOISON += 3;}
@@ -723,57 +723,57 @@ void make_enemy(string factor){ //generate enemy stats
 
         //set stats
         if(level < 5){ //levels 1-4
-            eHP = 8 + (rand() % 6); eDMG = 4 + (rand() % 4);
-            eICE = 2; eFIRE = 2; ePOISON = 2; eHEAL = 2;
+            eHP = 20 + (rand() % 6); eDMG = 3 + (rand() % 4);
+            eICE = 2; eFIRE = 2; ePOISON = 2; eHEAL = 4;
             if(eTYPE == "Fire"){eFIRE = 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE = 3;} //ice sorcerer buff
             if(eTYPE == "Necro"){ePOISON = 3;} //necromancer buff
-            if(eTYPE == "Defend"){eHEAL = 4;} //defender buff
+            if(eTYPE == "Defend"){eHEAL = 8; eHP += 5; eDMG -= 2;} //defender buff
         }
         else if(level < 10){ //levels 5-9
-            eHP = 9 + (rand() % 7); eDMG = 5 + (rand() % 4);
-            eICE = 1 + (rand() % 4); eFIRE = 1 + (rand() % 4); 
-            ePOISON = 1 + (rand() % 4); eHEAL = 3;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 6;}
+            eHP = 24 + (rand() % 7); eDMG = 4 + (rand() % 3);
+            eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
+            ePOISON = 1 + (rand() % 3); eHEAL = 6;
+            if(eTYPE == "Fire"){eFIRE += 1;}
+            if(eTYPE == "Ice"){eICE += 1;}
+            if(eTYPE == "Necro"){ePOISON += 1;}
+            if(eTYPE == "Defend"){eHEAL = 10; eHP += 7; eDMG-= 2;}
         }
         else if(level == 10){ //level 10 mini boss
-            eHP = 17 + (rand() % 9); eDMG = 6 + (rand() % 5);
-            eICE = 3 + (rand() % 4); eFIRE = 3 + (rand() % 4); 
-            ePOISON = 3 + (rand() % 4); eHEAL = 5;
+            eHP = 35 + (rand() % 8); eDMG = 5 + (rand() % 5);
+            eICE = 1 + (rand() % 4); eFIRE = 1 + (rand() % 4); 
+            ePOISON = 1 + (rand() % 4); eHEAL = 10;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 8;}
+            if(eTYPE == "Defend"){eHEAL = 14; eHP += 8; eDMG -= 1;}
         }
         else if(level < 15){ //levels 11-14
-            eHP = 13 + (rand() % 6); eDMG = 5 + (rand() % 5);
+            eHP = 28 + (rand() % 6); eDMG = 4 + (rand() % 3);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 5;
+            ePOISON = 1 + (rand() % 3); eHEAL = 8;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 7;}
+            if(eTYPE == "Defend"){eHEAL = 10; eHP += 9; eDMG -= 1;}
         }
         else if(level < 20){ //levels 15-19
-            eHP = 15 + (rand() % 7); eDMG = 6 + (rand() % 5);
+            eHP = 32 + (rand() % 7); eDMG = 4 + (rand() % 4);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eHEAL = 6;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Ice"){eICE += 3;}
-            if(eTYPE == "Necro"){ePOISON += 3;}
-            if(eTYPE == "Defend"){eHEAL = 8;}
+            ePOISON = 2 + (rand() % 3); eHEAL = 10;
+            if(eTYPE == "Fire"){eFIRE += 2;}
+            if(eTYPE == "Ice"){eICE += 2;}
+            if(eTYPE == "Necro"){ePOISON += 2;}
+            if(eTYPE == "Defend"){eHEAL = 12; eHP += 10; eDMG -= 1;}
         }
         else{ //level 20 final boss
-            eHP = 25 + (rand() % 8); eDMG = 8 + (rand() % 7);
+            eHP = 45 + (rand() % 11); eDMG = 4 + (rand() % 5);
             eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            ePOISON = 3 + (rand() % 3); eHEAL = 7;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Ice"){eICE += 3;}
-            if(eTYPE == "Necro"){ePOISON += 3;}
-            if(eTYPE == "Defend"){eHEAL = 10;}
+            ePOISON = 3 + (rand() % 3); eHEAL = 12;
+            if(eTYPE == "Fire"){eFIRE += 2;}
+            if(eTYPE == "Ice"){eICE += 2;}
+            if(eTYPE == "Necro"){ePOISON += 2;}
+            if(eTYPE == "Defend"){eHEAL = 15; eHP += 15; eDMG -= 2;}
         }
     }
 }
@@ -785,12 +785,14 @@ void level_up(){ //level up menu
     cout << "Select stat to increase by 1" << endl;
     cout << "COINS: " << COINS << endl << endl;
     cout << " (1): Health: " << HP << "   ["; //health and varied cost
-    if(HP < 15){cout << "50 Coins]" << endl;}
+    if(HP < 11){cout << "25 Coins]" << endl;}
+    else if(HP < 15){cout << "50 Coins]" << endl;}
     else if(HP < 20){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
     cout << " (2): Damage: " << DMG << "   ["; //damage and varied cost
-    if(DMG < 5){cout << "50 Coins]" << endl;}
+    if(DMG < 2){cout << "25 Coins]" << endl;}
+    else if(DMG < 5){cout << "50 Coins]" << endl;}
     else if(DMG < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
@@ -819,7 +821,14 @@ void level_up(){ //level up menu
     system("clear");
     }while(X < "0" || X > "6");
     if(X == "1"){ //health
-        if(HP < 15){ 
+        if(HP < 11){ 
+            if(COINS > 24){COINS -= 25; HP += 1; update();}
+            else{ //too poor
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(HP < 15){ 
             if(COINS > 49){COINS -= 50; HP += 1; update();}
             else{ //too poor
                 system("clear"); cout << "You don't have enough coins\n";
@@ -842,7 +851,14 @@ void level_up(){ //level up menu
         }
     }
     else if(X == "2"){ //damage
-        if(DMG < 5){
+        if(DMG < 2){
+            if(COINS > 24){COINS -= 25; DMG += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(DMG < 5){
             if(COINS > 49){COINS -= 50; DMG += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";

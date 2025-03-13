@@ -27,6 +27,14 @@
 
 ### Update History
 
+#### UPDATE 2.0.1
+03/13/2025
+- Balance changes
+- Bug fixes
+- Code tidied up
+
+#### _______________________________________
+
 #### UPDATE 2.0.0
 03/10/2025
 - Items added to game
