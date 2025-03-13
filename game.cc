@@ -1073,7 +1073,8 @@ void settings(){ //settings menu
         }while(X < "0" || X > "1");
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
-            game_speed = 1000; store1 = "no"; DIAMONDS = 0; update(); reset_items(); settings();
+            game_speed = 1000; store1 = "no"; DIAMONDS = 0; ownRoD = "no"; ownCoP = "no";
+            update(); reset_items(); settings();
         }
         else{settings();}
     }
