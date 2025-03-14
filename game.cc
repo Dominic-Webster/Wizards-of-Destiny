@@ -475,6 +475,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
                     eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else if(factor < 8){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
@@ -482,6 +483,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else if(factor < 9){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
@@ -489,6 +491,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -510,11 +513,12 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else{ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself!\n";
+            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
     }
     else if(eTYPE == "Ice"){ //ice sorcerer
@@ -531,6 +535,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
     }
     else if(eTYPE == "Necro"){ //necromancer
@@ -547,11 +552,12 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else if(factor < 6){ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself!\n";
+            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
         else{ //drain
             tempHP -= (1 + ((eDMG + eHEAL) / 2));
@@ -574,6 +580,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else if(factor < 3){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
@@ -581,11 +588,12 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
+            if(items[5] == 1){tempHP++; cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
         else if(factor < 7){ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself!\n";
+            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
         else{ //drain
             tempHP -= (1 + ((eDMG + eHEAL) / 2));
@@ -644,6 +652,12 @@ void output_level(string factor){ //show level player is on
     else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
     else{cout << " - Defender: ";}
     cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
+    if(items[0] == 1){ cout << "       - Equipped: Amulet of Undying -\n";}
+    if(items[1] == 1){ cout << "       - Equipped: Ring of Life -\n";}
+    if(items[2] == 1){ cout << "       - Equipped: Staff of Power -\n";}
+    if(items[3] == 1){ cout << "       - Equipped: Gauntlets of Strength -\n";}
+    if(items[4] == 1){ cout << "       - Equipped: Rune of Death -\n";}
+    if(items[5] == 1){ cout << "       - Equipped: Cloak of Protection -\n";}
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
     ice << "] [Poison: " << poison << "]" << endl <<"       [Heal: " << heal <<
     "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "] [Dodge: " <<
@@ -846,7 +860,7 @@ void level_up(){ //level up menu
     system("clear");
     do{
     cout << "    - LEVEL UP -" << endl << endl;
-    cout << "Select stat to increase by 1" << endl;
+    cout << "Select stat to increase" << endl;
     cout << "COINS: " << COINS << endl << endl;
     cout << " (1): Health: " << HP << "        ["; //health and varied cost
     if(HP < 11){cout << "25 Coins]" << endl;}
@@ -870,7 +884,7 @@ void level_up(){ //level up menu
     else if(ICE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
-    cout << " (5): Posion: " << POISON << "        ["; //poison and varied cost
+    cout << " (5): Poison: " << POISON << "        ["; //poison and varied cost
     if(POISON < 5){cout << "50 Coins]" << endl;}
     else if(POISON < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
@@ -881,19 +895,19 @@ void level_up(){ //level up menu
     else{cout << "200 Coins]" << endl;}
 
     cout << " (7): Crit Chance: " << CRITC << "%  ["; //crit chance and varied cost
-    if(CRITC < 11){cout << "50 Coins]" << endl;}
-    else if(CRITC < 21){cout << "75 Coins]" << endl;}
+    if(CRITC < 10){cout << "50 Coins]" << endl;}
+    else if(CRITC < 20){cout << "75 Coins]" << endl;}
     else if(CRITC < 60){cout << "150 Coins]" << endl;}
     else{cout << "MAX]" << endl;}
 
     cout << " (8): Crit Damage: " << CRITD << "   ["; //crit damage and varied cost
     if(CRITD < 7){cout << "50 Coins]" << endl;}
-    else if(CRITD < 11){cout << "150 Coins]" << endl;}
+    else if(CRITD < 10){cout << "150 Coins]" << endl;}
     else{cout << "300 Coins]" << endl;}
 
     cout << " (9): Dodge: " << DODGE << "%        ["; //crit chance and varied cost
-    if(DODGE < 11){cout << "30 Coins]" << endl;}
-    else if(DODGE < 16){cout << "80 Coins]" << endl;}
+    if(DODGE < 10){cout << "30 Coins]" << endl;}
+    else if(DODGE < 15){cout << "80 Coins]" << endl;}
     else if(DODGE < 50){cout << "120 Coins]" << endl;}
     else{cout << "MAX]\n";}
 
@@ -995,11 +1009,11 @@ void level_up(){ //level up menu
         }
     }
     else if(X == "7"){ //crit chance
-        if(CRITC < 11){
+        if(CRITC < 10){
             if(COINS > 49){COINS -= 50; CRITC += 1; update();}
             else{too_poor();}
         }
-        else if(CRITC < 21){
+        else if(CRITC < 20){
             if(COINS > 74){COINS -= 75; CRITC += 1; update();}
             else{too_poor();}
         }
@@ -1017,7 +1031,7 @@ void level_up(){ //level up menu
             if(COINS > 49){COINS -= 50; CRITD += 2; update();}
             else{too_poor();}
         }
-        else if(CRITD < 11){
+        else if(CRITD < 10){
             if(COINS > 149){COINS -= 150; CRITD += 2; update();}
             else{too_poor();}
         }
@@ -1027,11 +1041,11 @@ void level_up(){ //level up menu
         }
     }
     else if(X == "9"){ //dodge chance
-        if(DODGE < 11){
+        if(DODGE < 10){
             if(COINS > 29){COINS -= 30; DODGE += 1; update();}
             else{too_poor();}
         }
-        else if(DODGE < 16){
+        else if(DODGE < 15){
             if(COINS > 79){COINS -= 80; DODGE += 1; update();}
             else{too_poor();}
         }
@@ -1249,17 +1263,36 @@ void item_shop(){ //buy items
         cout << " (1): Rune of Death ";
         if(ownRoD == "no"){cout << " [5 Diamonds]\n";} //can be bought
         else{cout << "*Already Owned*\n";} //already bought
+        cout << " (2): Cloak of Protection ";
+        if(ownCoP == "no"){cout << " [5 Diamonds]\n";} //can be bought
+        else{cout << "*Already Owned*\n";} //already bought
         cout << " (0): Back to Store\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "1");
+    }while(X < "0" || X > "2");
     if(X == "1"){
         if(ownRoD == "yes"){ //already own item
             system("clear"); cout << "You already own this item\n";
             this_thread::sleep_for(chrono::seconds(1)); item_shop();
         }
         else{
-            if(DIAMONDS > 4){ //buy game speed upgrade
+            if(DIAMONDS > 4){ //buy rune of death
                 DIAMONDS -= 5; ownRoD = "yes";;
+                update(); item_shop();
+            }
+            else{ //too poor
+                system("clear"); cout << "You don't have enough diamonds\n";
+                this_thread::sleep_for(chrono::seconds(1)); item_shop();
+            }
+        }
+    }
+    if(X == "2"){
+        if(ownCoP == "yes"){ //already own item
+            system("clear"); cout << "You already own this item\n";
+            this_thread::sleep_for(chrono::seconds(1)); item_shop();
+        }
+        else{
+            if(DIAMONDS > 4){ //buy cloak of protection
+                DIAMONDS -= 5; ownCoP = "yes";;
                 update(); item_shop();
             }
             else{ //too poor

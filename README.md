@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.1.1
+## Version 2.1.2
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -27,9 +27,16 @@
 
 ### Update History
 
+#### UPDATE 2.1.2
+03/14/2025
+- New Item: Cloak of Protection
+
+#### _______________________________________
+
+
 #### UPDATE 2.1.1
 03/14/2025
-- Dodgess added
+- Dodges added
 - Item code fixed
 
 #### _______________________________________
