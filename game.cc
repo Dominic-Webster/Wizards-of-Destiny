@@ -431,7 +431,7 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
-        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n\n"; 
+        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
             this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
         eTempHP -= e; //decrease enemy health
         if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
@@ -443,7 +443,7 @@ void calculate(Spell card){ //calculate player spell results
         cout << endl << " You heal yourself for " << e << " health!\n";
     }
     else if(t == "atk-stun"){ //attack(stun) spell
-        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n\n"; 
+        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
             this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
         eTempHP -= e; TURN = 2; //deal damage, trigger stun
         cout << endl << " You stun your enemy, dealing " << e << " damage!\n";
@@ -861,8 +861,8 @@ void level_up(){ //level up menu
 
     cout << " (7): Crit Chance: " << CRITC << "%  ["; //crit chance and varied cost
     if(CRITC < 11){cout << "50 Coins]" << endl;}
-    else if(CRITC < 21){cout << "100 Coins]" << endl;}
-    else{cout << "200 Coins]" << endl;}
+    else if(CRITC < 21){cout << "75 Coins]" << endl;}
+    else{cout << "150 Coins]" << endl;}
 
     cout << " (8): Crit Damage: " << CRITD << "   ["; //crit damage and varied cost
     if(CRITD < 7){cout << "50 Coins]" << endl;}
@@ -1035,14 +1035,14 @@ void level_up(){ //level up menu
             }
         }
         else if(CRITC < 21){
-            if(COINS > 99){COINS -= 100; CRITC += 1; update();}
+            if(COINS > 74){COINS -= 75; CRITC += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
             }
         }
         else if(CRITC < 60){
-            if(COINS > 199){COINS -= 200; CRITC += 1; update();}
+            if(COINS > 149){COINS -= 150; CRITC += 1; update();}
             else{
                 system("clear"); cout << "You don't have enough coins\n";
                 this_thread::sleep_for(chrono::seconds(1)); level_up();
