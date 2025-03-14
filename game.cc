@@ -641,6 +641,7 @@ void make_enemy(string factor){ //generate enemy stats
         if(type < 2){eTYPE = "Wizard";} //evil wizard
         else if(type == 2){eTYPE = "Fire";} //fire mage 
         else{eTYPE = "Ice";} //ice sorcerer
+        eCRITC = 10; //crit chance
 
         //set stats based on adventure level
         if(level < 5){ //levels 1-4
@@ -659,7 +660,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level == 10){ //level 10 mini boss
             eHP = 15 + (rand() % 6); eDMG = 3 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 5; eCRITD = 2;
+            ePOISON = 3; eHEAL = 5; eCRITD = 2; eCRITC += 5;
             if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
@@ -680,11 +681,10 @@ void make_enemy(string factor){ //generate enemy stats
         else{ //level 20 final boss
             eHP = 22 + (rand() % 10); eDMG = 4 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 7; eCRITD = 4;
+            ePOISON = 3; eHEAL = 7; eCRITD = 4; eCRITC += 5;
             if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
-        eCRITC = 10;
     }
 
     //Ruined Castle
@@ -695,6 +695,9 @@ void make_enemy(string factor){ //generate enemy stats
         else if(type < 13){eTYPE = "Fire";} //fire mage
         else if(type < 18){eTYPE = "Ice";} //ice sorcerer
         else{eTYPE = "Necro";} //necromancer
+
+        if(eTYPE == "Wizard"){eCRITC = 15;} //crit chance
+        else{eCRITC = 10;}
 
         //set stats
         if(level < 5){ //levels 1-4
@@ -715,7 +718,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level == 10){ //level 10 mini boss
             eHP = 20 + (rand() % 8); eDMG = 3 + (rand() % 4);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 8; eCRITD = 3;
+            ePOISON = 1 + (rand() % 3); eHEAL = 8; eCRITD = 3; eCRITC += 5;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -739,13 +742,11 @@ void make_enemy(string factor){ //generate enemy stats
         else{ //level 20 final boss
             eHP = 30 + (rand() % 10); eDMG = 4 + (rand() % 5);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eHEAL = 9; eCRITD = 5;
+            ePOISON = 2 + (rand() % 3); eHEAL = 9; eCRITD = 5; eCRITC += 3;
             if(eTYPE == "Fire"){eFIRE += 3;}
             if(eTYPE == "Ice"){eICE += 3;}
             if(eTYPE == "Necro"){ePOISON += 3;}
         }
-        if(eTYPE == "Wizard"){eCRITC = 15;}
-        else{eCRITC = 10;}
     }
 
     //Mountain of Despair
@@ -757,6 +758,9 @@ void make_enemy(string factor){ //generate enemy stats
         else if(type < 10){eTYPE = "Ice";} //ice sorcerer
         else if(type < 15){eTYPE = "Necro";} //necromancer
         else{eTYPE = "Defend";} //defender
+
+        if(eTYPE == "Wizard"){eCRITC = 20;} //crit chance
+        else{eCRITC = 12;}
 
         //set stats
         if(level < 5){ //levels 1-4
@@ -779,7 +783,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level == 10){ //level 10 mini boss
             eHP = 35 + (rand() % 8); eDMG = 5 + (rand() % 5);
             eICE = 1 + (rand() % 4); eFIRE = 1 + (rand() % 4); 
-            ePOISON = 1 + (rand() % 4); eHEAL = 10; eCRITD = 4;
+            ePOISON = 1 + (rand() % 4); eHEAL = 10; eCRITD = 4; eCRITC += 3;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -806,14 +810,12 @@ void make_enemy(string factor){ //generate enemy stats
         else{ //level 20 final boss
             eHP = 45 + (rand() % 11); eDMG = 4 + (rand() % 5);
             eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            ePOISON = 3 + (rand() % 3); eHEAL = 12; eCRITD = 6;
+            ePOISON = 3 + (rand() % 3); eHEAL = 12; eCRITD = 6; eCRITC += 3;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
             if(eTYPE == "Defend"){eHEAL = 15; eHP += 15; eDMG -= 2;}
         }
-        if(eTYPE == "Wizard"){eCRITC = 20;}
-        else{eCRITC = 10;}
     }
 
     if(items[4] == 1){eHP--;} //rune of death
