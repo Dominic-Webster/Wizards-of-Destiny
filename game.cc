@@ -431,7 +431,7 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
-        if(rand()%100 < critc+5){e += critd; cout << " * CRITICAL HIT! *\n\n"; 
+        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n\n"; 
             this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
         eTempHP -= e; //decrease enemy health
         if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
@@ -443,7 +443,7 @@ void calculate(Spell card){ //calculate player spell results
         cout << endl << " You heal yourself for " << e << " health!\n";
     }
     else if(t == "atk-stun"){ //attack(stun) spell
-        if(rand()%100 < critc+5){e += critd; cout << " * CRITICAL HIT! *\n\n"; 
+        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n\n"; 
             this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
         eTempHP -= e; TURN = 2; //deal damage, trigger stun
         cout << endl << " You stun your enemy, dealing " << e << " damage!\n";
