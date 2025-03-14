@@ -32,7 +32,8 @@ int items[6]; //keeps track of which items player is using
 Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1, eName, ownRoD, ownCoP;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level,
-eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, DIAMONDS;
+eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, 
+DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD;
 
 int main(int argc, char const *argv[]){
     srand(time(0));
@@ -44,6 +45,7 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; HP = stoi(temp); infile >> waste >> temp; DMG = stoi(temp);
     infile >> waste >> temp; FIRE = stoi(temp); infile >> waste >> temp; ICE = stoi(temp);
     infile >> waste >> temp; POISON = stoi(temp); infile >> waste >> temp; HEAL = stoi(temp);
+    infile >> waste >> temp; CRITC = stoi(temp); infile >> waste >> temp; CRITD = stoi(temp);
     infile >> waste >> temp; COINS = stoi(temp); infile >> waste >> temp; PROGRESS = stoi(temp);
     infile >> waste >> temp; game_speed = stoi(temp); infile >> waste >> temp; store1 = temp; 
     infile >> waste >> temp; DIAMONDS = stoi(temp); infile >> waste >> temp; ownRoD = temp; 
@@ -111,6 +113,7 @@ void fight(string factor){ //fight function
     int random;
     //set play stats equal to base stats (they can be modified without messing with base stats)
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0; level = 1;
+    critc = CRITC; critd = CRITD;
     
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -428,6 +431,8 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
+        if(rand()%100 < critc+5){e += critd; cout << " * CRITICAL HIT! *\n\n"; 
+            this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
         eTempHP -= e; //decrease enemy health
         if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
         else{cout << endl << " You deal " << e << " " << t << " damage!\n";} //show results
@@ -438,6 +443,8 @@ void calculate(Spell card){ //calculate player spell results
         cout << endl << " You heal yourself for " << e << " health!\n";
     }
     else if(t == "atk-stun"){ //attack(stun) spell
+        if(rand()%100 < critc+5){e += critd; cout << " * CRITICAL HIT! *\n\n"; 
+            this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
         eTempHP -= e; TURN = 2; //deal damage, trigger stun
         cout << endl << " You stun your enemy, dealing " << e << " damage!\n";
     }
@@ -454,19 +461,27 @@ void calculate_enemy(){ //calculate what spell enemy casts
     if(eTYPE == "Wizard"){ //evil wizard
         if(factor < 6){ //attack
             tempHP -= eDMG;
-            cout << " " << eName << " deals " << eDMG << " damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; 
+                cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
         }
         else if(factor < 7){ //fire
             tempHP -= (eDMG + eFIRE);
-            cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
+                eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
         }
         else if(factor < 8){ //ice
             tempHP -= (eDMG + eICE);
-            cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
         }
         else if(factor < 9){ //poison
             tempHP -= (eDMG + ePOISON);
-            cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deald " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -477,11 +492,15 @@ void calculate_enemy(){ //calculate what spell enemy casts
     else if(eTYPE == "Fire"){ //fire mage
         if(factor < 3){ //attack
             tempHP -= eDMG;
-            cout << " " << eName << " deals " << eDMG << " damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
         }
         else if(factor < 8){ //fire
             tempHP -= (eDMG + eFIRE);
-            cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -492,21 +511,29 @@ void calculate_enemy(){ //calculate what spell enemy casts
     else if(eTYPE == "Ice"){ //ice sorcerer
         if(factor < 4){ //attack
             tempHP -= eDMG;
-            cout << " " << eName << " deals " << eDMG << " damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName << 
+                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
         }
         else{ //ice
             tempHP -= (eDMG + eICE);
-            cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
         }
     }
     else if(eTYPE == "Necro"){ //necromancer
         if(factor < 1){ //attack
             tempHP -= eDMG;
-            cout << " " << eName << " deals " << eDMG << " damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
         }
         else if(factor < 5){ //poison
             tempHP -= (eDMG + ePOISON);
-            cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
         }
         else if(factor < 6){ //heal
             eTempHP += eHEAL;
@@ -523,15 +550,21 @@ void calculate_enemy(){ //calculate what spell enemy casts
     else if(eTYPE == "Defend"){ //defender
         if(factor < 1){ //attack
             tempHP -= eDMG;
-            cout << " " << eName << " deals " << eDMG << " damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
         }
         else if(factor < 2){ //fire
             tempHP -= (eDMG + eFIRE);
-            cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
         }
         else if(factor < 3){ //ice
             tempHP -= (eDMG + eICE);
-            cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";
+            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
         }
         else if(factor < 7){ //heal
             eTempHP += eHEAL;
@@ -596,7 +629,8 @@ void output_level(string factor){ //show level player is on
     else{cout << " - Defender: ";}
     cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "] [Heal: " << heal << "]\n" << endl; //player info
+    ice << "] [Poison: " << poison << "]" << endl <<"       [Heal: " << heal <<
+    "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "]\n" << endl; //player info
 }
 
 void make_enemy(string factor){ //generate enemy stats
@@ -611,45 +645,46 @@ void make_enemy(string factor){ //generate enemy stats
         //set stats based on adventure level
         if(level < 5){ //levels 1-4
             eHP = 4 + (rand() % 5); eDMG = 1 + (rand() % 2);
-            eICE = 0; eFIRE = 0; ePOISON = 0; eHEAL = 1;
+            eICE = 0; eFIRE = 0; ePOISON = 0; eHEAL = 1; eCRITD = 1;
             if(eTYPE == "Fire"){eFIRE = 1;} //fire mage buff
             if(eTYPE == "Ice"){eICE = 1;} //ice sorcerer buff
         }
         else if(level < 10){ //levels 5-9
             eHP = 8 + (rand() % 6); eDMG = 1 + (rand() % 3);
             eICE = (rand() % 2); eFIRE = (rand() % 2); 
-            ePOISON = 1; eHEAL = 2;
+            ePOISON = 1; eHEAL = 2; eCRITD = 1;
             if(eTYPE == "Fire"){eFIRE += 1;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 1;} //ice sorcerer buff
         }
         else if(level == 10){ //level 10 mini boss
             eHP = 15 + (rand() % 6); eDMG = 3 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 5;
+            ePOISON = 3; eHEAL = 5; eCRITD = 2;
             if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
         else if(level < 15){ //levels 11-14
             eHP = 12 + (rand() % 6); eDMG = 2 + (rand() % 3);
             eICE = 1 + (rand() % 2); eFIRE = 1 + (rand() % 2); 
-            ePOISON = 2; eHEAL = 4;
+            ePOISON = 2; eHEAL = 4; eCRITD = 2;
             if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
         }
         else if(level < 20){ //levels 15-19
             eHP = 15 + (rand() % 7); eDMG = 3 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 5;
+            ePOISON = 3; eHEAL = 5; eCRITD = 3;
             if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
         else{ //level 20 final boss
             eHP = 22 + (rand() % 10); eDMG = 4 + (rand() % 3);
             eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eHEAL = 7;
+            ePOISON = 3; eHEAL = 7; eCRITD = 4;
             if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
         }
+        eCRITC = 10;
     }
 
     //Ruined Castle
@@ -664,7 +699,7 @@ void make_enemy(string factor){ //generate enemy stats
         //set stats
         if(level < 5){ //levels 1-4
             eHP = 8 + (rand() % 5); eDMG = 2 + (rand() % 3);
-            eICE = 1; eFIRE = 1; ePOISON = 1; eHEAL = 4;
+            eICE = 1; eFIRE = 1; ePOISON = 1; eHEAL = 4; eCRITD = 1;
             if(eTYPE == "Fire"){eFIRE = 2;} //fire mage buff
             if(eTYPE == "Ice"){eICE = 2;} //ice sorcerer buff
             if(eTYPE == "Necro"){ePOISON = 2;} //necromancer buff
@@ -672,7 +707,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level < 10){ //levels 5-9
             eHP = 12 + (rand() % 8); eDMG = 3 + (rand() % 3);
             eICE = (rand() % 3); eFIRE = (rand() % 3); 
-            ePOISON = (rand() % 3); eHEAL = 5;
+            ePOISON = (rand() % 3); eHEAL = 5; eCRITD = 2;
             if(eTYPE == "Fire"){eFIRE += 1;}
             if(eTYPE == "Ice"){eICE += 1;}
             if(eTYPE == "Necro"){ePOISON += 1;}
@@ -680,7 +715,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level == 10){ //level 10 mini boss
             eHP = 20 + (rand() % 8); eDMG = 3 + (rand() % 4);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 8;
+            ePOISON = 1 + (rand() % 3); eHEAL = 8; eCRITD = 3;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -688,7 +723,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level < 15){ //levels 11-14
             eHP = 16 + (rand() % 6); eDMG = 3 + (rand() % 3);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 6;
+            ePOISON = 1 + (rand() % 3); eHEAL = 6; eCRITD = 3;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -696,7 +731,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level < 20){ //levels 15-19
             eHP = 20 + (rand() % 7); eDMG = 4 + (rand() % 3);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eHEAL = 7;
+            ePOISON = 2 + (rand() % 3); eHEAL = 7; eCRITD = 4;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -704,11 +739,13 @@ void make_enemy(string factor){ //generate enemy stats
         else{ //level 20 final boss
             eHP = 30 + (rand() % 10); eDMG = 4 + (rand() % 5);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eHEAL = 9;
+            ePOISON = 2 + (rand() % 3); eHEAL = 9; eCRITD = 5;
             if(eTYPE == "Fire"){eFIRE += 3;}
             if(eTYPE == "Ice"){eICE += 3;}
             if(eTYPE == "Necro"){ePOISON += 3;}
         }
+        if(eTYPE == "Wizard"){eCRITC = 15;}
+        else{eCRITC = 10;}
     }
 
     //Mountain of Despair
@@ -724,7 +761,7 @@ void make_enemy(string factor){ //generate enemy stats
         //set stats
         if(level < 5){ //levels 1-4
             eHP = 20 + (rand() % 6); eDMG = 3 + (rand() % 4);
-            eICE = 2; eFIRE = 2; ePOISON = 2; eHEAL = 4;
+            eICE = 2; eFIRE = 2; ePOISON = 2; eHEAL = 4; eCRITD = 2;
             if(eTYPE == "Fire"){eFIRE = 3;} //fire mage buff
             if(eTYPE == "Ice"){eICE = 3;} //ice sorcerer buff
             if(eTYPE == "Necro"){ePOISON = 3;} //necromancer buff
@@ -733,7 +770,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level < 10){ //levels 5-9
             eHP = 24 + (rand() % 7); eDMG = 4 + (rand() % 3);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 6;
+            ePOISON = 1 + (rand() % 3); eHEAL = 6; eCRITD = 3;
             if(eTYPE == "Fire"){eFIRE += 1;}
             if(eTYPE == "Ice"){eICE += 1;}
             if(eTYPE == "Necro"){ePOISON += 1;}
@@ -742,7 +779,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level == 10){ //level 10 mini boss
             eHP = 35 + (rand() % 8); eDMG = 5 + (rand() % 5);
             eICE = 1 + (rand() % 4); eFIRE = 1 + (rand() % 4); 
-            ePOISON = 1 + (rand() % 4); eHEAL = 10;
+            ePOISON = 1 + (rand() % 4); eHEAL = 10; eCRITD = 4;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -751,7 +788,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level < 15){ //levels 11-14
             eHP = 28 + (rand() % 6); eDMG = 4 + (rand() % 3);
             eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eHEAL = 8;
+            ePOISON = 1 + (rand() % 3); eHEAL = 8; eCRITD = 4;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -760,7 +797,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(level < 20){ //levels 15-19
             eHP = 32 + (rand() % 7); eDMG = 4 + (rand() % 4);
             eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eHEAL = 10;
+            ePOISON = 2 + (rand() % 3); eHEAL = 10; eCRITD = 5;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
@@ -769,12 +806,14 @@ void make_enemy(string factor){ //generate enemy stats
         else{ //level 20 final boss
             eHP = 45 + (rand() % 11); eDMG = 4 + (rand() % 5);
             eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            ePOISON = 3 + (rand() % 3); eHEAL = 12;
+            ePOISON = 3 + (rand() % 3); eHEAL = 12; eCRITD = 6;
             if(eTYPE == "Fire"){eFIRE += 2;}
             if(eTYPE == "Ice"){eICE += 2;}
             if(eTYPE == "Necro"){ePOISON += 2;}
             if(eTYPE == "Defend"){eHEAL = 15; eHP += 15; eDMG -= 2;}
         }
+        if(eTYPE == "Wizard"){eCRITC = 20;}
+        else{eCRITC = 10;}
     }
 
     if(items[4] == 1){eHP--;} //rune of death
@@ -786,42 +825,53 @@ void level_up(){ //level up menu
     cout << "    - LEVEL UP -" << endl << endl;
     cout << "Select stat to increase by 1" << endl;
     cout << "COINS: " << COINS << endl << endl;
-    cout << " (1): Health: " << HP << "   ["; //health and varied cost
+    cout << " (1): Health: " << HP << "        ["; //health and varied cost
     if(HP < 11){cout << "25 Coins]" << endl;}
     else if(HP < 15){cout << "50 Coins]" << endl;}
     else if(HP < 20){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
-    cout << " (2): Damage: " << DMG << "   ["; //damage and varied cost
+    cout << " (2): Damage: " << DMG << "        ["; //damage and varied cost
     if(DMG < 2){cout << "25 Coins]" << endl;}
     else if(DMG < 5){cout << "50 Coins]" << endl;}
     else if(DMG < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
-    cout << " (3): Fire: " << FIRE << "     ["; //fire and varied cost
+    cout << " (3): Fire: " << FIRE << "          ["; //fire and varied cost
     if(FIRE < 5){cout << "50 Coins]" << endl;}
     else if(FIRE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
-    cout << " (4): Ice: " << ICE << "      ["; //ice and varied cost
+    cout << " (4): Ice: " << ICE << "           ["; //ice and varied cost
     if(ICE < 5){cout << "50 Coins]" << endl;}
     else if(ICE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
-    cout << " (5): Posion: " << POISON << "   ["; //poison and varied cost
+    cout << " (5): Posion: " << POISON << "        ["; //poison and varied cost
     if(POISON < 5){cout << "50 Coins]" << endl;}
     else if(POISON < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
-    cout << " (6): Heal: " << HEAL << "     ["; //heal and varied cost
+    cout << " (6): Heal: " << HEAL << "          ["; //heal and varied cost
     if(HEAL < 5){cout << "50 Coins]" << endl;}
     else if(HEAL < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
+
+    cout << " (7): Crit Chance: " << CRITC << "%  ["; //crit chance and varied cost
+    if(CRITC < 11){cout << "50 Coins]" << endl;}
+    else if(CRITC < 21){cout << "100 Coins]" << endl;}
+    else{cout << "200 Coins]" << endl;}
+
+    cout << " (8): Crit Damage: " << CRITD << "   ["; //crit damage and varied cost
+    if(CRITD < 7){cout << "50 Coins]" << endl;}
+    else if(CRITD < 11){cout << "150 Coins]" << endl;}
+    else{cout << "300 Coins]" << endl;}
+
     cout << " (0): [Menu]" << endl << endl;
     cout << " -> "; 
     cin >> X;
     system("clear");
-    }while(X < "0" || X > "6");
+    }while(X < "0" || X > "8");
     if(X == "1"){ //health
         if(HP < 11){ 
             if(COINS > 24){COINS -= 25; HP += 1; update();}
@@ -974,6 +1024,56 @@ void level_up(){ //level up menu
             }
         }
     }
+    else if(X == "7"){ //crit chance
+        if(CRITC < 11){
+            if(COINS > 49){COINS -= 50; CRITC += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(CRITC < 21){
+            if(COINS > 99){COINS -= 100; CRITC += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(CRITC < 60){
+            if(COINS > 199){COINS -= 200; CRITC += 1; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else{
+            system("clear"); cout << "This stat is maxed out\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
+    }
+    else if(X == "8"){ //crit damage
+        if(CRITD < 7){
+            if(COINS > 49){COINS -= 50; CRITD += 2; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else if(CRITD < 11){
+            if(COINS > 149){COINS -= 150; CRITD += 2; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+        else{
+            if(COINS > 299){COINS -= 300; CRITD += 2; update();}
+            else{
+                system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); level_up();
+            }
+        }
+    }
     else{menu();}
 
     level_up();
@@ -984,6 +1084,7 @@ void how_to(){ //game instructions
     cout << " WIZARDS OF DESTINY\n" << endl;
     cout << "  - HOW TO PLAY -\n" << endl;
     cout << "* When you enter an adventure, you start with your base stats\n";
+    cout << "* You may select an item to give you an advantage on your run\n";
     cout << "* You'll encounter enemies on each level. Enemies grow stronger as levels progress\n";
     cout << "* You take turns casting spells, until you or the enemy are defeated\n";
     cout << "* You get a selection of 3 random spells, which are influenced by your stats\n";
@@ -1005,7 +1106,7 @@ void store(){ //store menu
         cout << " (1): Game Speed Increase ";
         if(store1 == "no"){cout << " [20 Diamonds]\n";} //can be bought
         else{cout << "*Already Purchased*\n";} //already bought
-        cout << " (2): All Stats +3  [5 Diamonds]\n";
+        cout << " (2): Stat Boost  [5 Diamonds]\n";
         cout << " (3): Buy Items\n";
         cout << " (0): Back to Menu\n\n -> ";
         cin >> X;
@@ -1028,7 +1129,7 @@ void store(){ //store menu
     }
     else if(X == "2"){
         if(DIAMONDS > 4){ //buy stat boost
-            DIAMONDS -= 5; HP += 3; DMG += 3; FIRE += 3; ICE +=3; POISON += 3; HEAL += 3;
+            DIAMONDS -= 5; HP += 2; DMG += 2; FIRE += 2; ICE +=2; POISON += 2; HEAL += 2;
             update(); store();
         }
         else{ //too poor
@@ -1072,7 +1173,7 @@ void settings(){ //settings menu
             cin >> X;
         }while(X < "0" || X > "1");
         if(X == "1"){ //reset save
-            HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0;
+            HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2;
             game_speed = 1000; store1 = "no"; DIAMONDS = 0; ownRoD = "no"; ownCoP = "no";
             update(); reset_items(); settings();
         }
@@ -1087,7 +1188,8 @@ void update(){ //send player data to text file
     if(outfile.fail()){cout<<"FILE ERROR"<<endl; exit(0);}
     outfile << "Health: " << HP << endl << "Damage: " << DMG << endl <<
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
-    "Heal: " << HEAL << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
+    "Heal: " << HEAL << endl << "Crit-Chance: " << CRITC << endl << "Crit-Damage: " << 
+    CRITD << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
     "Diamonds: " << DIAMONDS << endl << "RoD: " << ownRoD << endl << "CoP: " << ownCoP << endl;
     outfile.close();
