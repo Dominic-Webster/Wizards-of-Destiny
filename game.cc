@@ -9,7 +9,7 @@ void fight(string factor);
 void level_up(); void settings(); void update();
 void make_enemy(string factor);
 void output_level(string factor);
-void show_card(Spell card);
+void show_card(Spell card); void too_poor();
 void player(string factor); void item_shop();
 void enemy(string factor); void reset_items();
 void calculate(Spell card); void calculate_enemy();
@@ -463,28 +463,28 @@ void calculate_enemy(){ //calculate what spell enemy casts
     int factor = rand() % 10;
     if(eTYPE == "Wizard"){ //evil wizard
         if(factor < 6){ //attack
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";} //player dodges
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";} //player dodges
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; 
                     cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 7){ //fire
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
                     eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
         }
         else if(factor < 8){ //ice
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
         }
         else if(factor < 9){ //poison
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
@@ -498,14 +498,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Fire"){ //fire mage
         if(factor < 3){ //attack
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 8){ //fire
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
@@ -519,14 +519,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Ice"){ //ice sorcerer
         if(factor < 4){ //attack
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName << 
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else{ //ice
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
@@ -535,14 +535,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Necro"){ //necromancer
         if(factor < 1){ //attack
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 5){ //poison
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
@@ -562,21 +562,21 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Defend"){ //defender
         if(factor < 1){ //attack
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 2){ //fire
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
         }
         else if(factor < 3){ //ice
-            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
@@ -883,12 +883,19 @@ void level_up(){ //level up menu
     cout << " (7): Crit Chance: " << CRITC << "%  ["; //crit chance and varied cost
     if(CRITC < 11){cout << "50 Coins]" << endl;}
     else if(CRITC < 21){cout << "75 Coins]" << endl;}
-    else{cout << "150 Coins]" << endl;}
+    else if(CRITC < 60){cout << "150 Coins]" << endl;}
+    else{cout << "MAX]" << endl;}
 
     cout << " (8): Crit Damage: " << CRITD << "   ["; //crit damage and varied cost
     if(CRITD < 7){cout << "50 Coins]" << endl;}
     else if(CRITD < 11){cout << "150 Coins]" << endl;}
     else{cout << "300 Coins]" << endl;}
+
+    cout << " (9): Dodge: " << DODGE << "%        ["; //crit chance and varied cost
+    if(DODGE < 11){cout << "30 Coins]" << endl;}
+    else if(DODGE < 16){cout << "80 Coins]" << endl;}
+    else if(DODGE < 50){cout << "120 Coins]" << endl;}
+    else{cout << "MAX]\n";}
 
     cout << " (0): [Menu]" << endl << endl;
     cout << " -> "; 
@@ -898,176 +905,107 @@ void level_up(){ //level up menu
     if(X == "1"){ //health
         if(HP < 11){ 
             if(COINS > 24){COINS -= 25; HP += 1; update();}
-            else{ //too poor
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();} //tell players they don't have enough coins
         }
         else if(HP < 15){ 
             if(COINS > 49){COINS -= 50; HP += 1; update();}
-            else{ //too poor
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(HP < 20){
             if(COINS > 99){COINS -= 100; HP += 1; update();}
-            else{ //too poor
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 199){COINS -= 200; HP += 1; update();}
-            else{ //too poor
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
     }
     else if(X == "2"){ //damage
         if(DMG < 2){
             if(COINS > 24){COINS -= 25; DMG += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(DMG < 5){
             if(COINS > 49){COINS -= 50; DMG += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(DMG < 10){
             if(COINS > 99){COINS -= 100; DMG += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 199){COINS -= 200; DMG += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
     }
     else if(X == "3"){ //fire
         if(FIRE < 5){
             if(COINS > 49){COINS -= 50; FIRE += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(FIRE < 10){
             if(COINS > 99){COINS -= 100; FIRE += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 199){COINS -= 200; FIRE += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
     }
     else if(X == "4"){ //ice
         if(ICE < 5){
             if(COINS > 49){COINS -= 50; ICE += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(ICE < 10){
             if(COINS > 99){COINS -= 100; ICE += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 199){COINS -= 200; ICE += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
     }
     else if(X == "5"){ //poison
         if(POISON < 5){
             if(COINS > 49){COINS -= 50; POISON += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(POISON < 10){
             if(COINS > 99){COINS -= 100; POISON += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 199){COINS -= 200; POISON += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
     }
     else if(X == "6"){ //heal
         if(HEAL < 5){
             if(COINS > 49){COINS -= 50; HEAL += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(HEAL < 10){
             if(COINS > 99){COINS -= 100; HEAL += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 199){COINS -= 200; HEAL += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
     }
     else if(X == "7"){ //crit chance
         if(CRITC < 11){
             if(COINS > 49){COINS -= 50; CRITC += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(CRITC < 21){
             if(COINS > 74){COINS -= 75; CRITC += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(CRITC < 60){
             if(COINS > 149){COINS -= 150; CRITC += 1; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             system("clear"); cout << "This stat is maxed out\n";
@@ -1077,24 +1015,33 @@ void level_up(){ //level up menu
     else if(X == "8"){ //crit damage
         if(CRITD < 7){
             if(COINS > 49){COINS -= 50; CRITD += 2; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else if(CRITD < 11){
             if(COINS > 149){COINS -= 150; CRITD += 2; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
         }
         else{
             if(COINS > 299){COINS -= 300; CRITD += 2; update();}
-            else{
-                system("clear"); cout << "You don't have enough coins\n";
-                this_thread::sleep_for(chrono::seconds(1)); level_up();
-            }
+            else{too_poor();}
+        }
+    }
+    else if(X == "9"){ //dodge chance
+        if(DODGE < 11){
+            if(COINS > 29){COINS -= 30; DODGE += 1; update();}
+            else{too_poor();}
+        }
+        else if(DODGE < 16){
+            if(COINS > 79){COINS -= 80; DODGE += 1; update();}
+            else{too_poor();}
+        }
+        else if(DODGE < 50){
+            if(COINS > 119){COINS -= 120; DODGE += 1; update();}
+            else{too_poor();}
+        }
+        else{
+            system("clear"); cout << "This stat is maxed out\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
         }
     }
     else{menu();}
@@ -1232,7 +1179,7 @@ void update_items(){ //send item data to text file
     outfile.close();
 }
 
-void reset_items(){
+void reset_items(){ //reset item data
     AoU.setStat(1); AoU.setLevel(1);
     RoL.setStat(2); RoL.setLevel(1);
     SoP.setStat(1); SoP.setLevel(1);
@@ -1294,7 +1241,7 @@ void pick_item(){ //get new item
     else{items[c] = 1;}
 }
 
-void item_shop(){
+void item_shop(){ //buy items
     do{
         system("clear");
         cout << "  - ITEM SHOP -\n" << endl;
@@ -1322,4 +1269,9 @@ void item_shop(){
         }
     }
     else{store();}
+}
+
+void too_poor(){ //function calls when players try to buy something too expensive
+    system("clear"); cout << "You don't have enough coins\n";
+    this_thread::sleep_for(chrono::seconds(1)); level_up();
 }
