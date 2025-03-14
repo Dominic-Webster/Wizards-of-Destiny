@@ -1132,7 +1132,8 @@ void store(){ //store menu
     else if(X == "2"){
         if(DIAMONDS > 4){ //buy stat boost
             DIAMONDS -= 5; HP += 2; DMG += 2; FIRE += 2; ICE +=2; POISON += 2; HEAL += 2;
-            update(); store();
+            update(); system("clear"); cout << " Stats have been boosted\n"; 
+            this_thread::sleep_for(chrono::seconds(1)); store();
         }
         else{ //too poor
             system("clear"); cout << "You don't have enough diamonds\n";
