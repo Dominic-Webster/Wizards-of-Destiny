@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.1.0
+## Version 2.1.1
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -26,6 +26,13 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.1.1
+03/14/2025
+- Dodgess added
+- Item code fixed
+
+#### _______________________________________
 
 #### UPDATE 2.1.0
 03/13/2025

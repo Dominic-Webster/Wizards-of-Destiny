@@ -6,6 +6,7 @@ Poison: 0
 Heal: 0
 Crit-Chance: 5
 Crit-Damage: 2
+Dodge: 5
 Coins: 0
 Progress: 0
 Gamespeed: 1000

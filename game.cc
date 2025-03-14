@@ -33,7 +33,7 @@ Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1, eName, ownRoD, ownCoP;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, 
-DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD;
+DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE;
 
 int main(int argc, char const *argv[]){
     srand(time(0));
@@ -46,6 +46,7 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; FIRE = stoi(temp); infile >> waste >> temp; ICE = stoi(temp);
     infile >> waste >> temp; POISON = stoi(temp); infile >> waste >> temp; HEAL = stoi(temp);
     infile >> waste >> temp; CRITC = stoi(temp); infile >> waste >> temp; CRITD = stoi(temp);
+    infile >> waste >> temp; DODGE = stoi(temp);
     infile >> waste >> temp; COINS = stoi(temp); infile >> waste >> temp; PROGRESS = stoi(temp);
     infile >> waste >> temp; game_speed = stoi(temp); infile >> waste >> temp; store1 = temp; 
     infile >> waste >> temp; DIAMONDS = stoi(temp); infile >> waste >> temp; ownRoD = temp; 
@@ -113,7 +114,7 @@ void fight(string factor){ //fight function
     int random;
     //set play stats equal to base stats (they can be modified without messing with base stats)
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0; level = 1;
-    critc = CRITC; critd = CRITD;
+    critc = CRITC; critd = CRITD; dodge = DODGE;
     
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -431,11 +432,12 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
-        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
-            this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
-        eTempHP -= e; //decrease enemy health
-        if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
-        else{cout << endl << " You deal " << e << " " << t << " damage!\n";} //show results
+        if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
+                this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
+            eTempHP -= e; //decrease enemy health
+            if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
+            else{cout << endl << " You deal " << e << " " << t << " damage!\n";}} //show results
     }
     else if(t == "heal"){ //healing spell
         tempHP += e;
@@ -443,10 +445,11 @@ void calculate(Spell card){ //calculate player spell results
         cout << endl << " You heal yourself for " << e << " health!\n";
     }
     else if(t == "atk-stun"){ //attack(stun) spell
-        if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
-            this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
-        eTempHP -= e; TURN = 2; //deal damage, trigger stun
-        cout << endl << " You stun your enemy, dealing " << e << " damage!\n";
+        if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
+                this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
+            eTempHP -= e; TURN = 2; //deal damage, trigger stun
+            cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
     else{ //drain spell
         eTempHP -= e; //damage
@@ -460,28 +463,32 @@ void calculate_enemy(){ //calculate what spell enemy casts
     int factor = rand() % 10;
     if(eTYPE == "Wizard"){ //evil wizard
         if(factor < 6){ //attack
-            tempHP -= eDMG;
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; 
-                cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";} //player dodges
+            else{tempHP -= eDMG;
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; 
+                    cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 7){ //fire
-            tempHP -= (eDMG + eFIRE);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
-                eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + eFIRE);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
+                    eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
         }
         else if(factor < 8){ //ice
-            tempHP -= (eDMG + eICE);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + eICE);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
         }
         else if(factor < 9){ //poison
-            tempHP -= (eDMG + ePOISON);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deald " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + ePOISON);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}}
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -491,16 +498,18 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Fire"){ //fire mage
         if(factor < 3){ //attack
-            tempHP -= eDMG;
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= eDMG;
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 8){ //fire
-            tempHP -= (eDMG + eFIRE);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + eFIRE);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -510,30 +519,34 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Ice"){ //ice sorcerer
         if(factor < 4){ //attack
-            tempHP -= eDMG;
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName << 
-                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= eDMG;
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName << 
+                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else{ //ice
-            tempHP -= (eDMG + eICE);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + eICE);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
         }
     }
     else if(eTYPE == "Necro"){ //necromancer
         if(factor < 1){ //attack
-            tempHP -= eDMG;
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= eDMG;
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 5){ //poison
-            tempHP -= (eDMG + ePOISON);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + ePOISON);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}}
         }
         else if(factor < 6){ //heal
             eTempHP += eHEAL;
@@ -549,22 +562,25 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Defend"){ //defender
         if(factor < 1){ //attack
-            tempHP -= eDMG;
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= eDMG;
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(factor < 2){ //fire
-            tempHP -= (eDMG + eFIRE);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + eFIRE);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
         }
         else if(factor < 3){ //ice
-            tempHP -= (eDMG + eICE);
-            if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
+            if(rand()%100 < dodge){cout << " You dodge an attack!\n";}
+            else{tempHP -= (eDMG + eICE);
+                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                    " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
+                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
         }
         else if(factor < 7){ //heal
             eTempHP += eHEAL;
@@ -630,7 +646,8 @@ void output_level(string factor){ //show level player is on
     cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
     ice << "] [Poison: " << poison << "]" << endl <<"       [Heal: " << heal <<
-    "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "]\n" << endl; //player info
+    "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "] [Dodge: " <<
+    DODGE << "%]\n" << endl; //player info
 }
 
 void make_enemy(string factor){ //generate enemy stats
@@ -642,6 +659,7 @@ void make_enemy(string factor){ //generate enemy stats
         else if(type == 2){eTYPE = "Fire";} //fire mage 
         else{eTYPE = "Ice";} //ice sorcerer
         eCRITC = 10; //crit chance
+        eDODGE = 5; //dodge chance
 
         //set stats based on adventure level
         if(level < 5){ //levels 1-4
@@ -698,6 +716,7 @@ void make_enemy(string factor){ //generate enemy stats
 
         if(eTYPE == "Wizard"){eCRITC = 15;} //crit chance
         else{eCRITC = 10;}
+        eDODGE = 7; //dodge chance
 
         //set stats
         if(level < 5){ //levels 1-4
@@ -761,6 +780,8 @@ void make_enemy(string factor){ //generate enemy stats
 
         if(eTYPE == "Wizard"){eCRITC = 20;} //crit chance
         else{eCRITC = 12;}
+        if(eTYPE == "Defend"){eDODGE = 15;} //dodge chance
+        else{eDODGE = 10;}
 
         //set stats
         if(level < 5){ //levels 1-4
@@ -1177,7 +1198,7 @@ void settings(){ //settings menu
         }while(X < "0" || X > "1");
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2;
-            game_speed = 1000; store1 = "no"; DIAMONDS = 0; ownRoD = "no"; ownCoP = "no";
+            game_speed = 1000; store1 = "no"; DIAMONDS = 0; ownRoD = "no"; ownCoP = "no"; DODGE = 5;
             update(); reset_items(); settings();
         }
         else{settings();}
@@ -1192,7 +1213,7 @@ void update(){ //send player data to text file
     outfile << "Health: " << HP << endl << "Damage: " << DMG << endl <<
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
     "Heal: " << HEAL << endl << "Crit-Chance: " << CRITC << endl << "Crit-Damage: " << 
-    CRITD << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
+    CRITD << endl << "Dodge: " << DODGE << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
     "Diamonds: " << DIAMONDS << endl << "RoD: " << ownRoD << endl << "CoP: " << ownCoP << endl;
     outfile.close();
