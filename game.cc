@@ -853,7 +853,7 @@ void make_enemy(string factor){ //generate enemy stats
         }
     }
 
-    if(items[4] == 1){eHP--;} //rune of death
+    if(items[4] == 1){eHP-=2;} //rune of death
 }
 
 void level_up(){ //level up menu
