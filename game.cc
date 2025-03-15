@@ -1106,7 +1106,7 @@ void level_up(){ //level up menu
             this_thread::sleep_for(chrono::seconds(1)); level_up();
         }
     }
-    else if(X == "10"){ //luck
+    else if(X == "11"){ //luck
         if(LUCK < 75){
             if(COINS > 9){COINS -= 10; LUCK += 1; update();}
             else{too_poor();}
