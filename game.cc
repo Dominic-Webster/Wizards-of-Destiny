@@ -24,19 +24,21 @@ string FNAME2[20] = {"Holga", "Waine", "Harkken", "Folda", "Swinn", "Varis", "Ga
 string LNAME2[20] = {"Westbound", "The Dead", "The Lost", "The Old", "The Young", "Gillian", "The Fallen", "Bell", "Jund", "Ungundo",
 "The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu"};
 
+//0, 1, 2, 3, 4, 5, 6, 7
 Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost starting health", 0, 0), 
 SoP("Staff of Power", "Boost elements", 0, 0), GoS("Gauntlets of Strength", "Boost starting damage", 0, 0), 
-RoD("Rune of Death", "Weaken enemy health", 0, 0), CoP("Cloak of Protection", "Reduce elemental damage", 0, 0); //0, 1, 2, 3, 4, 5
-int items[6]; //keeps track of which items player is using
+RoD("Rune of Death", "Weaken enemy health", 0, 0), CoP("Cloak of Protection", "Reduce elemental damage", 0, 0),
+G_T("Golden Talisman", "Boost crit chance", 10, 1), BotE("Boots of the Elves", "Boost dodge chance", 10, 1); 
+int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE, store1, eName, ownRoD, ownCoP;
+string X, eTYPE, store1, eName;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, 
-DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE;
+DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE, numItems;
 
 int main(int argc, char const *argv[]){
-    srand(time(0));
+    srand(time(0)); //seeds random to time
     string temp, waste;
 
     ifstream infile;
@@ -49,8 +51,7 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; DODGE = stoi(temp);
     infile >> waste >> temp; COINS = stoi(temp); infile >> waste >> temp; PROGRESS = stoi(temp);
     infile >> waste >> temp; game_speed = stoi(temp); infile >> waste >> temp; store1 = temp; 
-    infile >> waste >> temp; DIAMONDS = stoi(temp); infile >> waste >> temp; ownRoD = temp; 
-    infile >> waste >> temp; ownCoP = temp;
+    infile >> waste >> temp; DIAMONDS = stoi(temp); infile >> waste >> temp; numItems = stoi(temp);
     infile.close();
 
     infile.open("item.txt"); //get item info
@@ -61,6 +62,8 @@ int main(int argc, char const *argv[]){
     infile>>waste>>temp>>waste; GoS.setStat(stoi(temp)); GoS.setLevel(stoi(waste)); //Gauntlets of Strength
     infile>>waste>>temp>>waste; RoD.setStat(stoi(temp)); RoD.setLevel(stoi(waste)); //Rune of Death
     infile>>waste>>temp>>waste; CoP.setStat(stoi(temp)); CoP.setLevel(stoi(waste)); //Cloak of Protection
+    infile>>waste>>temp>>waste; G_T.setStat(stoi(temp)); G_T.setLevel(stoi(waste)); //Golden Talisman
+    infile>>waste>>temp>>waste; BotE.setStat(stoi(temp)); BotE.setLevel(stoi(waste)); //Boots of the Elves
     infile.close();
 
     string command = ""; //dev commands
@@ -129,6 +132,12 @@ void fight(string factor){ //fight function
         ice += SoP.getStat();
         poison += SoP.getStat();
     }
+    if(items[6] == 1){ //Golden Talisman
+        critc += G_T.getStat();
+    }
+    if(items[7] == 1){ //Boots of the Elves
+        dodge += BotE.getStat();
+    }
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
 
     //Misty Dungeon
@@ -154,7 +163,7 @@ void fight(string factor){ //fight function
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
                 cout << " Reward: " << level*5 << " coins!\n" << endl; //give player reward
                 COINS += (level*5);
-                random = (rand() % 4); //player has chance to get a diamond
+                random = (rand() % 3); //player has chance to get a diamond
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
@@ -658,6 +667,8 @@ void output_level(string factor){ //show level player is on
     if(items[3] == 1){ cout << "       - Equipped: Gauntlets of Strength -\n";}
     if(items[4] == 1){ cout << "       - Equipped: Rune of Death -\n";}
     if(items[5] == 1){ cout << "       - Equipped: Cloak of Protection -\n";}
+    if(items[6] == 1){ cout << "       - Equipped: Golden Talisman -\n";}
+    if(items[7] == 1){ cout << "       - Equipped: Boots of the Elves -\n";}
     cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
     ice << "] [Poison: " << poison << "]" << endl <<"       [Heal: " << heal <<
     "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "] [Dodge: " <<
@@ -875,17 +886,17 @@ void level_up(){ //level up menu
     else{cout << "200 Coins]" << endl;}
 
     cout << " (3): Fire: " << FIRE << "          ["; //fire and varied cost
-    if(FIRE < 5){cout << "50 Coins]" << endl;}
+    if(FIRE < 5){cout << "40 Coins]" << endl;}
     else if(FIRE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
     cout << " (4): Ice: " << ICE << "           ["; //ice and varied cost
-    if(ICE < 5){cout << "50 Coins]" << endl;}
+    if(ICE < 5){cout << "40 Coins]" << endl;}
     else if(ICE < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;} 
 
     cout << " (5): Poison: " << POISON << "        ["; //poison and varied cost
-    if(POISON < 5){cout << "50 Coins]" << endl;}
+    if(POISON < 5){cout << "40 Coins]" << endl;}
     else if(POISON < 10){cout << "100 Coins]" << endl;}
     else{cout << "200 Coins]" << endl;}
 
@@ -908,7 +919,7 @@ void level_up(){ //level up menu
     cout << " (9): Dodge: " << DODGE << "%        ["; //crit chance and varied cost
     if(DODGE < 10){cout << "30 Coins]" << endl;}
     else if(DODGE < 15){cout << "80 Coins]" << endl;}
-    else if(DODGE < 50){cout << "120 Coins]" << endl;}
+    else if(DODGE < 40){cout << "120 Coins]" << endl;}
     else{cout << "MAX]\n";}
 
     cout << " (0): [Menu]" << endl << endl;
@@ -954,7 +965,7 @@ void level_up(){ //level up menu
     }
     else if(X == "3"){ //fire
         if(FIRE < 5){
-            if(COINS > 49){COINS -= 50; FIRE += 1; update();}
+            if(COINS > 39){COINS -= 40; FIRE += 1; update();}
             else{too_poor();}
         }
         else if(FIRE < 10){
@@ -968,7 +979,7 @@ void level_up(){ //level up menu
     }
     else if(X == "4"){ //ice
         if(ICE < 5){
-            if(COINS > 49){COINS -= 50; ICE += 1; update();}
+            if(COINS > 39){COINS -= 40; ICE += 1; update();}
             else{too_poor();}
         }
         else if(ICE < 10){
@@ -982,7 +993,7 @@ void level_up(){ //level up menu
     }
     else if(X == "5"){ //poison
         if(POISON < 5){
-            if(COINS > 49){COINS -= 50; POISON += 1; update();}
+            if(COINS > 39){COINS -= 40; POISON += 1; update();}
             else{too_poor();}
         }
         else if(POISON < 10){
@@ -1049,7 +1060,7 @@ void level_up(){ //level up menu
             if(COINS > 79){COINS -= 80; DODGE += 1; update();}
             else{too_poor();}
         }
-        else if(DODGE < 50){
+        else if(DODGE < 40){
             if(COINS > 119){COINS -= 120; DODGE += 1; update();}
             else{too_poor();}
         }
@@ -1159,7 +1170,7 @@ void settings(){ //settings menu
         }while(X < "0" || X > "1");
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2;
-            game_speed = 1000; store1 = "no"; DIAMONDS = 0; ownRoD = "no"; ownCoP = "no"; DODGE = 5;
+            game_speed = 1000; store1 = "no"; DIAMONDS = 0; numItems = 0; DODGE = 5;
             update(); reset_items(); settings();
         }
         else{settings();}
@@ -1176,7 +1187,7 @@ void update(){ //send player data to text file
     "Heal: " << HEAL << endl << "Crit-Chance: " << CRITC << endl << "Crit-Damage: " << 
     CRITD << endl << "Dodge: " << DODGE << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
-    "Diamonds: " << DIAMONDS << endl << "RoD: " << ownRoD << endl << "CoP: " << ownCoP << endl;
+    "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl;
     outfile.close();
 }
 
@@ -1190,6 +1201,8 @@ void update_items(){ //send item data to text file
     outfile << "GoS " << GoS.getStat() << " " << GoS.getLevel() << endl; //Gauntlets of Strength
     outfile << "RoD " << RoD.getStat() << " " << RoD.getLevel() << endl; //Rune of Death
     outfile << "CoP " << CoP.getStat() << " " << CoP.getLevel() << endl; //Cloak of Protection
+    outfile << "G_T " << G_T.getStat() << " " << G_T.getLevel() << endl; //Golden Talisman
+    outfile << "BotE " << BotE.getStat() << " " << BotE.getLevel() << endl; //Boots of the Elves
     outfile.close();
 }
 
@@ -1200,6 +1213,8 @@ void reset_items(){ //reset item data
     GoS.setStat(2); GoS.setLevel(1);
     RoD.setStat(1); RoD.setLevel(1);
     CoP.setStat(1); CoP.setLevel(1);
+    G_T.setStat(10); G_T.setLevel(1);
+    BotE.setStat(10); BotE.setLevel(1);
     update_items();
 }
 
@@ -1228,19 +1243,24 @@ void enemy_name(){ //generate enemy name
 }
 
 void pick_item(){ //get new item
-    for(int i = 0; i < 6; i++){ //reset items
+    for(int i = 0; i < 8; i++){ //reset items
         items[i] = 0;
     }
     Item x, y, z; int a, b, c; string d, e, f;
-    string info = get_item(ownRoD, ownCoP); //return three items
+    string info = get_item(numItems); //return three items
     d = info.at(0); e = info.at(1); f = info.at(2);
     a = stoi(d); b = stoi(e); c = stoi(f);
     if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
-    else if(a == 3){x = GoS;} else{x = RoD;}
+    else if(a == 3){x = GoS;} else if(a == 4){x = RoD;} else if(a == 5){x = CoP;}
+    else if(a == 6){x = G_T;} else{x = BotE;}
+
     if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
-    else if(b == 3){y = GoS;} else{y = RoD;}
+    else if(b == 3){y = GoS;} else if(b == 4){y = RoD;} else if(b == 5){y = CoP;}
+    else if(b == 6){y = G_T;} else{y = BotE;}
+
     if(c == 0){z = AoU;} else if(c == 1){z = RoL;} else if(c == 2){z = SoP;} 
-    else if(c == 3){z = GoS;} else{z = RoD;}
+    else if(c == 3){z = GoS;} else if(c == 4){z = RoD;} else if(c == 5){z = CoP;}
+    else if(c == 6){z = G_T;} else{z = BotE;}
     do{
         system("clear");
         cout << " Select Starting Item\n" << endl;
@@ -1260,44 +1280,37 @@ void item_shop(){ //buy items
         system("clear");
         cout << "  - ITEM SHOP -\n" << endl;
         cout << "DIAMONDS: " << DIAMONDS << endl << endl;
-        cout << " (1): Rune of Death ";
-        if(ownRoD == "no"){cout << " [5 Diamonds]\n";} //can be bought
-        else{cout << "*Already Owned*\n";} //already bought
-        cout << " (2): Cloak of Protection ";
-        if(ownCoP == "no"){cout << " [5 Diamonds]\n";} //can be bought
-        else{cout << "*Already Owned*\n";} //already bought
-        cout << " (0): Back to Store\n\n -> ";
+        if(numItems < 4){cout << " (1): Unlock Next Item [4 Diamonds]\n";}
+        else{cout << " (-): All Items Unlocked\n";}
+        cout << " (0): Back To Store\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "2");
+    }while(X < "0" || X > "1");
     if(X == "1"){
-        if(ownRoD == "yes"){ //already own item
-            system("clear"); cout << "You already own this item\n";
+        if(numItems == 4){ //already own all items
+            system("clear"); cout << "Currently no items to buy\n";
             this_thread::sleep_for(chrono::seconds(1)); item_shop();
         }
         else{
-            if(DIAMONDS > 4){ //buy rune of death
-                DIAMONDS -= 5; ownRoD = "yes";;
-                update(); item_shop();
-            }
-            else{ //too poor
+            if(DIAMONDS < 4){ //too poor
                 system("clear"); cout << "You don't have enough diamonds\n";
-                this_thread::sleep_for(chrono::seconds(1)); item_shop();
+                this_thread::sleep_for(chrono::seconds(1)); item_shop(); 
             }
-        }
-    }
-    if(X == "2"){
-        if(ownCoP == "yes"){ //already own item
-            system("clear"); cout << "You already own this item\n";
-            this_thread::sleep_for(chrono::seconds(1)); item_shop();
-        }
-        else{
-            if(DIAMONDS > 4){ //buy cloak of protection
-                DIAMONDS -= 5; ownCoP = "yes";;
-                update(); item_shop();
-            }
-            else{ //too poor
-                system("clear"); cout << "You don't have enough diamonds\n";
-                this_thread::sleep_for(chrono::seconds(1)); item_shop();
+            else{ //buy next item
+                system("clear");
+                if(numItems == 0){ //rune of death
+                    cout << " Acquired: Rune of Death!\n";
+                }
+                else if(numItems == 1){ //cloak of protection
+                    cout << " Acquired: Cloak of Protection!\n";
+                }
+                else if(numItems == 2){ //golden talisman
+                    cout << " Acquired: Golden Talisman!\n";
+                }
+                else{ //boots of the elves
+                    cout << " Acquired: Boots of the Elves!\n";
+                }
+                numItems++; update();
+                this_thread::sleep_for(chrono::seconds(1)); item_shop(); 
             }
         }
     }

@@ -4,3 +4,5 @@ SoP 1 1
 GoS 2 1
 RoD 1 1
 CoP 1 1
+G_T 10 1
+BotE 10 1

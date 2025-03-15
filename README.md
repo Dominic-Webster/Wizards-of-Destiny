@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.1.2
+## Version 2.1.3
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -26,6 +26,13 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.1.3
+03/14/2025
+- New Items: Golden Talisman, Boots of the Elves
+- Major code reworks
+
+#### _______________________________________
 
 #### UPDATE 2.1.2
 03/14/2025

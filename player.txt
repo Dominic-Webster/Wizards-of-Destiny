@@ -12,5 +12,4 @@ Progress: 0
 Gamespeed: 1000
 store1: no
 Diamonds: 0
-RoD: no
-CoP: no
+Items: 0
