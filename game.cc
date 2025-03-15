@@ -949,7 +949,7 @@ void level_up(){ //level up menu
     cout << " -> "; 
     cin >> X;
     system("clear");
-    }while(X < "0" || X > "9");
+    }while(X < "0" || X > "11");
     if(X == "1"){ //health
         if(HP < 11){ 
             if(COINS > 24){COINS -= 25; HP += 1; update();}
