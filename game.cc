@@ -184,7 +184,8 @@ void fight(string factor){ //fight function
                 }
                 if(level == 5){ //level 5 cleared gives stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cout << " 1) Damage Boost (current:" << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage++; cout << "\n Damage increased!\n\n";}
                     else{health++; tempHP+=2; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
@@ -192,7 +193,9 @@ void fight(string factor){ //fight function
                 }
                 if(level == 10){ //level 10 cleared stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
+                    cout << " 1) Ice Boost (current: " << ice <<")\n" << 
+                    " 2) Fire Boost (current: " << fire << ")\n" <<
+                    " 3) Poison Boost (current: " << poison << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){ice++; cout << "\n Ice increased!\n\n";}
                     else if(X == "2"){fire++; cout << "\n Fire increased!\n\n";}
@@ -201,7 +204,8 @@ void fight(string factor){ //fight function
                 }
                 if(level == 15){ //level 15 cleared stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cout << " 1) Damage Boost (current:" << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 2; cout << "\n Damage increased!\n\n";}
                     else{health += 2; tempHP += 4; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
@@ -274,7 +278,8 @@ void fight(string factor){ //fight function
                 }
                 if(level == 5){ //level 5 stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cout << " 1) Damage Boost (current:" << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 2; cout << "\n Damage increased!\n\n";}
                     else{health += 2; tempHP += 4; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
@@ -282,7 +287,9 @@ void fight(string factor){ //fight function
                 }
                 if(level == 10){ //level 10 stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
+                    cout << " 1) Ice Boost (current: " << ice <<")\n" << 
+                    " 2) Fire Boost (current: " << fire << ")\n" <<
+                    " 3) Poison Boost (current: " << poison << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){ice += 2; cout << "\n Ice increased!\n\n";}
                     else if(X == "2"){fire += 2; cout << "\n Fire increased!\n\n";}
@@ -291,7 +298,8 @@ void fight(string factor){ //fight function
                 }
                 if(level == 15){ //level 15 stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cout << " 1) Damage Boost (current:" << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 4; cout << "\n Damage increased!\n\n";}
                     else{health += 3; tempHP += 6; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
@@ -364,7 +372,8 @@ void fight(string factor){ //fight function
                 }
                 if(level == 5){ //level 5 stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n -> ";
+                    cout << " 1) Damage Boost (current:" << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 4; cout << "\n Damage increased!\n\n";}
                     else{health += 4; tempHP += 6; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
@@ -372,7 +381,9 @@ void fight(string factor){ //fight function
                 }
                 if(level == 10){ //level 10 stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Ice Boost\n 2) Fire Boost\n 3) Poison Boost\n\n -> ";
+                    cout << " 1) Ice Boost (current: " << ice <<")\n" << 
+                    " 2) Fire Boost (current: " << fire << ")\n" <<
+                    " 3) Poison Boost (current: " << poison << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){ice += 4; cout << "\n Ice increased!\n\n";}
                     else if(X == "2"){fire += 4; cout << "\n Fire increased!\n\n";}
@@ -381,7 +392,8 @@ void fight(string factor){ //fight function
                 }
                 if(level == 15){ //level 15 stat boost
                     cout << "Choose upgrade:\n\n";
-                    cout << " 1) Damage Boost\n 2) Health Boost\n\n - >";
+                    cout << " 1) Damage Boost (current:" << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 6; cout << "\n Damage increased!\n\n";}
                     else{health += 6; tempHP += 9; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
