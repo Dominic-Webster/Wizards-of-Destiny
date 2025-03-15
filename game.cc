@@ -5,9 +5,9 @@
 #include <thread>
 
 void menu(); void battle(); void store(); void how_to();
-void fight(string factor);
+void fight(string factor); void database();
 void level_up(); void settings(); void update();
-void make_enemy(string factor);
+void make_enemy(string factor); void encounter();
 void output_level(string factor);
 void show_card(Spell card); void too_poor();
 void player(string factor); void item_shop();
@@ -32,9 +32,9 @@ G_T("Golden Talisman", "Boost crit chance", 10, 1), BotE("Boots of the Elves", "
 int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE, store1, eName;
-int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level,
-eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, 
+string X, eTYPE, store1, eName, encounterType;
+int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level, SHIELD, shield,
+eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, LUCK, luck, 
 DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE, numItems;
 
 int main(int argc, char const *argv[]){
@@ -48,7 +48,8 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; FIRE = stoi(temp); infile >> waste >> temp; ICE = stoi(temp);
     infile >> waste >> temp; POISON = stoi(temp); infile >> waste >> temp; HEAL = stoi(temp);
     infile >> waste >> temp; CRITC = stoi(temp); infile >> waste >> temp; CRITD = stoi(temp);
-    infile >> waste >> temp; DODGE = stoi(temp);
+    infile >> waste >> temp; DODGE = stoi(temp); infile >> waste >> temp; SHIELD = stoi(temp);
+    infile >> waste >> temp; LUCK = stoi(temp);
     infile >> waste >> temp; COINS = stoi(temp); infile >> waste >> temp; PROGRESS = stoi(temp);
     infile >> waste >> temp; game_speed = stoi(temp); infile >> waste >> temp; store1 = temp; 
     infile >> waste >> temp; DIAMONDS = stoi(temp); infile >> waste >> temp; numItems = stoi(temp);
@@ -81,17 +82,19 @@ void menu(){ //game menu
         cout << " (3): Store" << endl;
         cout << " (4): How To Play" << endl;
         cout << " (5): Settings" << endl;
+        cout << " (6): Enemy Database" << endl;
         cout << " (0): [Exit Game]" << endl << endl;
         cout << " -> ";
         cin >> X;
         system("clear");
-    }while(X < "0" || X > "5");
+    }while(X < "0" || X > "6");
 
     if(X == "1"){battle();} //play the game
     else if(X == "2"){level_up();} //go to level up menu
     else if(X == "3"){store();} //go to store
     else if(X == "4"){how_to();} //how to play
     else if(X == "5"){settings();} //go to settings
+    else if(X == "6"){database();} //go to enemy database
     else{update(); update_items(); exit(0);} //save and exit
 }
 
@@ -117,7 +120,7 @@ void fight(string factor){ //fight function
     int random;
     //set play stats equal to base stats (they can be modified without messing with base stats)
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0; level = 1;
-    critc = CRITC; critd = CRITD; dodge = DODGE;
+    critc = CRITC; critd = CRITD; dodge = DODGE; luck = LUCK; shield = SHIELD;
     
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -220,6 +223,7 @@ void fight(string factor){ //fight function
                     }
                     update(); battle(); //save and return to play menu
                 }
+                if(rand()%8 == 0){encounter();}
                 cout << " Descending further into the dungeon...\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; TURN = 0; //set turn to players, increase dungeon level
@@ -307,6 +311,7 @@ void fight(string factor){ //fight function
                     }
                     update(); battle(); //save and exit to menu
                 }
+                if(rand()%8 == 0){encounter();}
                 cout << " Descending further into the ruins...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; TURN = 0; //go to next level, set turn to player
@@ -390,6 +395,7 @@ void fight(string factor){ //fight function
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and go to menu
                 }
+                if(rand()%8 == 0){encounter();}
                 cout << " Descending further into the mountain...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; TURN = 0; //level increase and turn set to player
@@ -669,10 +675,10 @@ void output_level(string factor){ //show level player is on
     if(items[5] == 1){ cout << "       - Equipped: Cloak of Protection -\n";}
     if(items[6] == 1){ cout << "       - Equipped: Golden Talisman -\n";}
     if(items[7] == 1){ cout << "       - Equipped: Boots of the Elves -\n";}
-    cout << "  You: [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "]" << endl <<"       [Heal: " << heal <<
+    cout << "       [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
+    ice << "] [Poison: " << poison << "]" << endl <<" You:  [Heal: " << heal <<
     "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "] [Dodge: " <<
-    DODGE << "%]\n" << endl; //player info
+    DODGE << "%]" << endl << "       [Shield: " << SHIELD << "] [Luck: " << LUCK << "%]\n\n"; //player info
 }
 
 void make_enemy(string factor){ //generate enemy stats
@@ -865,6 +871,8 @@ void make_enemy(string factor){ //generate enemy stats
     }
 
     if(items[4] == 1){eHP-=2;} //rune of death
+    if((eDMG - shield) < 1){eDMG = 1;} //apply shield
+    else{eDMG -= shield;}
 }
 
 void level_up(){ //level up menu
@@ -922,7 +930,16 @@ void level_up(){ //level up menu
     else if(DODGE < 40){cout << "120 Coins]" << endl;}
     else{cout << "MAX]\n";}
 
-    cout << " (0): [Menu]" << endl << endl;
+    cout << " (10): Shield: " << SHIELD << "        ["; //shield
+    if(SHIELD == 0){cout << "250 Coins]" << endl;}
+    else if(SHIELD < 3){cout << "500 Coins]" << endl;}
+    else{cout << "MAX]\n";}
+
+    cout << " (11): Luck: " << LUCK << "%        ["; //shield
+    if(LUCK < 75){cout << "10 Coins]" << endl;}
+    else{cout << "MAX]\n";}
+
+    cout << "\n (0): [Menu]" << endl << endl;
     cout << " -> "; 
     cin >> X;
     system("clear");
@@ -1069,6 +1086,30 @@ void level_up(){ //level up menu
             this_thread::sleep_for(chrono::seconds(1)); level_up();
         }
     }
+    else if(X == "10"){ //shield
+        if(SHIELD == 0){
+            if(COINS > 249){COINS -= 250; SHIELD += 1; update();}
+            else{too_poor();}
+        }
+        else if(SHIELD < 3){
+            if(COINS > 499){COINS -= 500; SHIELD += 1; update();}
+            else{too_poor();}
+        }
+        else{
+            system("clear"); cout << "This stat is maxed out\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
+    }
+    else if(X == "10"){ //luck
+        if(LUCK < 75){
+            if(COINS > 9){COINS -= 10; LUCK += 1; update();}
+            else{too_poor();}
+        }
+        else{
+            system("clear"); cout << "This stat is maxed out\n";
+            this_thread::sleep_for(chrono::seconds(1)); level_up();
+        }
+    }
     else{menu();}
 
     level_up();
@@ -1170,7 +1211,7 @@ void settings(){ //settings menu
         }while(X < "0" || X > "1");
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2;
-            game_speed = 1000; store1 = "no"; DIAMONDS = 0; numItems = 0; DODGE = 5;
+            game_speed = 1000; store1 = "no"; DIAMONDS = 0; numItems = 0; DODGE = 5; LUCK = 5; SHIELD = 0;
             update(); reset_items(); settings();
         }
         else{settings();}
@@ -1185,7 +1226,8 @@ void update(){ //send player data to text file
     outfile << "Health: " << HP << endl << "Damage: " << DMG << endl <<
     "Fire: " << FIRE << endl << "Ice: " << ICE << endl << "Poison: " << POISON << endl <<
     "Heal: " << HEAL << endl << "Crit-Chance: " << CRITC << endl << "Crit-Damage: " << 
-    CRITD << endl << "Dodge: " << DODGE << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
+    CRITD << endl << "Dodge: " << DODGE << endl << "Shield: " << SHIELD << endl << "Luck: " <<
+    LUCK << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
     "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl;
     outfile.close();
@@ -1320,4 +1362,81 @@ void item_shop(){ //buy items
 void too_poor(){ //function calls when players try to buy something too expensive
     system("clear"); cout << "You don't have enough coins\n";
     this_thread::sleep_for(chrono::seconds(1)); level_up();
+}
+
+void database(){ //enemy information
+    system("clear");
+    cout << " - ENEMY DATABASE -\n\n";
+    if(PROGRESS == 0){
+        cout << " No enemies unlocked yet\n\n";
+    }
+    if(PROGRESS > 0){
+        cout << " Evil Wizard - Crits more frequently, no resistances or vulnerabilities\n";
+        cout << " Fire Mage - Resistant to fire, vunerable to ice\n";
+        cout << " Ice Sorcerer - Resistant to ice, vulnerable to fire\n";
+    }
+    if(PROGRESS > 1){
+        cout << " Necromancer - Resistant to poison\n";
+    }
+    if(PROGRESS > 2){
+        cout << " Defender - Dodges more frequently, vulnerable to poison\n";
+    }
+    cout << " [0] Back to Menu\n -> ";
+    cin >> X; menu();
+}
+
+void encounter(){
+    int factor = rand()%4; //get encounter type
+    if(factor < 2){encounterType = "trap";}
+    else if(factor == 2){encounterType = "hp potion";}
+    else{encounterType = "secret passage";}
+
+    if(encounterType == "trap"){
+        factor = rand()%2;
+        if(factor == 0){ //pit trap
+            cout << " You encounter a pit trap!\n\n";
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(rand()%100 < luck){ //save
+                cout << " You manage to leap over it in time!\n";
+            }
+            else{ //fail
+                cout << " You can't avoid it! -2 health!\n"; tempHP -= 2;
+            }
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+        else{ //arrow trap
+            cout << " You encounter an arrow trap!\n\n";
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(rand()%100 < luck){ //save
+                cout << " You manage to duck behind cover in time!\n";
+            }
+            else{ //fail
+                cout << " You can't avoid it! -4 health!\n"; tempHP -= 4;
+            }
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+    else if(encounterType == "hp potion"){
+        if(tempHP < health){
+            cout << " You find a health potion! It's refreshing!\n";
+            tempHP = health; this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+        else{
+            cout << " You find a trinket! +10 Coins!\n"; COINS += 10;
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+    else{
+        if(level < 18){
+            cout << " You find a secret passage!\n";
+            level += (2+(rand()%3));
+            if(level > 20){level = 19;}
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+        else{
+            cout << " You find a purse! +25 Coins!\n"; COINS += 25;
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+    cout << endl;
 }

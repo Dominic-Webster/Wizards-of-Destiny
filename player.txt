@@ -7,7 +7,9 @@ Heal: 0
 Crit-Chance: 5
 Crit-Damage: 2
 Dodge: 5
-Coins: 0
+Shield: 0
+Luck: 5
+Coins: 10
 Progress: 0
 Gamespeed: 1000
 store1: no

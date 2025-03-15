@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.1.3
+## Version 2.2.0
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -26,6 +26,14 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.2.0
+03/15/2025
+- New Stats: Shield and Luck
+- Random Encounters
+- Enemy Database
+
+#### _______________________________________
 
 #### UPDATE 2.1.3
 03/14/2025
