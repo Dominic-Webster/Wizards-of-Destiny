@@ -9,7 +9,7 @@ Crit-Damage: 2
 Dodge: 5
 Shield: 0
 Luck: 5
-Coins: 10
+Coins: 0
 Progress: 0
 Gamespeed: 1000
 store1: no
