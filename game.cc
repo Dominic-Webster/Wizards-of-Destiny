@@ -223,7 +223,9 @@ void fight(string factor){ //fight function
                     }
                     update(); battle(); //save and return to play menu
                 }
-                if(rand()%8 == 0){encounter();}
+                if(level != 5 && level != 10 && level != 15){ //random encounter
+                    if(rand()%8 == 0){encounter();}
+                }
                 cout << " Descending further into the dungeon...\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; TURN = 0; //set turn to players, increase dungeon level
@@ -311,7 +313,9 @@ void fight(string factor){ //fight function
                     }
                     update(); battle(); //save and exit to menu
                 }
-                if(rand()%8 == 0){encounter();}
+                if(level != 5 && level != 10 && level != 15){ //random encounter
+                    if(rand()%8 == 0){encounter();}
+                }
                 cout << " Descending further into the ruins...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; TURN = 0; //go to next level, set turn to player
@@ -395,7 +399,9 @@ void fight(string factor){ //fight function
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and go to menu
                 }
-                if(rand()%8 == 0){encounter();}
+                if(level != 5 && level != 10 && level != 15){ //random encounter
+                    if(rand()%8 == 0){encounter();}
+                }
                 cout << " Descending further into the mountain...\n";
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 level++; TURN = 0; //level increase and turn set to player
