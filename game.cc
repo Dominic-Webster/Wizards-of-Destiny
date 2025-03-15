@@ -655,6 +655,7 @@ void output_level(string factor){ //show level player is on
         if(level == 10){cout << "  - Watcher of the Pass -\n";}
         if(level == 20){cout << "  - Dweller in the Deep -\n";}
     }
+    this_thread::sleep_for(chrono::milliseconds(game_speed/2)); //wait
     cout << "  " << eName; //show enemy name
     if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
     else if(eTYPE == "Fire"){cout << " - Fire Mage: ";}
@@ -662,6 +663,7 @@ void output_level(string factor){ //show level player is on
     else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
     else{cout << " - Defender: ";}
     cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
+    this_thread::sleep_for(chrono::milliseconds(game_speed/2)); //wait
     if(items[0] == 1){ cout << "       - Equipped: Amulet of Undying -\n";}
     if(items[1] == 1){ cout << "       - Equipped: Ring of Life -\n";}
     if(items[2] == 1){ cout << "       - Equipped: Staff of Power -\n";}
