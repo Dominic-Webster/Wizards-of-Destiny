@@ -639,6 +639,7 @@ void show_card(Spell card){ //display spell
 }
 
 void output_level(string factor){ //show level player is on
+    this_thread::sleep_for(chrono::milliseconds(game_speed/2)); //wait
     if(factor == "1"){ //misty dungeon
         cout << "    - MISTY DUNGEON: LEVEL " << level << " -\n" << endl;
         if(level == 10){cout << "  - Guardian of the Tomb -\n";}
