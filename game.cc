@@ -1404,14 +1404,15 @@ void database(){ //enemy information
 }
 
 void encounter(){
-    int factor = rand()%4; //get encounter type
-    if(factor < 2){encounterType = "trap";}
-    else if(factor == 2){encounterType = "hp potion";}
+    int factor = rand()%8; //get encounter type
+    if(factor < 3){encounterType = "trap";}
+    else if(factor < 6){encounterType = "hp potion";}
+    else if(factor == 6){encounterType = "potion choice";}
     else{encounterType = "secret passage";}
 
     if(encounterType == "trap"){
-        factor = rand()%2;
-        if(factor == 0){ //pit trap
+        factor = rand()%3;
+        if(factor < 2){ //pit trap
             cout << " You encounter a pit trap!\n\n";
             this_thread::sleep_for(chrono::milliseconds(game_speed));
             if(rand()%100 < luck){ //save
@@ -1441,6 +1442,42 @@ void encounter(){
         }
         else{
             cout << " You find a trinket! +10 Coins!\n"; COINS += 10;
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+    else if(encounterType == "potion choice"){
+        cout << " You find a glittering potion with unknown properties...\n\n";
+        cout << " (1): Drink unknown potion\n (2): Don't drink unknown potion\n\n -> ";
+        cin >> X;
+        if(X == "1"){
+            if(rand()%5 == 0){ //stat boost
+                factor = rand()%6;
+                if(factor == 0){ //health
+                    cout << endl << " Your health permanently increases!\n"; HP++; tempHP++; health++;
+                }
+                else if(factor == 1){ //damage
+                    cout << endl << " Your damage permanently increases!\n"; DMG++; damage++;
+                }
+                else if(factor == 2){ //heal
+                    cout << endl << " Your healing permanently increases!\n"; HEAL++; heal++;
+                }
+                else if(factor == 3){ //fire
+                    cout << endl << " Your fire permanently increases!\n"; FIRE++; fire++;
+                }
+                else if(factor == 4){ //ice
+                    cout << endl << " Your ice permanently increases!\n"; ICE++; ice++;
+                }
+                else{ //poison
+                    cout << endl << " Your poison permanently increases!\n"; POISON++; poison++;
+                }
+            }
+            else{ //poison
+                cout << endl << " You've been poisoned! -5 health!\n"; tempHP -= 5;
+            }
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+        else{
+            cout << endl << " Probably a smart choice...\n";
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
