@@ -11,7 +11,7 @@ class Spell{
         string getName(){return name;};
         string getType(){return type;};
         int getEffect(){return effect;};
-        void get_card(int hp, int dmg, int fire, int ice, int poison, int heal);
+        void get_card(int hp, int dmg, int fire, int ice, int poison, int electric, int heal);
     private:
         string name, type;
         int effect;

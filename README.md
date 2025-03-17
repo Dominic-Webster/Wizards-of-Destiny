@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.2.0
+## Version 2.3.0
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -26,6 +26,17 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.3.0
+03/17/2025
+- New Stat: Electric
+- More Random Encounters
+- New Enemy: Stormcaster
+- New Adventure: Desolate Wastes
+- New Spells
+- Various balance changes
+
+#### _______________________________________
 
 #### UPDATE 2.2.0
 03/15/2025

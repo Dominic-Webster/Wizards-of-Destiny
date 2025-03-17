@@ -3,6 +3,7 @@ Damage: 1
 Fire: 0
 Ice: 0
 Poison: 0
+Electric: 0
 Heal: 0
 Crit-Chance: 5
 Crit-Damage: 2
