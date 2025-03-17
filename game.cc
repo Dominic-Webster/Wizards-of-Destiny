@@ -1403,7 +1403,7 @@ void database(){ //enemy information
     if(PROGRESS > 2){
         cout << " * Defender - Dodges more frequently, vulnerable to poison\n";
     }
-    cout << "\n [0] Back to Menu\n -> ";
+    cout << "\n [0] Back to Menu\n\n -> ";
     cin >> X; menu();
 }
 
