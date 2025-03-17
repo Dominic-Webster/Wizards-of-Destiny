@@ -1361,6 +1361,7 @@ void item_shop(){ //buy items
             }
             else{ //buy next item
                 system("clear");
+                DIAMONDS -=4;
                 if(numItems == 0){ //rune of death
                     cout << " Acquired: Rune of Death!\n";
                 }
