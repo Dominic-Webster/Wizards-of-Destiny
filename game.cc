@@ -28,7 +28,7 @@ string LNAME2[20] = {"Westbound", "The Dead", "The Lost", "The Old", "The Young"
 Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost starting health", 0, 0), 
 SoP("Staff of Power", "Boost elements", 0, 0), GoS("Gauntlets of Strength", "Boost starting damage", 0, 0), 
 RoD("Rune of Death", "Weaken enemy health", 0, 0), CoP("Cloak of Protection", "Reduce elemental damage", 0, 0),
-G_T("Golden Talisman", "Boost crit chance", 10, 1), BotE("Boots of the Elves", "Boost dodge chance", 10, 1); 
+G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "Boost dodge chance", 0, 0); 
 int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
@@ -700,7 +700,7 @@ void output_level(string factor){ //show level player is on
     cout << "       [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
     ice << "] [Poison: " << poison << "]" << endl <<" You:  [Heal: " << heal <<
     "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "] [Dodge: " <<
-    DODGE << "%]" << endl << "       [Shield: " << SHIELD << "] [Luck: " << LUCK << "%]\n\n"; //player info
+    dodge << "%]" << endl << "       [Shield: " << shield << "] [Luck: " << luck << "%]\n\n"; //player info
 }
 
 void make_enemy(string factor){ //generate enemy stats
