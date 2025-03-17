@@ -476,6 +476,10 @@ void calculate(Spell card){ //calculate player spell results
         tempHP += e;
         if(tempHP > health){tempHP = health;} //can't go over max
         cout << endl << " You heal yourself for " << e << " health!\n";
+        if(rand()%2 == 0){ //trigger stun
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            cout << endl << " Enemy is stunned!\n"; TURN = 2;
+        }
     }
     else if(t == "atk-stun"){ //attack(stun) spell
         if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
@@ -655,7 +659,7 @@ void show_card(Spell card){ //display spell
         cout << "Deal " << card.getEffect() << " poison damage\n";
     }
     else if(card.getType() == "heal"){ //healing spell
-        cout << "Gain " << card.getEffect() << " health\n";
+        cout << "Gain " << card.getEffect() << " health. 50% chance to stun enemy\n";
     } 
     else{ //drain spell
         cout << "Drain " << card.getEffect() << " health from enemy\n";
