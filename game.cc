@@ -697,8 +697,8 @@ void output_level(string factor){ //show level player is on
     if(items[5] == 1){ cout << "       - Equipped: Cloak of Protection -\n";}
     if(items[6] == 1){ cout << "       - Equipped: Golden Talisman -\n";}
     if(items[7] == 1){ cout << "       - Equipped: Boots of the Elves -\n";}
-    cout << "       [Health: " << tempHP << "] [Damage: " << damage << "] [Fire: " << fire << "] [Ice: " <<
-    ice << "] [Poison: " << poison << "]" << endl <<" You:  [Heal: " << heal <<
+    cout << "       [Health: " << tempHP << "/" << health << "] [Damage: " << damage << "] [Fire: " << fire <<
+    "] [Ice: " << ice << "] [Poison: " << poison << "]" << endl <<" You:  [Heal: " << heal <<
     "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "] [Dodge: " <<
     dodge << "%]" << endl << "       [Shield: " << shield << "] [Luck: " << luck << "%]\n\n"; //player info
 }
