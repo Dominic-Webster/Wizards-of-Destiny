@@ -1393,17 +1393,17 @@ void database(){ //enemy information
         cout << " No enemies unlocked yet\n\n";
     }
     if(PROGRESS > 0){
-        cout << " Evil Wizard - Crits more frequently, no resistances or vulnerabilities\n";
-        cout << " Fire Mage - Resistant to fire, vunerable to ice\n";
-        cout << " Ice Sorcerer - Resistant to ice, vulnerable to fire\n";
+        cout << " * Evil Wizard - Crits more frequently\n";
+        cout << " * Fire Mage - Resistant to fire, vunerable to ice\n";
+        cout << " * Ice Sorcerer - Resistant to ice, vulnerable to fire\n";
     }
     if(PROGRESS > 1){
-        cout << " Necromancer - Resistant to poison\n";
+        cout << " * Necromancer - Resistant to poison\n";
     }
     if(PROGRESS > 2){
-        cout << " Defender - Dodges more frequently, vulnerable to poison\n";
+        cout << " * Defender - Dodges more frequently, vulnerable to poison\n";
     }
-    cout << " [0] Back to Menu\n -> ";
+    cout << "\n [0] Back to Menu\n -> ";
     cin >> X; menu();
 }
 
