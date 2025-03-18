@@ -32,8 +32,8 @@ void Spell::get_card(int hp, int dmg, int fire, int ice, int poison, int electri
     else if(factor < 12){ //ice
         tp = "ice";
         factor = rand() % 3;
-        if(factor == 0){nm = "ICY WIND"; eff = (dmg + ice); tp = "ice-stun";}
-        else if(factor == 1){nm = "FREEZE"; eff = (1 + dmg + ice);}
+        if(factor == 0){nm = "FREEZE"; eff = (dmg + ice); tp = "ice-stun";}
+        else if(factor == 1){nm = "ICY WIND"; eff = (1 + dmg + ice);}
         else{nm = "ICE STORM"; eff = (2 + dmg + ice);}
     }
     else if(factor < 15){ //poison

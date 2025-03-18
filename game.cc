@@ -8,7 +8,7 @@ void menu(); void battle(); void store(); void how_to();
 void fight(string factor); void database();
 void level_up(); void settings(); void update();
 void make_enemy(string factor); void encounter();
-void output_level(string factor);
+void output_level(string factor); int itemCount();
 void show_card(Spell card); void too_poor();
 void player(string factor); void item_shop();
 void enemy(string factor); void reset_items();
@@ -1701,12 +1701,13 @@ void database(){ //enemy information
 }
 
 void encounter(){ //random encounters
-    int factor = rand()%9; //get encounter type
-    if(factor < 3){encounterType = "trap";}
-    else if(factor < 6){encounterType = "hp potion";}
-    else if(factor == 6){encounterType = "potion choice";}
-    else if(factor == 7){encounterType = "diamond";}
-    else{encounterType = "secret passage";}
+    int factor = rand()%20; //get encounter type
+    if(factor < 5){encounterType = "trap";} //25%
+    else if(factor < 10){encounterType = "hp potion";} //25%
+    else if(factor < 14){encounterType = "potion choice";} //20%
+    else if(factor < 16){encounterType = "diamond";} //10%
+    else if(factor < 18){encounterType = "item";} //10%
+    else{encounterType = "secret passage";} //10%
 
     if(encounterType == "trap"){
         factor = rand()%3;
@@ -1733,6 +1734,7 @@ void encounter(){ //random encounters
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
+
     else if(encounterType == "hp potion"){
         if(tempHP < health){
             cout << " You find a health potion! It's refreshing!\n";
@@ -1743,6 +1745,7 @@ void encounter(){ //random encounters
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
+
     else if(encounterType == "potion choice"){
         cout << " You find a glittering potion with unknown properties...\n\n";
         cout << " (1): Drink unknown potion\n (2): Don't drink unknown potion\n\n -> ";
@@ -1782,10 +1785,55 @@ void encounter(){ //random encounters
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
+
     else if(encounterType == "diamond"){
         cout << " You notice a diamond by your foot. Shiny!\n"; DIAMONDS++;
         this_thread::sleep_for(chrono::milliseconds(game_speed));
     }
+
+    else if(encounterType == "item"){
+        if(itemCount() > 1){ //there are enough items
+            Item x, y; int a, b; string c, d;
+            string info = extra_item(numItems, items); //return two items
+            c = info.at(0); d = info.at(1);
+            a = stoi(c); b = stoi(d);
+            if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
+            else if(a == 3){x = GoS;} else if(a == 4){x = RoD;} else if(a == 5){x = CoP;}
+            else if(a == 6){x = G_T;} else{x = BotE;}
+    
+            if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
+            else if(b == 3){y = GoS;} else if(b == 4){y = RoD;} else if(b == 5){y = CoP;}
+            else if(b == 6){y = G_T;} else{y = BotE;}
+    
+            cout << " You find an item!\n" << endl;
+            cout << " (1): "; x.print();
+            cout << "\n (2): "; y.print();
+            cout << "\n\n -> ";
+            cin >> X;
+            if(X == "1"){items[a] = 1;}
+            else{items[b] = 1;}
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+        else if(itemCount() == 1){ //one item can be found
+            int count;
+            for(count = 0; items[count] == 1; count++);
+            items[count] = 1;
+            if(count == 0){cout << " You found the Amulet of Undying!\n";}
+            else if(count == 1){cout << " You come across a Ring of Life!\n";}
+            else if(count == 2){cout << " You found a Staff of Power!\n";}
+            else if(count == 3){cout << " You found the Gauntlets of Strength!\n";}
+            else if(count == 4){cout << " You pick up the Rune of Death!\n";}
+            else if(count == 5){cout << " You found the Cloak of Protection!\n";}
+            else if(count == 6){cout << " You discover a Golden Talisman!\n";}
+            else{cout << " You found some Boots of the Elves!\n";}
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+        else{ //no more items
+            cout << " You find some treasure! +25 Coins!\n"; COINS += 25;
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+
     else{ //secret passage
         if(level < 18){
             cout << " You find a secret passage!\n";
@@ -1799,4 +1847,12 @@ void encounter(){ //random encounters
         }
     }
     cout << endl;
+}
+
+int itemCount(){ //find number of items still not equipped
+    int count;
+    for(int i = 0; i < 8; i++){
+        if(items[i] == 0){count++;}
+    }
+    return count;
 }

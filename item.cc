@@ -32,3 +32,19 @@ string get_item(int num){ //sends three items for user to pick
 
     return item_code;
 }
+
+string extra_item(int num, int list[]){
+    item_code = "";
+
+    do{ //first item
+        factor = rand()%(4+num);
+    }while(list[factor] == 1);
+    item_code += to_string(factor);
+
+    do{ //second item
+        factor = rand()%(4+num);
+    }while(list[factor] == 1 || item_code == to_string(factor));
+    item_code += to_string(factor);
+
+    return item_code;
+}

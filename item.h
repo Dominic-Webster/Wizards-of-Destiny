@@ -24,5 +24,6 @@ class Item{
 };
 
 string get_item(int num);
+string extra_item(int num, int list[]);
 
 #endif
