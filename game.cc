@@ -879,10 +879,15 @@ void output_level(string factor){ //show level player is on
         if(level == 10){cout << "  - Upholder of Justice -\n";}
         if(level == 20){cout << "  - Lord of the Tower -\n";}
     }
-    else{ //mountain of despair
+    else if(factor == "3"){ //mountain of despair
         cout << "    - MOUNTAIN OF DESPAIR: LEVEL " << level << " -\n" << endl;
         if(level == 10){cout << "  - Watcher of the Pass -\n";}
         if(level == 20){cout << "  - Dweller in the Deep -\n";}
+    }
+    else{ //desolate waste
+        cout << "    - DESOLATE WASTES: LEVEL " << level << " -\n" << endl;
+        if(level == 10){cout << "  - Lord of the Dunes -\n";}
+        if(level == 20){cout << "  - King of the Wastes -\n";}
     }
     cout << "  " << eName; //show enemy name
     if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
