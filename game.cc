@@ -1502,7 +1502,8 @@ void store(){ //store menu
                 DIAMONDS -= 750; store2 = "yes";
                 update(); store();
             }
-            else{ too_poor();}
+            else{system("clear"); cout << "You don't have enough coins\n";
+                this_thread::sleep_for(chrono::seconds(1)); store();}
         }
     }
     else{menu();}
