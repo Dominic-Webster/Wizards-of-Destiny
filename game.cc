@@ -1747,7 +1747,8 @@ void database(){ //enemy information
 void encounter(){ //random encounters
     int factor = rand()%20; //get encounter type
     if(factor < 5){encounterType = "trap";} //25%
-    else if(factor < 10){encounterType = "hp potion";} //25%
+    else if(factor < 9){encounterType = "hp potion";} //20%
+    else if(factor < 10){encounterType = "shop";} //5%
     else if(factor < 14){encounterType = "potion choice";} //20%
     else if(factor < 16){encounterType = "diamond";} //10%
     else if(factor < 18){encounterType = "item";} //10%
@@ -1876,6 +1877,37 @@ void encounter(){ //random encounters
             cout << " You find some treasure! +40 Coins!\n"; COINS += 40;
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
+    }
+
+    else if(encounterType == "shop"){
+        cout << " You come across a strange merchant. He shows you his wares\n\n";
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+        cout << " Coins: " << COINS << endl;
+        cout << " (1): Health Potion [50 Coins] (Health: " << tempHP << "/" << health << ")\n";
+        cout << " (2): Ornate Dagger [100 Coins]\n";
+        cout << " (3): Glittering Amulet [500 Coins]\n";
+        cout << " (0): Buy Nothing\n -> ";
+        cin >> X;
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+        if(X != "0" && rand()%100 == 0){ //1% chance for merchant to curse player
+            cout << "\n The merchant laughs, and casts a curse on you before vanishing\n";
+            damage -= 2; if(damage < 1){damage = 1;} health -= 2; if(tempHP > health){tempHP = health;}
+        }
+        else if(X == "1"){ //health potion
+            cout << "\n The potion tastes great!\n"; COINS -= 50; tempHP += (1+heal); health += (1+heal);
+        }
+        else if(X == "2"){ //ornate dagger
+            cout << "\n The dagger looks like it will cause some damage!\n"; COINS -= 100; damage += 5;
+        }
+        else if(X == "3"){ //glittering amulet
+            cout << "\n The amulet is pulsing with power!\n"; COINS -= 500; damage += 10; health += 5;
+            tempHP += 5; ice += 3; fire += 3; poison += 3; electric += 3; heal += 3; critc += 10; luck +=10;
+            dodge += 10; critd += 10; shield++;
+        }
+        else{
+            cout << "\n The merchant sighs, but lets you go on your way\n";
+        }
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
     }
 
     else{ //secret passage
