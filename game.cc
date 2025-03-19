@@ -32,7 +32,7 @@ G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "B
 int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE, store1, eName, encounterType;
+string X, eTYPE, store1, store2, eName, encounterType;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level, SHIELD, shield,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, LUCK, luck, 
 DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE, numItems, ELECTRIC, electric,
@@ -53,7 +53,8 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; SHIELD = stoi(temp); infile >> waste >> temp; LUCK = stoi(temp);
     infile >> waste >> temp; COINS = stoi(temp); infile >> waste >> temp; PROGRESS = stoi(temp);
     infile >> waste >> temp; game_speed = stoi(temp); infile >> waste >> temp; store1 = temp; 
-    infile >> waste >> temp; DIAMONDS = stoi(temp); infile >> waste >> temp; numItems = stoi(temp);
+    infile >> waste >> temp; store2 = temp; infile >> waste >> temp; DIAMONDS = stoi(temp); 
+    infile >> waste >> temp; numItems = stoi(temp);
     infile.close();
 
     infile.open("item.txt"); //get item info
@@ -1457,9 +1458,12 @@ void store(){ //store menu
         else{cout << "*Already Purchased*\n";} //already bought
         cout << " (2): Stat Boost  [5 Diamonds]\n";
         cout << " (3): Buy Items\n";
+        cout << " (4): Second Starting Item ";
+        if(store2 == "no"){cout << " [750 Coins]\n";} //can be bought
+        else{cout << "*Already Purchased*\n";} //already bought
         cout << " (0): Back to Menu\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "3");
+    }while(X < "0" || X > "4");
     if(X == "1"){
         if(store1 == "yes"){ //already own game speed upgrade
             system("clear"); cout << "You already own this item\n";
@@ -1488,6 +1492,19 @@ void store(){ //store menu
         }
     }
     else if(X == "3"){item_shop();}
+    else if(X == "2"){
+        if(store2 == "yes"){ //already own second item
+            system("clear"); cout << "You already own this upgrade\n";
+            this_thread::sleep_for(chrono::seconds(1)); store();
+        }
+        else{
+            if(COINS > 749){ //buy game speed upgrade
+                DIAMONDS -= 750; store2 = "yes";
+                update(); store();
+            }
+            else{ too_poor();}
+        }
+    }
     else{menu();}
 }
 
@@ -1525,7 +1542,7 @@ void settings(){ //settings menu
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2; ELECTRIC = 0;
             game_speed = 1000; store1 = "no"; DIAMONDS = 0; numItems = 0; DODGE = 5; LUCK = 5; SHIELD = 0;
-            update(); reset_items(); settings();
+            store2 = "no"; update(); reset_items(); settings();
         }
         else{settings();}
     }
@@ -1541,8 +1558,8 @@ void update(){ //send player data to text file
     ELECTRIC << endl << "Heal: " << HEAL << endl << "Crit-Chance: " << CRITC << endl << "Crit-Damage: " << 
     CRITD << endl << "Dodge: " << DODGE << endl << "Shield: " << SHIELD << endl << "Luck: " <<
     LUCK << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
-    endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << 
-    "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl;
+    endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << "store2: " << store2 <<
+    endl << "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl;
     outfile.close();
 }
 
@@ -1628,6 +1645,30 @@ void pick_item(){ //get new item
     if(X == "1"){items[a] = 1;}
     else if(X == "2"){items[b] = 1;}
     else{items[c] = 1;}
+
+    if(store2 == "yes"){ //if second item upgrade owned
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+        system("clear");
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+        info = extra_item(numItems, items); //return two items
+        d = info.at(0); e = info.at(1);
+        a = stoi(d); b = stoi(e);
+        if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
+        else if(a == 3){x = GoS;} else if(a == 4){x = RoD;} else if(a == 5){x = CoP;}
+        else if(a == 6){x = G_T;} else{x = BotE;}
+    
+        if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
+        else if(b == 3){y = GoS;} else if(b == 4){y = RoD;} else if(b == 5){y = CoP;}
+        else if(b == 6){y = G_T;} else{y = BotE;}
+    
+        cout << " Select Second Item\n" << endl;
+        cout << " (1): "; x.print();
+        cout << "\n (2): "; y.print();
+        cout << "\n\n -> ";
+        cin >> X;
+        if(X == "1"){items[a] = 1;}
+        else{items[b] = 1;}
+    }
 }
 
 void item_shop(){ //buy items

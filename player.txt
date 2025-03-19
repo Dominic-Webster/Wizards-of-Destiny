@@ -14,5 +14,6 @@ Coins: 0
 Progress: 0
 Gamespeed: 1000
 store1: no
+store2: no
 Diamonds: 0
 Items: 0

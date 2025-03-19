@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.3.0
+## Version 2.3.1
 
 ## THE EPIC SPELL-SLINGING ROGUELIKE
 
@@ -26,6 +26,13 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.3.1
+03/19/2025
+- New Store Item
+- Bug fixes
+
+#### _______________________________________
 
 #### UPDATE 2.3.0
 03/17/2025
