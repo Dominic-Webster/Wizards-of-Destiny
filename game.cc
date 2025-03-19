@@ -607,7 +607,8 @@ void calculate(Spell card){ //calculate player spell results
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
             cout << endl << " You deal " << e << " ice damage!\n";
-            if(rand()%4 == 0){TURN = 2; cout << "\n Enemy Stunned!\n";}
+            if(rand()%4 == 0){this_thread::sleep_for(chrono::milliseconds(game_speed));
+                TURN = 2; cout << "\n Enemy Stunned!\n";}
         }
     }
     else if(t == "electric-stun"){ //electric(stun) spell
@@ -616,7 +617,8 @@ void calculate(Spell card){ //calculate player spell results
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
             cout << endl << " You deal " << e << " electric damage!\n";
-            if(rand()%10 < 3){TURN = 2; cout << "\n Enemy Stunned!\n";}
+            if(rand()%10 < 3){this_thread::sleep_for(chrono::milliseconds(game_speed));
+                TURN = 2; cout << "\n Enemy Stunned!\n";}
         }
     }
     else{ //drain spell
