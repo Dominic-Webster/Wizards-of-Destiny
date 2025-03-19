@@ -1873,7 +1873,7 @@ void encounter(){ //random encounters
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
         else{ //no more items
-            cout << " You find some treasure! +25 Coins!\n"; COINS += 25;
+            cout << " You find some treasure! +40 Coins!\n"; COINS += 40;
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
