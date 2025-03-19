@@ -1492,7 +1492,7 @@ void store(){ //store menu
         }
     }
     else if(X == "3"){item_shop();}
-    else if(X == "2"){
+    else if(X == "4"){
         if(store2 == "yes"){ //already own second item
             system("clear"); cout << "You already own this upgrade\n";
             this_thread::sleep_for(chrono::seconds(1)); store();
