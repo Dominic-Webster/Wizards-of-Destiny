@@ -899,7 +899,7 @@ void output_level(string factor){ //show level player is on
     else if(eTYPE == "Necro"){cout << " - Necromancer: ";}
     else if(eTYPE == "Storm"){cout << " - Stormcaster: ";}
     else{cout << " - Defender: ";}
-    cout << "[Health: " << eTempHP << "]" << endl << endl; //show enemy health
+    cout << "[Health: " << eTempHP << "/" << eHP << "]" << endl << endl; //show enemy health
     if(items[0] == 1){ cout << "       - Equipped: Amulet of Undying -\n";}
     if(items[1] == 1){ cout << "       - Equipped: Ring of Life -\n";}
     if(items[2] == 1){ cout << "       - Equipped: Staff of Power -\n";}
