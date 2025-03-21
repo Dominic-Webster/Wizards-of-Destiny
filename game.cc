@@ -1894,15 +1894,31 @@ void encounter(){ //random encounters
             damage -= 2; if(damage < 1){damage = 1;} health -= 2; if(tempHP > health){tempHP = health;}
         }
         else if(X == "1"){ //health potion
-            cout << "\n The potion tastes great!\n"; COINS -= 50; tempHP += (1+heal); health += (1+heal);
+            if(COINS > 49){
+                cout << "\n The potion tastes great!\n"; COINS -= 50; tempHP += (1+heal); health += (1+heal);
+            }
+            else{
+                cout << "\n The merchant sighs at your poverty, and gives you a coin for your trouble\n"; COINS++;
+            }
+            
         }
         else if(X == "2"){ //ornate dagger
-            cout << "\n The dagger looks like it will cause some damage!\n"; COINS -= 100; damage += 5;
+            if(COINS > 99){
+                cout << "\n The dagger looks like it will cause some damage!\n"; COINS -= 100; damage += 5;
+            }
+            else{
+                cout << "\n The merchant sighs at your poverty, and gives you a coin for your trouble\n"; COINS++;
+            }    
         }
         else if(X == "3"){ //glittering amulet
-            cout << "\n The amulet is pulsing with power!\n"; COINS -= 500; damage += 10; health += 5;
-            tempHP += 5; ice += 3; fire += 3; poison += 3; electric += 3; heal += 3; critc += 10; luck +=10;
-            dodge += 10; critd += 10; shield++;
+            if(COINS > 499){
+                cout << "\n The amulet is pulsing with power!\n"; COINS -= 500; damage += 10; health += 5;
+                tempHP += 5; ice += 3; fire += 3; poison += 3; electric += 3; heal += 3; critc += 10; luck +=10;
+                dodge += 10; critd += 10; shield++;
+            }
+            else{
+                cout << "\n The merchant sighs at your poverty, and gives you a coin for your trouble\n"; COINS++;
+            }    
         }
         else{
             cout << "\n The merchant sighs, but lets you go on your way\n";
