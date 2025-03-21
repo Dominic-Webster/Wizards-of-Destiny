@@ -1425,6 +1425,7 @@ void level_up(){ //level up menu
         }
     }
     else{menu();}
+    level_up();
 }
 
 void how_to(){ //game instructions
@@ -1940,7 +1941,7 @@ void encounter(){ //random encounters
 }
 
 int itemCount(){ //find number of items still not equipped
-    int count;
+    int count = 0;
     for(int i = 0; i < 8; i++){
         if(items[i] == 0){count++;}
     }
