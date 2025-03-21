@@ -1425,8 +1425,6 @@ void level_up(){ //level up menu
         }
     }
     else{menu();}
-
-    level_up();
 }
 
 void how_to(){ //game instructions
