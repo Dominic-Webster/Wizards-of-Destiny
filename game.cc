@@ -25,8 +25,8 @@ string LNAME2[20] = {"Westbound", "The Dead", "The Lost", "The Old", "The Young"
 "The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu"};
 
 //0, 1, 2, 3, 4, 5, 6, 7
-Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost starting health", 0, 0), 
-SoP("Staff of Power", "Boost elements", 0, 0), GoS("Gauntlets of Strength", "Boost starting damage", 0, 0), 
+Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost health", 0, 0), 
+SoP("Staff of Power", "Boost elements", 0, 0), GoS("Gauntlets of Strength", "Boost damage", 0, 0), 
 RoD("Rune of Death", "Weaken enemy health", 0, 0), CoP("Cloak of Protection", "Reduce elemental damage", 0, 0),
 G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "Boost dodge chance", 0, 0); 
 int items[8]; //keeps track of which items player is using
@@ -1795,7 +1795,7 @@ void encounter(){ //random encounters
         cout << " (1): Drink unknown potion\n (2): Don't drink unknown potion\n\n -> ";
         cin >> X;
         if(X == "1"){
-            if(rand()%6 == 0){ //stat boost
+            if(rand()%100 < (20 + (luck/2))){ //stat boost
                 factor = rand()%6;
                 if(factor == 0){ //health
                     cout << endl << " Your health permanently increases!\n"; HP++; tempHP++; health++;
@@ -1854,8 +1854,22 @@ void encounter(){ //random encounters
             cout << "\n (2): "; y.print();
             cout << "\n\n -> ";
             cin >> X;
-            if(X == "1"){items[a] = 1;}
-            else{items[b] = 1;}
+            if(X == "1"){items[a] = 1;
+                if(a == 1){health+=RoL.getStat(); tempHP+=RoL.getStat();}//RoL
+                else if(a == 2){fire+=SoP.getStat(); ice+=SoP.getStat();
+                    poison+=SoP.getStat(); electric+=SoP.getStat();}//SoP
+                else if(a == 3){damage+=GoS.getStat();}//GoS
+                else if(a == 6){critc+=G_T.getStat();}//G_T
+                else if(a == 7){dodge+=BotE.getStat();}//BotE
+            }
+            else{items[b] = 1;
+                if(b == 1){health+=RoL.getStat(); tempHP+=RoL.getStat();}//RoL
+                else if(b == 2){fire+=SoP.getStat(); ice+=SoP.getStat();
+                    poison+=SoP.getStat(); electric+=SoP.getStat();}//SoP
+                else if(b == 3){damage+=GoS.getStat();}//GoS
+                else if(b == 6){critc+=G_T.getStat();}//G_T
+                else if(b == 7){dodge+=BotE.getStat();}//BotE
+            }
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
         else if(itemCount() == 1){ //one item can be found
@@ -1863,13 +1877,15 @@ void encounter(){ //random encounters
             for(count = 0; items[count] == 1; count++);
             items[count] = 1;
             if(count == 0){cout << " You found the Amulet of Undying!\n";}
-            else if(count == 1){cout << " You come across a Ring of Life!\n";}
-            else if(count == 2){cout << " You found a Staff of Power!\n";}
-            else if(count == 3){cout << " You found the Gauntlets of Strength!\n";}
+            else if(count == 1){cout << " You come across a Ring of Life!\n"; 
+                health+=RoL.getStat(); tempHP+=RoL.getStat();}
+            else if(count == 2){cout << " You found a Staff of Power!\n"; fire+=SoP.getStat();
+                ice+=SoP.getStat(); poison+=SoP.getStat(); electric+=SoP.getStat();}
+            else if(count == 3){cout << " You found the Gauntlets of Strength!\n"; damage+=GoS.getStat();}
             else if(count == 4){cout << " You pick up the Rune of Death!\n";}
             else if(count == 5){cout << " You found the Cloak of Protection!\n";}
-            else if(count == 6){cout << " You discover a Golden Talisman!\n";}
-            else{cout << " You found some Boots of the Elves!\n";}
+            else if(count == 6){cout << " You discover a Golden Talisman!\n"; critc+=G_T.getStat();}
+            else{cout << " You found some Boots of the Elves!\n"; dodge+=BotE.getStat();}
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
         else{ //no more items
