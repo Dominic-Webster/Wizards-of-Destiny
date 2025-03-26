@@ -1648,7 +1648,6 @@ void pick_item(){ //get new item
     if(store2 == "yes"){ //if second item upgrade owned
         this_thread::sleep_for(chrono::milliseconds(game_speed));
         system("clear");
-        this_thread::sleep_for(chrono::milliseconds(game_speed));
         info = extra_item(numItems, items); //return two items
         d = info.at(0); e = info.at(1);
         a = stoi(d); b = stoi(e);
