@@ -647,36 +647,36 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
                     eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 8){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 9){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 10){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -698,9 +698,9 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //heal
             eTempHP += eHEAL;
@@ -722,9 +722,9 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
     }
     else if(eTYPE == "Necro"){ //necromancer
@@ -741,9 +741,9 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + ePOISON);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 6){ //heal
             eTempHP += eHEAL;
@@ -771,18 +771,18 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 3){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 7){ //heal
             eTempHP += eHEAL;
@@ -794,9 +794,9 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //drain
             tempHP -= (1 + ((eDMG + eHEAL) / 2));
@@ -819,21 +819,21 @@ void calculate_enemy(){ //calculate what spell enemy casts
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n Cloak of Protection activates\n";} //cloak of protection
+                cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{//stun
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}}
+                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
             this_thread::sleep_for(chrono::milliseconds(game_speed));
             cout << "\n The shock from the spell leaves you stunned...\n"; TURN = 3;
-            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            this_thread::sleep_for(chrono::milliseconds(game_speed));}
         }    
     }
 }
