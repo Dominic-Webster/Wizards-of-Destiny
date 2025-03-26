@@ -32,11 +32,11 @@ G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "B
 int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE, store1, store2, eName, encounterType;
+string X, eTYPE, store1, store2, eName, encounterType, t;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level, SHIELD, shield,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, LUCK, luck, 
 DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE, numItems, ELECTRIC, electric,
-eELECTRIC; 
+eELECTRIC, e, efactor; 
 
 int main(int argc, char const *argv[]){
     srand(time(0)); //seeds random to time
@@ -569,7 +569,7 @@ void enemy(string factor){ //enemy turn
 }
 
 void calculate(Spell card){ //calculate player spell results
-    string t = card.getType(); int e = card.getEffect();
+    t = card.getType(); e = card.getEffect();
     if(t == "attack" || t == "fire" || t == "ice" || t == "poison" || t == "electric"){ //attack spell
         if(t == "fire" && eTYPE == "Ice"){e+=fire;} //ice sorcerer is weak to fire
         if(t == "fire" && eTYPE == "Fire"){e-=fire;} //fire mage is fire resistant
@@ -596,14 +596,14 @@ void calculate(Spell card){ //calculate player spell results
         }
     }
     else if(t == "atk-stun"){ //attack(stun) spell
-        if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%110 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; TURN = 2; //deal damage, trigger stun
             cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
     else if(t == "ice-stun"){ //ice(stun) spell
-        if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%105 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
@@ -613,7 +613,7 @@ void calculate(Spell card){ //calculate player spell results
         }
     }
     else if(t == "electric-stun"){ //electric(stun) spell
-        if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%105 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
@@ -631,17 +631,16 @@ void calculate(Spell card){ //calculate player spell results
 }
 
 void calculate_enemy(){ //calculate what spell enemy casts
-    int factor;
     if(eTYPE == "Wizard"){ //evil wizard
-        factor = rand()%11;
-        if(factor < 6){ //attack
+        efactor = rand()%11;
+        if(efactor < 6){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";} //player dodges
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; 
                     cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
-        else if(factor < 7){ //fire
+        else if(efactor < 7){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
@@ -650,7 +649,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
-        else if(factor < 8){ //ice
+        else if(efactor < 8){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -659,7 +658,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
-        else if(factor < 9){ //poison
+        else if(efactor < 9){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -668,7 +667,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
-        else if(factor < 10){ //electric
+        else if(efactor < 10){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -684,15 +683,15 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
     }
     else if(eTYPE == "Fire"){ //fire mage
-        factor = rand()%10;
-        if(factor < 3){ //attack
+        efactor = rand()%10;
+        if(efactor < 3){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
-        else if(factor < 9){ //fire
+        else if(efactor < 9){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -708,8 +707,8 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
     }
     else if(eTYPE == "Ice"){ //ice sorcerer
-        factor = rand()%10;
-        if(factor < 4){ //attack
+        efactor = rand()%10;
+        if(efactor < 4){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName << 
@@ -727,15 +726,15 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
     }
     else if(eTYPE == "Necro"){ //necromancer
-        factor = rand()%11;
-        if(factor < 1){ //attack
+        efactor = rand()%11;
+        if(efactor < 1){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
-        else if(factor < 5){ //poison
+        else if(efactor < 5){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -744,7 +743,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
-        else if(factor < 6){ //heal
+        else if(efactor < 6){ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
             cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
@@ -757,15 +756,15 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
     }
     else if(eTYPE == "Defend"){ //defender
-        factor = rand()%11;
-        if(factor < 1){ //attack
+        efactor = rand()%11;
+        if(efactor < 1){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
-        else if(factor < 2){ //fire
+        else if(efactor < 2){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -774,7 +773,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                  cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
-        else if(factor < 3){ //ice
+        else if(efactor < 3){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -783,12 +782,12 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
         }
-        else if(factor < 7){ //heal
+        else if(efactor < 7){ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
             cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
-        else if(factor < 8){ //electric
+        else if(efactor < 8){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -805,15 +804,15 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
     }
     else if(eTYPE == "Storm"){
-        factor = rand()%10;
-        if(factor < 2){ //attack
+        efactor = rand()%10;
+        if(efactor < 2){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
-        else if(factor < 9){//electric
+        else if(efactor < 9){//electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
