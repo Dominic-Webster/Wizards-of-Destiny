@@ -574,7 +574,9 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "fire" && eTYPE == "Ice"){e+=fire;} //ice sorcerer is weak to fire
         if(t == "fire" && eTYPE == "Fire"){e-=fire;} //fire mage is fire resistant
         if(t == "ice" && eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
+        if(t == "ice-stun" && eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
+        if(t == "ice-stun" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
         if(t == "electric" && eTYPE == "Wizard"){e-=electric;} //Wizard is electric resistant
