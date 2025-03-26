@@ -1497,7 +1497,7 @@ void store(){ //store menu
         }
         else{
             if(COINS > 749){ //buy game speed upgrade
-                DIAMONDS -= 750; store2 = "yes";
+                COINS -= 750; store2 = "yes";
                 update(); store();
             }
             else{system("clear"); cout << "You don't have enough coins\n";
