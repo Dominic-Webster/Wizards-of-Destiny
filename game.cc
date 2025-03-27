@@ -625,10 +625,18 @@ void calculate(Spell card){ //calculate player spell results
         }
     }
     else{ //drain spell
-        eTempHP -= e; //damage
-        tempHP += e; //heal
-        if(tempHP > health){tempHP = health;} //can't go over max
-        cout << endl << " You drain " << e << " life from the enemy!\n";
+        if(eTempHP < e){
+            tempHP += eTempHP;
+            eTempHP -= e;
+            if(tempHP > health){tempHP = health;} //can't go over max
+            cout << endl << " You drain the life from your enemy!\n";
+        }
+        else{
+            eTempHP -= e; //damage
+            tempHP += e; //heal
+            if(tempHP > health){tempHP = health;} //can't go over max
+            cout << endl << " You drain " << e << " life from the enemy!\n";
+        }
     }
 }
 
@@ -1751,7 +1759,8 @@ void encounter(){ //random encounters
     else if(factor < 14){encounterType = "potion choice";} //20%
     else if(factor < 16){encounterType = "diamond";} //10%
     else if(factor < 18){encounterType = "item";} //10%
-    else{encounterType = "secret passage";} //10%
+    else if(factor < 19){encounterType = "fairy";} //5%
+    else{encounterType = "secret passage";} //5%
 
     if(encounterType == "trap"){
         factor = rand()%3;
@@ -1938,6 +1947,12 @@ void encounter(){ //random encounters
         else{
             cout << "\n The merchant sighs, but lets you go on your way\n";
         }
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+    }
+
+    else if(encounterType == "fairy"){
+        cout << " A little fairy lands on your shoulder, and gives you a blessing\n";
+        damage++; critd += 2; fire++; ice++; poison++; electric++;
         this_thread::sleep_for(chrono::milliseconds(game_speed));
     }
 
