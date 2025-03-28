@@ -677,7 +677,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
-        else if(efactor < 10){ //electric
+        else if(efactor < 10 || eTempHP == eHP){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -701,7 +701,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
-        else if(efactor < 9){ //fire
+        else if(efactor < 9 || eTempHP == eHP){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
                 if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
@@ -753,7 +753,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
-        else if(efactor < 6){ //heal
+        else if(efactor < 6 || eTempHP == eHP){ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
             cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
@@ -792,7 +792,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
-        else if(efactor < 7){ //heal
+        else if(efactor < 7 && eTempHP < eHP){ //heal
             eTempHP += eHEAL;
             if(eTempHP > eHP){eTempHP = eHP;}
             cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
