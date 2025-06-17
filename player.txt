@@ -17,3 +17,4 @@ store1: no
 store2: no
 Diamonds: 0
 Items: 0
+Endless: 0

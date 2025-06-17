@@ -1,7 +1,7 @@
 # WIZARDS OF DESTINY
-## Version 2.3.1
+## Version 2.4.0
 
-## THE EPIC SPELL-SLINGING ROGUELIKE
+## THE EPIC SPELL-SLINGING ROGUELITE
 
 - Embark On Dangerous Adventures!
 - Face Off Against Powerful Foes!
@@ -26,6 +26,12 @@
 ---
 
 ### Update History
+
+#### UPDATE 2.4.0
+06/16/2025
+- New Game Mode: Endless Mode
+
+#### _______________________________________
 
 #### UPDATE 2.3.1
 03/19/2025
