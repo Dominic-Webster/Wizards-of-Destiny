@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 2.4.0
+## Version 3.0.0
 
 ## THE EPIC SPELL-SLINGING ROGUELITE
 
@@ -26,6 +26,16 @@
 ---
 
 ### Update History
+
+#### UPDATE 3.0.0
+06/18/2025
+- Companion feature added
+- 3 companions to unlock: Fairy, Imp, and Pixie
+- Boon feature added
+- 2 boons to unlock: Guardian and Warrior
+- Rebirth feature added
+
+#### _______________________________________
 
 #### UPDATE 2.4.0
 06/16/2025

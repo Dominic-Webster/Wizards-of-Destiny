@@ -2,6 +2,7 @@
 #include "colors.h"
 #include "item.h"
 #include <ctime>
+#include <cmath>
 #include <fstream>
 #include <thread>
 
@@ -10,11 +11,12 @@ void fight(string factor); void database(); void endless_mode();
 void level_up(); void settings(); void update();
 void make_enemy(string factor); void encounter();
 void output_level(string factor); int itemCount();
-void show_card(Spell card); void too_poor();
-void player(string factor); void item_shop();
+void show_card(Spell card); void too_poor(); void boost_menu();
+void player(string factor); void item_shop(); void calculate_comp();
 void enemy(string factor); void reset_items();
 void calculate(Spell card); void calculate_enemy();
 void enemy_name(); void pick_item(); void update_items();
+void boon_menu(); void companion_menu(); void rebirth_menu();
 
 string FNAME[25] = {"Yarno", "Belloc", "Soma", "Yeen", "Marcuus", "Liol", "Quand", "Jurno", "Corsto", "Kaimo", "Lord Denna", "Hubert",
 "Wernda", "Helena", "Astan", "Lucia", "Ferdinand", "Orp", "Oogga", "Ray", "Rendolf", "Portian", "Billis", "Quamm", "Foxy"};
@@ -33,11 +35,11 @@ G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "B
 int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE, store1, store2, eName, encounterType, t;
+string X, eTYPE, store1, store2, eName, encounterType, t, boon1, boon2, comp1, comp2, comp3;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level, SHIELD, shield,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, LUCK, luck, 
 DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE, numItems, ELECTRIC, electric,
-eELECTRIC, e, efactor, ENDLESS, endlessNum; 
+eELECTRIC, e, efactor, ENDLESS, endlessNum, REBIRTH, BOON, COMPANION;
 
 int main(int argc, char const *argv[]){
     srand(time(0)); //seeds random to time
@@ -56,6 +58,10 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; game_speed = stoi(temp); infile >> waste >> temp; store1 = temp; 
     infile >> waste >> temp; store2 = temp; infile >> waste >> temp; DIAMONDS = stoi(temp); 
     infile >> waste >> temp; numItems = stoi(temp); infile >> waste >> temp; ENDLESS = stoi(temp);
+    infile >> waste >> temp; REBIRTH = stoi(temp); infile >> waste >> temp; BOON = stoi(temp);
+    infile >> waste >> temp; boon1 = temp; infile >> waste >> temp; boon2 = temp;
+    infile >> waste >> temp; COMPANION = stoi(temp); infile >> waste >> temp; comp1 = temp;
+    infile >> waste >> temp; comp2 = temp; infile >> waste >> temp; comp3 = temp;
     infile.close();
 
     infile.open("item.txt"); //get item info
@@ -82,22 +88,24 @@ void menu(){ //game menu
         cout << BLUE << "    - MENU -" << RESET << endl << endl;
         cout << GREEN << " (1):" << RESET << " Play Game" << endl;
         cout << GREEN << " (2):" << RESET << " Level Up" << endl;
-        cout << GREEN << " (3):" << RESET << " Store" << endl;
-        cout << GREEN << " (4):" << RESET << " How To Play" << endl;
-        cout << GREEN << " (5):" << RESET << " Settings" << endl;
-        cout << GREEN << " (6):" << RESET << " Enemy Database" << endl;
+        cout << GREEN << " (3):" << RESET << " Additional Upgrades" << endl;
+        cout << GREEN << " (4):" << RESET << " Store" << endl;
+        cout << GREEN << " (5):" << RESET << " How To Play" << endl;
+        cout << GREEN << " (6):" << RESET << " Settings" << endl;
+        cout << GREEN << " (7):" << RESET << " Enemy Database" << endl;
         cout << GREEN << " (0):" << RESET << " [Exit Game]" << endl << endl;
         cout << " -> ";
         cin >> X;
         system("clear");
-    }while(X < "0" || X > "6");
+    }while(X < "0" || X > "7");
 
     if(X == "1"){battle();} //play the game
     else if(X == "2"){level_up();} //go to level up menu
-    else if(X == "3"){store();} //go to store
-    else if(X == "4"){how_to();} //how to play
-    else if(X == "5"){settings();} //go to settings
-    else if(X == "6"){database();} //go to enemy database
+    else if(X == "3"){boost_menu();} //boons/companions/rebirth
+    else if(X == "4"){store();} //go to store
+    else if(X == "5"){how_to();} //how to play
+    else if(X == "6"){settings();} //go to settings
+    else if(X == "7"){database();} //go to enemy database
     else{update(); update_items(); exit(0);} //save and exit
 }
 
@@ -173,8 +181,8 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
-                cout << " Reward: " << level*5 << " coins!\n" << endl; //give player reward
-                COINS += (level*5);
+                cout << " Reward: " << level*5*REBIRTH << " coins!\n" << endl; //give player reward
+                COINS += (level*5*REBIRTH);
                 random = (rand() % 3); //player has chance to get a diamond
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
@@ -225,8 +233,8 @@ void fight(string factor){ //fight function
                 if(level == 20){ //dungeon cleared
                     cout << "You've cleared the Misty Dungeon!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 250 Coins\n" << endl; //completion reward
-                    COINS += 250;
+                    cout << "Reward: " << 250*REBIRTH << " Coins\n" << endl; //completion reward
+                    COINS += 250*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS++;
                     cout << "You have found a diamond!\n" << endl;}
@@ -270,8 +278,8 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*10 << " coins!\n" << endl; //give reward
-                COINS += (level*10);
+                cout << " Reward: " << level*10*REBIRTH << " coins!\n" << endl; //give reward
+                COINS += (level*10*REBIRTH);
                 random = (rand() % 4); //diamond chance
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
@@ -322,8 +330,8 @@ void fight(string factor){ //fight function
                 if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 500 Coins\n" << endl; //player reward
-                    COINS += 500;
+                    cout << "Reward: " << 500*REBIRTH << "Coins\n" << endl; //player reward
+                    COINS += 500*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS += 2;
                         cout << "You have found 2 diamonds!\n" << endl;}
@@ -367,8 +375,8 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*20 << " coins!\n" << endl; //player reward
-                COINS += (level*20);
+                cout << " Reward: " << level*20*REBIRTH << " coins!\n" << endl; //player reward
+                COINS += (level*20*REBIRTH);
                 random = (rand() % 4); //diamond chance
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds\n";}
@@ -419,8 +427,8 @@ void fight(string factor){ //fight function
                 if(level == 20){ //mountain cleared
                     cout << "You've cleared the Mountain of Despair!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 750 Coins\n" << endl; //player reward
-                    COINS += 750;
+                    cout << "Reward: " << 750*REBIRTH << "Coins\n" << endl; //player reward
+                    COINS += 750*REBIRTH;
                     random = (rand() % 2);
                     if(random == 0){DIAMONDS += 2;
                     cout << "You have found 2 diamonds!\n" << endl;}
@@ -464,8 +472,8 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*40 << " coins!\n" << endl; //give reward
-                COINS += (level*40);
+                cout << " Reward: " << level*40*REBIRTH << " coins!\n" << endl; //give reward
+                COINS += (level*40*REBIRTH);
                 random = (rand() % 3); //diamond chance
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds!\n";}
@@ -515,8 +523,8 @@ void fight(string factor){ //fight function
                 if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: 800 Coins\n" << endl; //player reward
-                    COINS += 800;
+                    cout << "Reward: " << 800*REBIRTH << "Coins\n" << endl; //player reward
+                    COINS += 800*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS += 3;
                         cout << "You have found 3 diamonds!\n" << endl;}
@@ -584,7 +592,7 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
         if(t == "electric" && eTYPE == "Wizard"){e-=electric;} //Wizard is electric resistant
         if(t == "electric" && eTYPE == "Necro"){e+=electric;} //Necro is weak to poison
-        if(rand()%100 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%100 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //decrease enemy health
@@ -601,14 +609,14 @@ void calculate(Spell card){ //calculate player spell results
         }
     }
     else if(t == "atk-stun"){ //attack(stun) spell
-        if(rand()%110 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%110 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; TURN = 2; //deal damage, trigger stun
             cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
     else if(t == "ice-stun"){ //ice(stun) spell
-        if(rand()%105 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
@@ -618,7 +626,7 @@ void calculate(Spell card){ //calculate player spell results
         }
     }
     else if(t == "electric-stun"){ //electric(stun) spell
-        if(rand()%105 < eDODGE){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
@@ -641,6 +649,38 @@ void calculate(Spell card){ //calculate player spell results
             cout << endl << " You drain " << e << " life from the enemy!\n";
         }
     }
+
+    if(COMPANION != 0){calculate_comp();} //companions
+}
+
+void calculate_comp(){ //calculate companion effects
+    if(COMPANION == 1){ //fairy
+        if(tempHP < health){
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            cout << "\n Fairy blesses you with health\n";
+            if(heal < 4){tempHP += 2;}
+            else{tempHP += heal/2;}
+            if(tempHP > health){tempHP = health;}
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+    else if(COMPANION == 2){ //imp
+        if(eTempHP > 0){
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            cout << "\n Imp strikes at your enemy\n";
+            eTempHP -= damage/2;
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+        }
+    }
+    else{ //pixie
+        if(eTempHP > 0 && TURN != 2){
+            if(rand()%5 == 0){
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+                cout << "\n Pixie stuns your enemy\n"; TURN = 2;
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+            }
+        }
+    }
 }
 
 void calculate_enemy(){ //calculate what spell enemy casts
@@ -649,14 +689,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         if(efactor < 6){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";} //player dodges
             else{tempHP -= eDMG;
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; 
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; 
                     cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 7){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " <<
                     eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -665,7 +705,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else if(efactor < 8){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -674,7 +714,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else if(efactor < 9){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -683,7 +723,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else if(efactor < 10 || eTempHP == eHP){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -700,14 +740,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         if(efactor < 3){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 9 || eTempHP == eHP){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -724,14 +764,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         if(efactor < 4){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName << 
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName << 
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else{ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -743,14 +783,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         if(efactor < 1){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 5){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + ePOISON);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -773,14 +813,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         if(efactor < 1){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 2){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eFIRE);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -789,7 +829,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else if(efactor < 3){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eICE);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -803,7 +843,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else if(efactor < 8){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -821,14 +861,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         if(efactor < 2){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= eDMG;
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 9){//electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -837,7 +877,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         else{//stun
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (eDMG + eELECTRIC);
-                if(rand()%100 < eCRITC){tempHP -= eCRITD; cout << " " << eName <<
+                if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
             if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -935,6 +975,17 @@ void output_level(string factor){ //show level player is on
     if(items[5] == 1){ cout << "       - Equipped: Cloak of Protection -\n";}
     if(items[6] == 1){ cout << "       - Equipped: Golden Talisman -\n";}
     if(items[7] == 1){ cout << "       - Equipped: Boots of the Elves -\n";}
+    if(COMPANION != 0){
+        cout << CYAN;
+        if(COMPANION == 1){cout << "       - Companion: Fairy -\n";}
+        if(COMPANION == 2){cout << "       - Companion: Imp -\n";}
+        if(COMPANION == 3){cout << "       - Companion: Pixie -\n";}
+    }
+    if(BOON != 0){
+        cout << YELLOW;
+        if(BOON == 1){cout << "       - Boon of the Guardian -\n";}
+        if(BOON == 2){cout << "       - Boon of the Warrior -\n";}
+    }
     cout << RESET;
     cout << "       [Health: "; if(tempHP < health){cout << RED;} else{cout << GREEN;}
     cout << tempHP << RESET << "/" << GREEN << health << RESET << "] [Damage: " << damage << "] [Fire: " << fire <<
@@ -1307,16 +1358,16 @@ void endless_mode(){ //endless game mode
             this_thread::sleep_for(chrono::milliseconds(game_speed*2)); //wait briefly
             //give player reward
             if(endlessNum < 25){
-                cout << " Reward: " << endlessNum*5 << " coins!\n" << endl; 
-                COINS += (endlessNum*5);
+                cout << " Reward: " << endlessNum*5*REBIRTH << " coins!\n" << endl; 
+                COINS += (endlessNum*5*REBIRTH);
             }
             else if(endlessNum < 50){
-                cout << " Reward: " << endlessNum*10 << " coins!\n" << endl; 
-                COINS += (endlessNum*10);
+                cout << " Reward: " << endlessNum*10*REBIRTH << " coins!\n" << endl; 
+                COINS += (endlessNum*10*REBIRTH);
             }
             else{
-                cout << " Reward: " << endlessNum*15 << " coins!\n" << endl; 
-                COINS += (endlessNum*15);
+                cout << " Reward: " << endlessNum*15*REBIRTH << " coins!\n" << endl; 
+                COINS += (endlessNum*15*REBIRTH);
             }
             random = (rand() % 3); //player has chance to get a diamond
             if(random == 0){DIAMONDS++;
@@ -1372,8 +1423,8 @@ void endless_mode(){ //endless game mode
                 else{health+=(buff+1); tempHP+=(buff+2); if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
             }
-            if(level != 5 && level != 10 && level != 15){ //random encounter
-                if(rand()%7 == 0){encounter();}
+            if(endlessNum%10 != 0){ //random encounter
+                if(rand()%6 == 0){encounter();}
             }
             if(tempHP > 0){cout << " Continuing on...\n"; 
             this_thread::sleep_for(chrono::milliseconds(game_speed));}
@@ -1755,7 +1806,8 @@ void settings(){ //settings menu
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2; ELECTRIC = 0;
             game_speed = 1000; store1 = "no"; DIAMONDS = 0; numItems = 0; DODGE = 5; LUCK = 5; SHIELD = 0;
-            store2 = "no"; ENDLESS = 0; update(); reset_items(); settings();
+            store2 = "no"; boon1 = boon2 = "no"; BOON = 0; ENDLESS = 0; REBIRTH = 1; COMPANION = 0;
+            comp1 = comp2 = comp3 = "no"; update(); reset_items(); settings();
         }
         else{settings();}
     }
@@ -1772,7 +1824,10 @@ void update(){ //send player data to text file
     CRITD << endl << "Dodge: " << DODGE << endl << "Shield: " << SHIELD << endl << "Luck: " <<
     LUCK << endl << "Coins: " << COINS << endl << "Progress: " << PROGRESS << 
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << "store2: " << store2 <<
-    endl << "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl << "Endless: " << ENDLESS << endl;
+    endl << "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl << "Endless: " << ENDLESS << 
+    endl << "Rebirth: " << REBIRTH << endl << "Boon: " << BOON << endl << "boon1: " << boon1 << 
+    endl << "boon2: " << boon2 << endl << "Companion: " << COMPANION << endl << "comp1: " << comp1 << endl << 
+    "comp2: " << comp2 << endl << "comp3: " << comp3 << endl;
     outfile.close();
 }
 
@@ -1924,6 +1979,154 @@ void item_shop(){ //buy items
         }
     }
     else{store();}
+}
+
+void boost_menu(){ //boons, companions, and rebirth
+    do{
+        system("clear");
+        cout << BLUE << "  - ADDITIONAL UPGRADES -\n" << RESET << endl;
+        cout << GREEN << " (1):" << RESET << " Boons\n";
+        cout << GREEN << " (2):" << RESET << " Companions\n";
+        cout << GREEN << " (3):" << RESET << " Rebirth\n";
+        cout << GREEN << " (0):" << RESET << " Back to Menu\n\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "3");
+    if(X == "0"){menu();}
+    else if(X == "1"){boon_menu();}
+    else if(X == "2"){companion_menu();}
+    else{rebirth_menu();}
+}
+
+void boon_menu(){ //controls player boons
+    do{
+        system("clear");
+        cout << BLUE << "  - BOONS -\n" << RESET << endl;
+        cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
+        cout << YELLOW << ITALIC << " Boons give a unique in-game buff\n" << RESET << endl;
+        cout << GREEN << " (1):" << RESET << " Boon of the Guardian: Enemies cannot crit";
+        if(boon1 == "no"){cout << CYAN << " (Unlock for 1500 coins)" << RESET;}
+        if(BOON == 1){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (2):" << RESET << " Boon of the Warrior: Enemies cannot dodge";
+        if(boon2 == "no"){cout << CYAN << " (Unlock for 3000 coins)" << RESET;}
+        if(BOON == 2){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (3):" << RESET << " Disable Boons\n";
+        cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "3");
+    if(X == "0"){boost_menu();}
+    else if(X == "1"){
+        if(boon1 == "no"){
+            if(COINS < 1500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                boon_menu();
+            }
+            else{COINS -= 1500; boon1 = "yes"; boon_menu();}
+        }
+        else{BOON = 1; boon_menu();}
+    }
+    else if(X == "2"){
+        if(boon2 == "no"){
+            if(COINS < 3000){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                boon_menu();
+            }
+            else{COINS -= 3000; boon2 = "yes"; boon_menu();}
+        }
+        else{BOON = 2; boon_menu();}
+    }
+    else{BOON = 0; boon_menu();}
+}
+
+void companion_menu(){ //controls player companions
+    do{
+        system("clear");
+        cout << BLUE << "  - COMPANIONS -\n" << RESET << endl;
+        cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
+        cout << YELLOW << ITALIC << " Companions assist you in battle\n" << RESET << endl;
+        cout << GREEN << " (1):" << RESET << " Fairy: Heals your wounds";
+        if(comp1 == "no"){cout << CYAN << " (Unlock for 500 coins)" << RESET;}
+        if(COMPANION == 1){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (2):" << RESET << " Imp: Attacks enemies";
+        if(comp2 == "no"){cout << CYAN << " (Unlock for 500 coins)" << RESET;}
+        if(COMPANION == 2){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (3):" << RESET << " Pixie: Can stun enemies";
+        if(comp3 == "no"){cout << CYAN << " (Unlock for 750 coins)" << RESET;}
+        if(COMPANION == 2){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (4):" << RESET << " Disable Companions\n";
+        cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "4");
+    if(X == "0"){boost_menu();}
+    else if(X == "1"){
+        if(comp1 == "no"){
+            if(COINS < 500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                companion_menu();
+            }
+            else{COINS -= 500; comp1 = "yes"; companion_menu();}
+        }
+        else{COMPANION = 1; companion_menu();}
+    }
+    else if(X == "2"){
+        if(comp2 == "no"){
+            if(COINS < 500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                companion_menu();
+            }
+            else{COINS -= 500; comp2 = "yes"; companion_menu();}
+        }
+        else{COMPANION = 2; companion_menu();}
+    }
+    else if(X == "3"){
+        if(comp3 == "no"){
+            if(COINS < 750){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                companion_menu();
+            }
+            else{COINS -= 750; comp3 = "yes"; companion_menu();}
+        }
+        else{COMPANION = 3; companion_menu();}
+    }
+    else{COMPANION = 0; companion_menu();}
+}
+
+void rebirth_menu(){ //controls player rebirth
+    do{
+        system("clear");
+        cout << BLUE << "  - REBIRTH (Level: " << REBIRTH << ") -\n" << RESET << endl;
+        cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
+        cout << YELLOW << ITALIC << " Rebirth resets all your stats and progress, but increases your coin income\n" << endl;
+        cout << RESET << GREEN << " (1):" << RESET << " Rebirth (" << 1000 * pow(2, REBIRTH-1) << " Coins)\n";
+        cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "1");
+    if(X == "0"){boost_menu();}
+    else{
+        system("clear");
+        if(COINS < 1000 * pow(2, REBIRTH-1)){
+            cout << CYAN << " You don't have enough coins!\n" << RESET;
+        }
+        else{
+            cout << YELLOW << " You are reborn!\n" << RESET;
+            cout << " Your stats and progress have been reset\n";
+            cout << " Your items and upgrades have been kept\n";
+            REBIRTH++; PROGRESS = 0; COINS = 0; HP = 10; DMG = 1; FIRE = 0; ICE = 0; POISON = 0;
+            ELECTRIC = 0; HEAL = 0; DODGE = 5; LUCK = 5; SHIELD = 0; CRITC = 5; CRITD = 2;
+            this_thread::sleep_for(chrono::seconds(1));
+        }
+        this_thread::sleep_for(chrono::seconds(1));
+        rebirth_menu();
+    }
 }
 
 void too_poor(){ //function calls when players try to buy something too expensive

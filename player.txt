@@ -18,3 +18,11 @@ store2: no
 Diamonds: 0
 Items: 0
 Endless: 0
+Rebirth: 1
+Boon: 0
+boon1: no
+boon2: no
+Companion: 0
+comp1: no
+comp2: no
+comp3: no
