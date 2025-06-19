@@ -202,6 +202,8 @@ void fight(string factor){ //fight function
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
+                cout << "\n [1]: Return to Menu\n -> ";
+                cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //back to play menu
             }
             else{ //proceed to next level
@@ -259,6 +261,8 @@ void fight(string factor){ //fight function
                         PROGRESS = 1; //unlock ruined castle
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
+                    cout << "\n [1]: Return to Menu\n -> ";
+                    cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and return to play menu
                 }
                 if(level != 5 && level != 10 && level != 15){ //random encounter
@@ -299,6 +303,8 @@ void fight(string factor){ //fight function
                 if(random == 0){DIAMONDS++;
                 cout << " You have found a diamond!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
+                cout << "\n [1]: Return to Menu\n -> ";
+                cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
             else{ //player beat level
@@ -356,6 +362,8 @@ void fight(string factor){ //fight function
                         PROGRESS = 2; //unlock mountain of despaiir
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
+                    cout << "\n [1]: Return to Menu\n -> ";
+                    cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and exit to menu
                 }
                 if(level != 5 && level != 10 && level != 15){ //random encounter
@@ -396,6 +404,8 @@ void fight(string factor){ //fight function
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
+                cout << "\n [1]: Return to Menu\n -> ";
+                cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
             else{ //player defeated level
@@ -453,6 +463,8 @@ void fight(string factor){ //fight function
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     } //if first time completed
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
+                    cout << "\n [1]: Return to Menu\n -> ";
+                    cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and go to menu
                 }
                 if(level != 5 && level != 10 && level != 15){ //random encounter
@@ -493,6 +505,8 @@ void fight(string factor){ //fight function
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
+                cout << "\n [1]: Return to Menu\n -> ";
+                cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
             else{ //player beat level
@@ -547,6 +561,8 @@ void fight(string factor){ //fight function
                     if(PROGRESS == 3){ //first time completed
                         PROGRESS = 4; //unlock next?
                     }
+                    cout << "\n [1]: Return to Menu\n -> ";
+                    cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and exit to menu
                 }
                 if(level != 5 && level != 10 && level != 15){ //random encounter
@@ -587,6 +603,8 @@ void fight(string factor){ //fight function
                 if(random == 0){DIAMONDS += 2;
                 cout << " You have found 2 diamonds!\n";}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
+                cout << "\n [1]: Return to Menu\n -> ";
+                cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
             else{ //player beat level
@@ -641,6 +659,8 @@ void fight(string factor){ //fight function
                     if(PROGRESS == 4){ //first time completed
                         PROGRESS = 5; //unlock next?
                     }
+                    cout << "\n [1]: Return to Menu\n -> ";
+                    cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and exit to menu
                 }
                 if(level != 5 && level != 10 && level != 15){ //random encounter
@@ -1597,6 +1617,8 @@ void endless_mode(){ //endless game mode
             if(random == 0){DIAMONDS++;
             cout << " You have found a diamond!\n";}
             this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
+            cout << "\n [1]: Return to Menu\n -> ";
+            cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
             update(); battle(); //back to play menu
         }
         else{ //proceed to next level
