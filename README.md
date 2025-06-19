@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 3.0.0
+## Version 3.0.1
 
 ## THE EPIC SPELL-SLINGING ROGUELITE
 
@@ -26,6 +26,14 @@
 ---
 
 ### Update History
+
+#### UPDATE 3.0.1
+06/19/2025
+- New Boon: Trickster
+- New Companion: Gnome
+- Boon and Companion costs adjusted
+
+#### _______________________________________
 
 #### UPDATE 3.0.0
 06/18/2025

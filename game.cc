@@ -1,3 +1,10 @@
+/**
+ * WIZARDS OF DESTINY
+ * @author: Dominic Webster
+ * @version: 3.0.1
+ * @brief: controls the main game
+ */
+
 #include "spell.h"
 #include "colors.h"
 #include "item.h"
@@ -35,7 +42,7 @@ G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "B
 int items[8]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
-string X, eTYPE, store1, store2, eName, encounterType, t, boon1, boon2, comp1, comp2, comp3;
+string X, eTYPE, store1, store2, eName, encounterType, t, boon1, boon2, boon3, comp1, comp2, comp3, comp4;
 int HP, DMG, COINS, FIRE, ICE, POISON, HEAL, PROGRESS, eHP, eTempHP, eDMG, TURN, level, SHIELD, shield,
 eFIRE, eICE, ePOISON, eHEAL, health, tempHP, damage, fire, ice, poison, heal, game_speed, LUCK, luck, 
 DIAMONDS, CRITC, CRITD, critc, critd, eCRITC, eCRITD, DODGE, dodge, eDODGE, numItems, ELECTRIC, electric,
@@ -60,8 +67,9 @@ int main(int argc, char const *argv[]){
     infile >> waste >> temp; numItems = stoi(temp); infile >> waste >> temp; ENDLESS = stoi(temp);
     infile >> waste >> temp; REBIRTH = stoi(temp); infile >> waste >> temp; BOON = stoi(temp);
     infile >> waste >> temp; boon1 = temp; infile >> waste >> temp; boon2 = temp;
-    infile >> waste >> temp; COMPANION = stoi(temp); infile >> waste >> temp; comp1 = temp;
-    infile >> waste >> temp; comp2 = temp; infile >> waste >> temp; comp3 = temp;
+    infile >> waste >> temp; boon3 = temp; infile >> waste >> temp; COMPANION = stoi(temp); 
+    infile >> waste >> temp; comp1 = temp; infile >> waste >> temp; comp2 = temp; 
+    infile >> waste >> temp; comp3 = temp; infile >> waste >> temp; comp4 = temp;
     infile.close();
 
     infile.open("item.txt"); //get item info
@@ -580,6 +588,7 @@ void enemy(string factor){ //enemy turn
 }
 
 void calculate(Spell card){ //calculate player spell results
+    bool critted = false;
     t = card.getType(); e = card.getEffect();
     if(t == "attack" || t == "fire" || t == "ice" || t == "poison" || t == "electric"){ //attack spell
         if(t == "fire" && eTYPE == "Ice"){e+=fire;} //ice sorcerer is weak to fire
@@ -593,7 +602,7 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "electric" && eTYPE == "Wizard"){e-=electric;} //Wizard is electric resistant
         if(t == "electric" && eTYPE == "Necro"){e+=electric;} //Necro is weak to poison
         if(rand()%100 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
-        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
+        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //decrease enemy health
             if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
@@ -610,14 +619,14 @@ void calculate(Spell card){ //calculate player spell results
     }
     else if(t == "atk-stun"){ //attack(stun) spell
         if(rand()%110 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
-        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
+        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; TURN = 2; //deal damage, trigger stun
             cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
     else if(t == "ice-stun"){ //ice(stun) spell
         if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
-        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
+        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
             cout << endl << " You deal " << e << " ice damage!\n";
@@ -627,7 +636,7 @@ void calculate(Spell card){ //calculate player spell results
     }
     else if(t == "electric-stun"){ //electric(stun) spell
         if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
-        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; 
+        else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;  
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             eTempHP -= e; //deal damage
             cout << endl << " You deal " << e << " electric damage!\n";
@@ -647,6 +656,17 @@ void calculate(Spell card){ //calculate player spell results
             tempHP += e; //heal
             if(tempHP > health){tempHP = health;} //can't go over max
             cout << endl << " You drain " << e << " life from the enemy!\n";
+        }
+    }
+
+    if(critted == true){ //a critical hit happened
+        if(BOON == 3 && tempHP < health){ //booon of the trickster
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            cout << YELLOW << "\n The Trickster's blessing heals you\n" << RESET;
+            if(heal < 6){tempHP += 3;}
+            else{tempHP += heal/2;}
+            if(tempHP > health){tempHP = health;}
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
 
@@ -672,13 +692,25 @@ void calculate_comp(){ //calculate companion effects
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
-    else{ //pixie
+    else if(COMPANION == 3){ //pixie
         if(eTempHP > 0 && TURN != 2){
             if(rand()%5 == 0){
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Pixie stuns your enemy\n"; TURN = 2;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
             }
+        }
+    }
+    else{ //gnome
+        if(rand()%3 == 0){
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(rand()%8 == 0){
+                cout << CYAN << "\n Gnome discovers a diamond!\n" << RESET; DIAMONDS++;
+            }
+            else{
+                cout << "\n Gnome finds some treasure! +" << 25*REBIRTH << " Coins!\n"; COINS += 25*REBIRTH;
+            }
+            this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
     }
 }
@@ -980,11 +1012,13 @@ void output_level(string factor){ //show level player is on
         if(COMPANION == 1){cout << "       - Companion: Fairy -\n";}
         if(COMPANION == 2){cout << "       - Companion: Imp -\n";}
         if(COMPANION == 3){cout << "       - Companion: Pixie -\n";}
+        if(COMPANION == 4){cout << "       - Companion: Gnome -\n";}
     }
     if(BOON != 0){
         cout << YELLOW;
         if(BOON == 1){cout << "       - Boon of the Guardian -\n";}
         if(BOON == 2){cout << "       - Boon of the Warrior -\n";}
+        if(BOON == 3){cout << "       - Boon of the Trickster -\n";}
     }
     cout << RESET;
     cout << "       [Health: "; if(tempHP < health){cout << RED;} else{cout << GREEN;}
@@ -1806,8 +1840,8 @@ void settings(){ //settings menu
         if(X == "1"){ //reset save
             HP=10; DMG=1; FIRE=0; ICE=0; POISON=0; HEAL=0; COINS=0; PROGRESS = 0; CRITC = 5; CRITD = 2; ELECTRIC = 0;
             game_speed = 1000; store1 = "no"; DIAMONDS = 0; numItems = 0; DODGE = 5; LUCK = 5; SHIELD = 0;
-            store2 = "no"; boon1 = boon2 = "no"; BOON = 0; ENDLESS = 0; REBIRTH = 1; COMPANION = 0;
-            comp1 = comp2 = comp3 = "no"; update(); reset_items(); settings();
+            store2 = "no"; boon1 = boon2 = boon3 = "no"; BOON = 0; ENDLESS = 0; REBIRTH = 1; COMPANION = 0;
+            comp1 = comp2 = comp3 = comp4 = "no"; update(); reset_items(); settings();
         }
         else{settings();}
     }
@@ -1826,8 +1860,9 @@ void update(){ //send player data to text file
     endl << "Gamespeed: " << game_speed << endl << "store1: " << store1 << endl << "store2: " << store2 <<
     endl << "Diamonds: " << DIAMONDS << endl << "Items: " << numItems << endl << "Endless: " << ENDLESS << 
     endl << "Rebirth: " << REBIRTH << endl << "Boon: " << BOON << endl << "boon1: " << boon1 << 
-    endl << "boon2: " << boon2 << endl << "Companion: " << COMPANION << endl << "comp1: " << comp1 << endl << 
-    "comp2: " << comp2 << endl << "comp3: " << comp3 << endl;
+    endl << "boon2: " << boon2 << endl << "boon3: " << boon3 << endl << "Companion: " << COMPANION << 
+    endl << "comp1: " << comp1 << endl << "comp2: " << comp2 << endl << "comp3: " << comp3 << endl <<
+    "comp4: " << comp4 << endl;
     outfile.close();
 }
 
@@ -2009,12 +2044,15 @@ void boon_menu(){ //controls player boons
         cout << GREEN << "\n (2):" << RESET << " Boon of the Warrior: Enemies cannot dodge";
         if(boon2 == "no"){cout << CYAN << " (Unlock for 3000 coins)" << RESET;}
         if(BOON == 2){cout << MAGENTA << " [Equipped]" << RESET;}
-        cout << GREEN << "\n (3):" << RESET << " Disable Boons\n";
+        cout << GREEN << "\n (3):" << RESET << " Boon of the Trickster: Heal on crits";
+        if(boon3 == "no"){cout << CYAN << " (Unlock for 5000 coins)" << RESET;}
+        if(BOON == 3){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (4):" << RESET << " Disable Boons\n";
         cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "3");
+    }while(X < "0" || X > "4");
     if(X == "0"){boost_menu();}
-    else if(X == "1"){
+    else if(X == "1"){ //guardian
         if(boon1 == "no"){
             if(COINS < 1500){
                 system("clear");
@@ -2026,7 +2064,7 @@ void boon_menu(){ //controls player boons
         }
         else{BOON = 1; boon_menu();}
     }
-    else if(X == "2"){
+    else if(X == "2"){ //warrior
         if(boon2 == "no"){
             if(COINS < 3000){
                 system("clear");
@@ -2038,6 +2076,18 @@ void boon_menu(){ //controls player boons
         }
         else{BOON = 2; boon_menu();}
     }
+    else if(X == "3"){ //trickster
+        if(boon3 == "no"){
+            if(COINS < 5000){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                boon_menu();
+            }
+            else{COINS -= 5000; boon3 = "yes"; boon_menu();}
+        }
+        else{BOON = 3; boon_menu();}
+    }
     else{BOON = 0; boon_menu();}
 }
 
@@ -2047,55 +2097,70 @@ void companion_menu(){ //controls player companions
         cout << BLUE << "  - COMPANIONS -\n" << RESET << endl;
         cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
         cout << YELLOW << ITALIC << " Companions assist you in battle\n" << RESET << endl;
-        cout << GREEN << " (1):" << RESET << " Fairy: Heals your wounds";
-        if(comp1 == "no"){cout << CYAN << " (Unlock for 500 coins)" << RESET;}
+        cout << GREEN << " (1):" << RESET << " Fairy: Heals your wounds"; //fairy
+        if(comp1 == "no"){cout << CYAN << " (Unlock for 1000 coins)" << RESET;}
         if(COMPANION == 1){cout << MAGENTA << " [Equipped]" << RESET;}
-        cout << GREEN << "\n (2):" << RESET << " Imp: Attacks enemies";
-        if(comp2 == "no"){cout << CYAN << " (Unlock for 500 coins)" << RESET;}
+        cout << GREEN << "\n (2):" << RESET << " Imp: Attacks enemies"; //imp
+        if(comp2 == "no"){cout << CYAN << " (Unlock for 1000 coins)" << RESET;}
         if(COMPANION == 2){cout << MAGENTA << " [Equipped]" << RESET;}
-        cout << GREEN << "\n (3):" << RESET << " Pixie: Can stun enemies";
-        if(comp3 == "no"){cout << CYAN << " (Unlock for 750 coins)" << RESET;}
-        if(COMPANION == 2){cout << MAGENTA << " [Equipped]" << RESET;}
-        cout << GREEN << "\n (4):" << RESET << " Disable Companions\n";
+        cout << GREEN << "\n (3):" << RESET << " Pixie: Can stun enemies"; //pixie
+        if(comp3 == "no"){cout << CYAN << " (Unlock for 2000 coins)" << RESET;}
+        if(COMPANION == 3){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (4):" << RESET << " Gnome: Searches for treasure"; //gnome
+        if(comp4 == "no"){cout << CYAN << " (Unlock for 5000 coins)" << RESET;}
+        if(COMPANION == 4){cout << MAGENTA << " [Equipped]" << RESET;}
+        cout << GREEN << "\n (5):" << RESET << " Disable Companions\n";
         cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "4");
+    }while(X < "0" || X > "5");
     if(X == "0"){boost_menu();}
-    else if(X == "1"){
+    else if(X == "1"){ //fairy
         if(comp1 == "no"){
-            if(COINS < 500){
+            if(COINS < 1000){
                 system("clear");
                 cout << CYAN << " You don't have enough coins!\n" << RESET;
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 500; comp1 = "yes"; companion_menu();}
+            else{COINS -= 1000; comp1 = "yes"; companion_menu();}
         }
         else{COMPANION = 1; companion_menu();}
     }
-    else if(X == "2"){
+    else if(X == "2"){ //imp
         if(comp2 == "no"){
-            if(COINS < 500){
+            if(COINS < 1000){
                 system("clear");
                 cout << CYAN << " You don't have enough coins!\n" << RESET;
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 500; comp2 = "yes"; companion_menu();}
+            else{COINS -= 1000; comp2 = "yes"; companion_menu();}
         }
         else{COMPANION = 2; companion_menu();}
     }
-    else if(X == "3"){
+    else if(X == "3"){ //pixie
         if(comp3 == "no"){
-            if(COINS < 750){
+            if(COINS < 2000){
                 system("clear");
                 cout << CYAN << " You don't have enough coins!\n" << RESET;
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 750; comp3 = "yes"; companion_menu();}
+            else{COINS -= 2000; comp3 = "yes"; companion_menu();}
         }
         else{COMPANION = 3; companion_menu();}
+    }
+    else if(X == "3"){ //gnome
+        if(comp4 == "no"){
+            if(COINS < 5000){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                companion_menu();
+            }
+            else{COINS -= 5000; comp4 = "yes"; companion_menu();}
+        }
+        else{COMPANION = 4; companion_menu();}
     }
     else{COMPANION = 0; companion_menu();}
 }
