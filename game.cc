@@ -20,7 +20,7 @@ void make_enemy(string factor); void encounter();
 void output_level(string factor); int itemCount();
 void show_card(Spell card); void too_poor(); void boost_menu();
 void player(string factor); void item_shop(); void calculate_comp();
-void enemy(string factor); void reset_items();
+void enemy(string factor); void reset_items(); void item_menu();
 void calculate(Spell card); void calculate_enemy();
 void enemy_name(); void pick_item(); void update_items();
 void boon_menu(); void companion_menu(); void rebirth_menu();
@@ -34,12 +34,13 @@ string FNAME2[25] = {"Holga", "Waine", "Harkken", "Folda", "Swinn", "Varis", "Ga
 string LNAME2[25] = {"Westbound", "The Dead", "The Lost", "The Old", "The Young", "Gillian", "The Fallen", "Bell", "Jund", "Ungundo", "Jojo", "Kiwi",
 "The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu", "The Small", "The Chum", "Of The Wolves"};
 
-//0, 1, 2, 3, 4, 5, 6, 7
+//0, 1, 2, 3, 4, 5, 6, 7, 8
 Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost health", 0, 0), 
 SoP("Staff of Power", "Boost elements", 0, 0), GoS("Gauntlets of Strength", "Boost damage", 0, 0), 
 RoD("Rune of Death", "Weaken enemy health", 0, 0), CoP("Cloak of Protection", "Reduce elemental damage", 0, 0),
-G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "Boost dodge chance", 0, 0); 
-int items[8]; //keeps track of which items player is using
+G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "Boost dodge chance", 0, 0),
+WoH("Wand of Heroes", "Boost shield", 1, 1); 
+int items[9]; //keeps track of which items player is using
 
 Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1, store2, eName, encounterType, t, boon1, boon2, boon3, comp1, comp2, comp3, comp4;
@@ -82,6 +83,7 @@ int main(int argc, char const *argv[]){
     infile>>waste>>temp>>waste; CoP.setStat(stoi(temp)); CoP.setLevel(stoi(waste)); //Cloak of Protection
     infile>>waste>>temp>>waste; G_T.setStat(stoi(temp)); G_T.setLevel(stoi(waste)); //Golden Talisman
     infile>>waste>>temp>>waste; BotE.setStat(stoi(temp)); BotE.setLevel(stoi(waste)); //Boots of the Elves
+    infile>>waste>>temp>>waste; WoH.setStat(stoi(temp)); WoH.setLevel(stoi(waste)); //Wand of Heroes
     infile.close();
 
     string command = ""; //dev commands
@@ -127,6 +129,7 @@ void battle(){ //adventure menu
         if(PROGRESS > 0){cout << GREEN << " (3):" << RESET << " Ruined Castle" << endl;} //only show after misty dungeon completed
         if(PROGRESS > 1){cout << GREEN << " (4):" << RESET << " Mountain of Despair" << endl;} //only show after ruined castle completed
         if(PROGRESS > 2){cout << GREEN << " (5):" << RESET << " Desolate Wastes" << endl;} //only show after mountain of despair completed
+        if(PROGRESS > 3){cout << GREEN << " (6):" << RESET << " Cursed Mines" << endl;} //only show after desolate wastes completed
         cout << GREEN << " (0):" << RESET << " [Menu]" << endl << endl << " -> ";
         cin >> X;
     }while(X < "0" || X > "5");
@@ -137,6 +140,7 @@ void battle(){ //adventure menu
     else if(X == "3" && PROGRESS > 0){fight("2");} //ruined castle
     else if(X == "4" && PROGRESS > 1){fight("3");} //mountain of despair
     else if(X == "5" && PROGRESS > 2){fight("4");} //desolate wastes
+    else if(X == "6" && PROGRESS > 3){fight("5");} //cursed mines
 }
 
 void fight(string factor){ //fight function
@@ -164,6 +168,9 @@ void fight(string factor){ //fight function
     }
     if(items[7] == 1){ //Boots of the Elves
         dodge += BotE.getStat();
+    }
+    if(items[8] == 1){ //Wand of Heroes
+        shield += WoH.getStat();
     }
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
 
@@ -552,6 +559,102 @@ void fight(string factor){ //fight function
         }
     }
 
+    //Cursed Mines
+    if(factor == "5"){
+        while(level < 21){ //runs until reaches end
+            make_enemy(factor); //create enemy for the level
+            enemy_name(); //enemy name
+            eTempHP = eHP; //set temp health
+            while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+                if(TURN == 0){ //player turn
+                    player(factor);
+                    if(TURN == 2){TURN = 0;} //enemy stunned
+                    else{TURN = 1;}
+                }
+                else{ //enemy turn
+                    enemy(factor);
+                    if(TURN == 3){TURN = 1;} //player stunned
+                    else{TURN = 0;}
+                }
+            }
+            if(tempHP < 1){ //player lost
+                system("clear");
+                cout << " You have been defeated\n" << endl;
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+                cout << " Reward: " << level*50*REBIRTH << " coins!\n" << endl; //give reward
+                COINS += (level*50*REBIRTH);
+                random = (rand() % 3); //diamond chance
+                if(random == 0){DIAMONDS += 2;
+                cout << " You have found 2 diamonds!\n";}
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+                update(); battle(); //save and return to menu
+            }
+            else{ //player beat level
+                system("clear");
+                cout << " Enemy defeated!\n" << endl;
+                this_thread::sleep_for(chrono::milliseconds(game_speed));
+                if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
+                    cout << " Amulet of Undying activates\n" << endl;
+                    tempHP += AoU.getStat();
+                    if(tempHP > health){tempHP = health;} //make sure health doesn't go over
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 5){ //level 5 stat boost
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost (current: " << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
+                    cin >> X;
+                    if(X == "1"){damage += 7; cout << "\n Damage increased!\n\n";}
+                    else{health += 6; tempHP += 12; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 10){ //level 10 stat boost
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Ice Boost (current: " << ice <<")\n" << 
+                    " 2) Fire Boost (current: " << fire << ")\n" <<
+                    " 3) Poison Boost (current: " << poison << ")\n" <<
+                    " 4) Electric Boost (current: " << electric << ")\n\n -> ";
+                    cin >> X;
+                    if(X == "1"){ice += 5; cout << "\n Ice increased!\n\n";}
+                    else if(X == "2"){fire += 5; cout << "\n Fire increased!\n\n";}
+                    else{poison += 5; cout << "\n Poison increased!\n\n";}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 15){ //level 15 stat boost
+                    cout << "Choose upgrade:\n\n";
+                    cout << " 1) Damage Boost (current: " << damage << ")\n" <<
+                    " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
+                    cin >> X;
+                    if(X == "1"){damage += 7; cout << "\n Damage increased!\n\n";}
+                    else{health += 8; tempHP += 14; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                }
+                if(level == 20){ //castle cleared
+                    cout << "You've cleared the Ruined Castle!\n" << endl;
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                    cout << "Reward: " << 900*REBIRTH << "Coins\n" << endl; //player reward
+                    COINS += 900*REBIRTH;
+                    random = (rand() % 2); //diamond chance
+                    if(random == 0){DIAMONDS += 3;
+                        cout << "You have found 3 diamonds!\n" << endl;}
+                    this_thread::sleep_for(chrono::milliseconds(game_speed));
+                    if(PROGRESS == 4){ //first time completed
+                        PROGRESS = 5; //unlock next?
+                    }
+                    update(); battle(); //save and exit to menu
+                }
+                if(level != 5 && level != 10 && level != 15){ //random encounter
+                    if(rand()%7 == 0){encounter();}
+                }
+                if(tempHP > 0){cout << " Descending deeper into the mines...\n";
+                this_thread::sleep_for(chrono::milliseconds(game_speed));}
+                level++;//go to next level
+                if(rand()%4 == 0){TURN = 1;} //25% chance enemy goes first
+                else{TURN = 0;} //75% chance player goes first
+            }
+        }
+    }
+
 }
 
 void player(string factor){ //player turn
@@ -731,7 +834,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " <<
                     eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 8){ //ice
@@ -740,7 +843,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 9){ //poison
@@ -749,7 +852,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 10 || eTempHP == eHP){ //electric
@@ -758,7 +861,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //heal
@@ -782,7 +885,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //heal
@@ -806,7 +909,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
     }
@@ -825,7 +928,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 6 || eTempHP == eHP){ //heal
@@ -855,7 +958,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                  cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 3){ //ice
@@ -864,7 +967,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 7 && eTempHP < eHP){ //heal
@@ -878,7 +981,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //drain
@@ -903,7 +1006,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{//stun
@@ -912,12 +1015,26 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
-            if(items[5] == 1){tempHP++; this_thread::sleep_for(chrono::milliseconds(game_speed));
+            if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
             this_thread::sleep_for(chrono::milliseconds(game_speed));
             cout << "\n The shock from the spell leaves you stunned...\n"; TURN = 3;
             this_thread::sleep_for(chrono::milliseconds(game_speed));}
         }    
+    }
+    else if(eTYPE == "Unstable"){ //unstable mage
+        if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
+        else{tempHP -= eDMG;
+            if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
+                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+        }
+        //mage takes damage
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+        int unstable_damage = rand() % (eDMG + eCRITD) + 1;
+        cout << "\n " << eName << " injuress themselves with their unstable magic!\n";
+        cout << " They take " << unstable_damage << " damage\n";
+        eTempHP -= unstable_damage;
     }
 }
 
@@ -984,10 +1101,15 @@ void output_level(string factor){ //show level player is on
         if(level == 10){cout << "  - Watcher of the Pass -\n";}
         if(level == 20){cout << "  - Dweller in the Deep -\n";}
     }
-    else{ //desolate waste
+    else if(factor == "4"){ //desolate waste
         cout << BOLD << YELLOW << "    - DESOLATE WASTES: LEVEL " << level << " -\n" << RESET << endl;
         if(level == 10){cout << "  - Lord of the Dunes -\n";}
         if(level == 20){cout << "  - King of the Wastes -\n";}
+    }
+    else{ //cursed mines
+        cout << BOLD << MAGENTA << "    - CURSED MINES: LEVEL " << level << " -\n" << RESET << endl;
+        if(level == 10){cout << "  - Captain of the Depths -\n";}
+        if(level == 20){cout << "  - Ruler of the Deep -\n";}
     }
     cout << BOLD << "  " << eName << RESET; //show enemy name
     if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
@@ -995,6 +1117,7 @@ void output_level(string factor){ //show level player is on
     else if(eTYPE == "Ice"){cout << BLUE << " - Ice Sorcerer: " << RESET;}
     else if(eTYPE == "Necro"){cout << MAGENTA << " - Necromancer: " << RESET;}
     else if(eTYPE == "Storm"){cout << YELLOW << " - Stormcaster: " << RESET;}
+    else if(eTYPE == "Unstable"){cout << BOLD << RED << " - Unstable Mage: " << RESET;}
     else{cout << " - Defender: ";}
     cout << "[Health: "; if(eTempHP < eHP){cout << RED;} else{cout << GREEN;}
     cout << eTempHP << RESET << "/" << GREEN << eHP << RESET << "]" << endl << endl; //show enemy health
@@ -1279,6 +1402,69 @@ void make_enemy(string factor){ //generate enemy stats
         }
     }
 
+    //Cursed Mines
+    if(factor == "5"){
+        //get enemy type
+        int type = (rand() % 4);
+        if(type == 0){eTYPE = "Wizard";} //evil wizard
+        else if(type == 1){eTYPE = "Ice";} //ice sorcerer
+        else if(type == 2){eTYPE = "Unstable";} //unstable mage
+        else{eTYPE = "Necro";} //necromancer
+
+        if(eTYPE == "Wizard" || eTYPE == "Unstable"){eCRITC = 20;} //improved crit chance
+        else{eCRITC = 15;} //basic crit chance
+        eDODGE = 13; //dodge
+
+        //set stats
+        if(level < 5){ //levels 1-4
+            eHP = 40 + (rand() % 10); eDMG = 5 + (rand() % 5);
+            eICE = 3; eFIRE = 3; ePOISON = 3; eELECTRIC = 3; eHEAL = 8; eCRITD = 5;
+            if(eTYPE == "Ice"){eICE = 5;} //ice sorcerer buff
+            if(eTYPE == "Unstable"){eDMG += 5;} //unstable mage buff
+            if(eTYPE == "Necro"){ePOISON = 5;} //necromancer buff
+        }
+        else if(level < 10){ //levels 5-9
+            eHP = 50 + (rand() % 7); eDMG = 5 + (rand() % 5);
+            eICE = 3 + (rand() % 3); eFIRE = 4; 
+            ePOISON = 3 + (rand() % 3); eELECTRIC = 4; eHEAL = 9; eCRITD = 5;
+            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
+            if(eTYPE == "Unstable"){eDMG += 5;} //unstable mage buff
+            if(eTYPE == "Necro"){ePOISON += 2;} //necromancer buff
+        }
+        else if(level == 10){ //level 10 mini boss
+            eHP = 65 + (rand() % 10); eDMG = 6 + (rand() % 6);
+            eICE = 4 + (rand() % 4); eFIRE = 5; 
+            eELECTRIC = 5; ePOISON = 4 + (rand() % 4); eHEAL = 15; eCRITD = 8; eCRITC += 5;
+            if(eTYPE == "Ice"){eICE += 5;} //ice sorcerer buff
+            if(eTYPE == "Unstable"){eDMG += 10;} //unstable mage buff
+            if(eTYPE == "Necro"){ePOISON += 5;} //necromancer buff
+        }
+        else if(level < 15){ //levels 11-14
+            eHP = 60 + (rand() % 6); eDMG = 6 + (rand() % 4);
+            eICE = 4 + (rand() % 3); eFIRE = 5; 
+            eELECTRIC = 5; ePOISON = 4 + (rand() % 3); eHEAL = 12; eCRITD = 7;
+            if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
+            if(eTYPE == "Unstable"){eDMG += 7;} //unstable mage buff
+            if(eTYPE == "Necro"){ePOISON += 3;} //necromancer buff
+        }
+        else if(level < 20){ //levels 15-19
+            eHP = 70 + (rand() % 5); eDMG = 6 + (rand() % 6);
+            eICE = 4 + (rand() % 4); eFIRE = 5; 
+            eELECTRIC = 5; ePOISON = 4 + (rand() % 4); eHEAL = 15; eCRITD = 8;
+            if(eTYPE == "Ice"){eICE += 4;} //ice sorcerer buff
+            if(eTYPE == "Unstable"){eDMG += 9;} //unstable mage buff
+            if(eTYPE == "Necro"){ePOISON += 4;} //necromancer buff
+        }
+        else{ //level 20 final boss
+            eHP = 90 + (rand() % 11); eDMG = 7 + (rand() % 5);
+            eICE = 5 + (rand() % 3); eFIRE = 6; 
+            eELECTRIC = 6; ePOISON = 5 + (rand() % 3); eHEAL = 25; eCRITD = 10; eCRITC += 10;
+            if(eTYPE == "Ice"){eICE += 5;} //ice sorcerer buff
+            if(eTYPE == "Unstable"){eDMG += 12;} //unstable mage buff
+            if(eTYPE == "Necro"){ePOISON += 5;} //necromancer buff
+        }
+    }
+
     //Endless mode
     if(factor == "X"){
         //get enemy type
@@ -1332,6 +1518,7 @@ void make_enemy(string factor){ //generate enemy stats
     }
 
     if(items[4] == 1){eHP -= RoD.getStat();} //rune of death
+    if(eHP < 1){eHP = 1;}
     if((eDMG - shield) < 0){eDMG = 0;} //apply shield
     else{eDMG -= shield;}
 }
@@ -1361,6 +1548,9 @@ void endless_mode(){ //endless game mode
     }
     if(items[7] == 1){ //Boots of the Elves
         dodge += BotE.getStat();
+    }
+    if(items[8] == 1){ //Wand of Heroes
+        shield += WoH.getStat();
     }
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
 
@@ -1878,6 +2068,7 @@ void update_items(){ //send item data to text file
     outfile << "CoP " << CoP.getStat() << " " << CoP.getLevel() << endl; //Cloak of Protection
     outfile << "G_T " << G_T.getStat() << " " << G_T.getLevel() << endl; //Golden Talisman
     outfile << "BotE " << BotE.getStat() << " " << BotE.getLevel() << endl; //Boots of the Elves
+    outfile << "WoH " << WoH.getStat() << " " << WoH.getLevel() << endl; //Wand of Heroes
     outfile.close();
 }
 
@@ -1890,6 +2081,7 @@ void reset_items(){ //reset item data
     CoP.setStat(1); CoP.setLevel(1);
     G_T.setStat(10); G_T.setLevel(1);
     BotE.setStat(10); BotE.setLevel(1);
+    WoH.setStat(1); WoH.setLevel(1);
     update_items();
 }
 
@@ -1918,7 +2110,7 @@ void enemy_name(){ //generate enemy name
 }
 
 void pick_item(){ //get new item
-    for(int i = 0; i < 8; i++){ //reset items
+    for(int i = 0; i < 9; i++){ //reset items
         items[i] = 0;
     }
     Item x, y, z; int a, b, c; string d, e, f;
@@ -1927,15 +2119,15 @@ void pick_item(){ //get new item
     a = stoi(d); b = stoi(e); c = stoi(f);
     if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
     else if(a == 3){x = GoS;} else if(a == 4){x = RoD;} else if(a == 5){x = CoP;}
-    else if(a == 6){x = G_T;} else{x = BotE;}
+    else if(a == 6){x = G_T;} else if(a == 7){x = BotE;} else{x = WoH;}
 
     if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
     else if(b == 3){y = GoS;} else if(b == 4){y = RoD;} else if(b == 5){y = CoP;}
-    else if(b == 6){y = G_T;} else{y = BotE;}
+    else if(b == 6){y = G_T;} else if(b == 7){y = BotE;} else{y = WoH;}
 
     if(c == 0){z = AoU;} else if(c == 1){z = RoL;} else if(c == 2){z = SoP;} 
     else if(c == 3){z = GoS;} else if(c == 4){z = RoD;} else if(c == 5){z = CoP;}
-    else if(c == 6){z = G_T;} else{z = BotE;}
+    else if(c == 6){z = G_T;} else if(c == 7){z = BotE;} else{z = WoH;}
     do{
         system("clear");
         cout << BLUE << " Select Starting Item\n" << RESET << endl;
@@ -1957,11 +2149,11 @@ void pick_item(){ //get new item
         a = stoi(d); b = stoi(e);
         if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
         else if(a == 3){x = GoS;} else if(a == 4){x = RoD;} else if(a == 5){x = CoP;}
-        else if(a == 6){x = G_T;} else{x = BotE;}
+        else if(a == 6){x = G_T;} else if(a == 7){x = BotE;} else{x = WoH;}
     
         if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
         else if(b == 3){y = GoS;} else if(b == 4){y = RoD;} else if(b == 5){y = CoP;}
-        else if(b == 6){y = G_T;} else{y = BotE;}
+        else if(b == 6){y = G_T;} else if(b == 7){y = BotE;} else{y = WoH;}
     
         cout << BLUE << " Select Second Item\n" << RESET << endl;
         cout << GREEN << " (1): " << RESET; x.print();
@@ -1978,13 +2170,13 @@ void item_shop(){ //buy items
         system("clear");
         cout << BLUE << "  - ITEM SHOP -\n" << RESET << endl;
         cout << "DIAMONDS: " << CYAN << DIAMONDS << RESET << endl << endl;
-        if(numItems < 4){cout << GREEN << " (1):" << RESET << " Unlock Next Item " << CYAN << " [4 Diamonds]\n" << RESET;}
+        if(numItems < 5){cout << GREEN << " (1):" << RESET << " Unlock Next Item " << CYAN << " [4 Diamonds]\n" << RESET;}
         else{cout << GREEN << " (-):" << RESET << " All Items Unlocked\n";}
         cout << GREEN << " (0):" << RESET << " Back To Store\n\n -> ";
         cin >> X;
     }while(X < "0" || X > "1");
     if(X == "1"){
-        if(numItems == 4){ //already own all items
+        if(numItems == 5){ //already own all items
             system("clear"); cout << CYAN << "Currently no items to buy\n" << RESET;
             this_thread::sleep_for(chrono::seconds(1)); item_shop();
         }
@@ -2005,8 +2197,11 @@ void item_shop(){ //buy items
                 else if(numItems == 2){ //golden talisman
                     cout << CYAN << " Acquired: Golden Talisman!\n" << RESET;
                 }
-                else{ //boots of the elves
+                else if(numItems == 3){ //boots of the elves
                     cout << CYAN << " Acquired: Boots of the Elves!\n" << RESET;
+                }
+                else{ //wand of heroes
+                    cout << CYAN << " Acquired: Wand of Heroes!\n" << RESET;
                 }
                 numItems++; update();
                 this_thread::sleep_for(chrono::seconds(1)); item_shop(); 
@@ -2016,19 +2211,21 @@ void item_shop(){ //buy items
     else{store();}
 }
 
-void boost_menu(){ //boons, companions, and rebirth
+void boost_menu(){ //boons, companions, item upgrades, and rebirth
     do{
         system("clear");
         cout << BLUE << "  - ADDITIONAL UPGRADES -\n" << RESET << endl;
         cout << GREEN << " (1):" << RESET << " Boons\n";
         cout << GREEN << " (2):" << RESET << " Companions\n";
-        cout << GREEN << " (3):" << RESET << " Rebirth\n";
+        cout << GREEN << " (3):" << RESET << " Upgrade Items\n";
+        cout << GREEN << " (4):" << RESET << " Rebirth\n";
         cout << GREEN << " (0):" << RESET << " Back to Menu\n\n -> ";
         cin >> X;
-    }while(X < "0" || X > "3");
+    }while(X < "0" || X > "4");
     if(X == "0"){menu();}
     else if(X == "1"){boon_menu();}
     else if(X == "2"){companion_menu();}
+    else if(X == "3"){item_menu();}
     else{rebirth_menu();}
 }
 
@@ -2060,7 +2257,7 @@ void boon_menu(){ //controls player boons
                 this_thread::sleep_for(chrono::seconds(1));
                 boon_menu();
             }
-            else{COINS -= 1500; boon1 = "yes"; boon_menu();}
+            else{COINS -= 1500; boon1 = "yes"; update(); boon_menu();}
         }
         else{BOON = 1; boon_menu();}
     }
@@ -2072,7 +2269,7 @@ void boon_menu(){ //controls player boons
                 this_thread::sleep_for(chrono::seconds(1));
                 boon_menu();
             }
-            else{COINS -= 3000; boon2 = "yes"; boon_menu();}
+            else{COINS -= 3000; boon2 = "yes"; update(); boon_menu();}
         }
         else{BOON = 2; boon_menu();}
     }
@@ -2084,7 +2281,7 @@ void boon_menu(){ //controls player boons
                 this_thread::sleep_for(chrono::seconds(1));
                 boon_menu();
             }
-            else{COINS -= 5000; boon3 = "yes"; boon_menu();}
+            else{COINS -= 5000; boon3 = "yes"; update(); boon_menu();}
         }
         else{BOON = 3; boon_menu();}
     }
@@ -2122,7 +2319,7 @@ void companion_menu(){ //controls player companions
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 1000; comp1 = "yes"; companion_menu();}
+            else{COINS -= 1000; comp1 = "yes"; update(); companion_menu();}
         }
         else{COMPANION = 1; companion_menu();}
     }
@@ -2134,7 +2331,7 @@ void companion_menu(){ //controls player companions
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 1000; comp2 = "yes"; companion_menu();}
+            else{COINS -= 1000; comp2 = "yes"; update(); companion_menu();}
         }
         else{COMPANION = 2; companion_menu();}
     }
@@ -2146,7 +2343,7 @@ void companion_menu(){ //controls player companions
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 2000; comp3 = "yes"; companion_menu();}
+            else{COINS -= 2000; comp3 = "yes"; update(); companion_menu();}
         }
         else{COMPANION = 3; companion_menu();}
     }
@@ -2158,11 +2355,351 @@ void companion_menu(){ //controls player companions
                 this_thread::sleep_for(chrono::seconds(1));
                 companion_menu();
             }
-            else{COINS -= 5000; comp4 = "yes"; companion_menu();}
+            else{COINS -= 5000; comp4 = "yes"; update(); companion_menu();}
         }
         else{COMPANION = 4; companion_menu();}
     }
     else{COMPANION = 0; companion_menu();}
+}
+
+void item_menu(){
+    do{
+        system("clear");
+        cout << BLUE << "  - UPGRADE ITEMS -\n" << RESET << endl;
+        cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
+        cout << YELLOW << ITALIC << " Level up items to increase their effects\n" << RESET << endl;
+
+        cout << GREEN << " (1):" << RESET << " Amulet of Undying: Level " << AoU.getLevel(); //AoU
+        if(AoU.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
+        else if(AoU.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
+        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+
+        cout << GREEN << "\n (2):" << RESET << " Ring of Life: Level " << RoL.getLevel(); //RoL
+        if(RoL.getLevel() == 1){cout << CYAN << " (Upgrade for 200 coins)" << RESET;}
+        else if(RoL.getLevel() == 2){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
+        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+
+        cout << GREEN << "\n (3):" << RESET << " Staff of Power: Level " << SoP.getLevel(); //SoP
+        if(SoP.getLevel() == 1){cout << CYAN << " (Upgrade for 200 coins)" << RESET;}
+        else if(SoP.getLevel() == 2){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
+        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+
+        cout << GREEN << "\n (4):" << RESET << " Gauntlets of Strength: Level " << GoS.getLevel(); //GoS
+        if(GoS.getLevel() == 1){cout << CYAN << " (Upgrade for 200 coins)" << RESET;}
+        else if(GoS.getLevel() == 2){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
+        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+
+        if(numItems > 0){
+            cout << GREEN << "\n (5):" << RESET << " Rune of Death: Level " << RoD.getLevel(); //RoD
+            if(RoD.getLevel() == 1){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
+            else if(RoD.getLevel() == 2){cout << CYAN << " (Upgrade for 800 coins)" << RESET;}
+            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        }
+
+        if(numItems > 1){
+            cout << GREEN << "\n (6):" << RESET << " Cloak of Protection: Level " << CoP.getLevel(); //CoP
+            if(CoP.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
+            else if(CoP.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
+            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        }
+
+        if(numItems > 2){
+            cout << GREEN << "\n (7):" << RESET << " Golden Talisman: Level " << G_T.getLevel(); //G_T
+            if(G_T.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
+            else if(G_T.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
+            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        }
+
+        if(numItems > 3){
+            cout << GREEN << "\n (8):" << RESET << " Boots of the Elves: Level " << BotE.getLevel(); //BotE
+            if(BotE.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
+            else if(BotE.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
+            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        }
+
+        if(numItems > 4){
+            cout << GREEN << "\n (9):" << RESET << " Wand of Heroes: Level " << BotE.getLevel(); //WoH
+            if(WoH.getLevel() == 1){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
+            else if(WoH.getLevel() == 2){cout << CYAN << " (Upgrade for 800 coins)" << RESET;}
+            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        }
+
+        cout << GREEN << "\n (0):" << RESET << " Back to Upgrades\n\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "9");
+
+    if(X == "0"){boost_menu();}
+    else if(X == "1"){ //amulet of undying
+        if(AoU.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(AoU.getLevel() == 2){
+            if(COINS < 500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 500; AoU.setLevel(3); AoU.setStat(4); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 250){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 250; AoU.setLevel(2); AoU.setStat(2); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "2"){ //ring of life
+        if(RoL.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(RoL.getLevel() == 2){
+            if(COINS < 400){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 400; RoL.setLevel(3); RoL.setStat(6); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 200){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 200; RoL.setLevel(2); RoL.setStat(4); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "3"){ //staff of power
+        if(SoP.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(SoP.getLevel() == 2){
+            if(COINS < 400){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 400; SoP.setLevel(3); SoP.setStat(3); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 200){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 200; SoP.setLevel(2); SoP.setStat(2); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "4"){ //gauntlets of strength
+        if(GoS.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(GoS.getLevel() == 2){
+            if(COINS < 400){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 400; GoS.setLevel(3); GoS.setStat(5); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 200){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 200; GoS.setLevel(2); GoS.setStat(3); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "5" && numItems > 0){ //rune of death
+        if(RoD.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(RoD.getLevel() == 2){
+            if(COINS < 800){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 800; RoD.setLevel(3); RoD.setStat(10); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 400){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 400; RoD.setLevel(2); RoD.setStat(5); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "6" && numItems > 1){ //cloak of protection
+        if(CoP.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(CoP.getLevel() == 2){
+            if(COINS < 500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 500; CoP.setLevel(3); CoP.setStat(3); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 250){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 250; CoP.setLevel(2); CoP.setStat(2); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "7" && numItems > 2){ //golden talisman
+        if(G_T.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(G_T.getLevel() == 2){
+            if(COINS < 500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 500; G_T.setLevel(3); G_T.setStat(20); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 250){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 250; G_T.setLevel(2); G_T.setStat(15); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "8" && numItems > 3){ //boots of the elves
+        if(BotE.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(BotE.getLevel() == 2){
+            if(COINS < 500){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 500; BotE.setLevel(3); BotE.setStat(10); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 250){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 250; BotE.setLevel(2); BotE.setStat(5); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else if(X == "9" && numItems > 4){ //wand of heroes
+        if(WoH.getLevel() == 3){
+            system("clear");
+            cout << CYAN << " This item is fully upgraded!\n" << RESET;
+            this_thread::sleep_for(chrono::seconds(1));
+            item_menu();
+        }
+        else if(WoH.getLevel() == 2){
+            if(COINS < 800){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 800; WoH.setLevel(3); WoH.setStat(10); update_items(); update(); item_menu();
+            }
+        }
+        else{
+            if(COINS < 400){
+                system("clear");
+                cout << CYAN << " You don't have enough coins!\n" << RESET;
+                this_thread::sleep_for(chrono::seconds(1));
+                item_menu();
+            }
+            else{
+                COINS -= 400; WoH.setLevel(2); WoH.setStat(5); update_items(); update(); item_menu();
+            }
+        }
+    }
+    else{item_menu();} //in case of errors
 }
 
 void rebirth_menu(){ //controls player rebirth
@@ -2186,7 +2723,7 @@ void rebirth_menu(){ //controls player rebirth
             cout << " Your stats and progress have been reset\n";
             cout << " Your items and upgrades have been kept\n";
             REBIRTH++; PROGRESS = 0; COINS = 0; HP = 10; DMG = 1; FIRE = 0; ICE = 0; POISON = 0;
-            ELECTRIC = 0; HEAL = 0; DODGE = 5; LUCK = 5; SHIELD = 0; CRITC = 5; CRITD = 2;
+            ELECTRIC = 0; HEAL = 0; DODGE = 5; LUCK = 5; SHIELD = 0; CRITC = 5; CRITD = 2; update();
             this_thread::sleep_for(chrono::seconds(1));
         }
         this_thread::sleep_for(chrono::seconds(1));
@@ -2324,11 +2861,11 @@ void encounter(){ //random encounters
             a = stoi(c); b = stoi(d);
             if(a == 0){x = AoU;} else if(a == 1){x = RoL;} else if(a == 2){x = SoP;}
             else if(a == 3){x = GoS;} else if(a == 4){x = RoD;} else if(a == 5){x = CoP;}
-            else if(a == 6){x = G_T;} else{x = BotE;}
+            else if(a == 6){x = G_T;} else if(a == 7){x = BotE;} else{x = WoH;}
     
             if(b == 0){y = AoU;} else if(b == 1){y = RoL;} else if(b == 2){y = SoP;} 
             else if(b == 3){y = GoS;} else if(b == 4){y = RoD;} else if(b == 5){y = CoP;}
-            else if(b == 6){y = G_T;} else{y = BotE;}
+            else if(b == 6){y = G_T;} else if(b == 7){y = BotE;} else{y = WoH;}
     
             cout << BLUE << " You find an item!\n" << RESET << endl;
             cout << GREEN << " (1): " << RESET; x.print();
@@ -2342,6 +2879,7 @@ void encounter(){ //random encounters
                 else if(a == 3){damage+=GoS.getStat();}//GoS
                 else if(a == 6){critc+=G_T.getStat();}//G_T
                 else if(a == 7){dodge+=BotE.getStat();}//BotE
+                else if(a == 8){shield+=WoH.getStat();}//WoH
             }
             else{items[b] = 1;
                 if(b == 1){health+=RoL.getStat(); tempHP+=RoL.getStat();}//RoL
@@ -2350,6 +2888,7 @@ void encounter(){ //random encounters
                 else if(b == 3){damage+=GoS.getStat();}//GoS
                 else if(b == 6){critc+=G_T.getStat();}//G_T
                 else if(b == 7){dodge+=BotE.getStat();}//BotE
+                else if(b == 8){shield+=WoH.getStat();}//WoH
             }
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
@@ -2366,7 +2905,7 @@ void encounter(){ //random encounters
             else if(count == 4){cout << " You pick up the Rune of Death!\n";}
             else if(count == 5){cout << " You found the Cloak of Protection!\n";}
             else if(count == 6){cout << " You discover a Golden Talisman!\n"; critc+=G_T.getStat();}
-            else{cout << " You found some Boots of the Elves!\n"; dodge+=BotE.getStat();}
+            else if(count == 7){cout << " You find the Wand of Heroes!\n"; shield+=WoH.getStat();}
             this_thread::sleep_for(chrono::milliseconds(game_speed));
         }
         else{ //no more items

@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 3.0.1
+## Version 3.1.0
 
 ## THE EPIC SPELL-SLINGING ROGUELITE
 
@@ -26,6 +26,15 @@
 ---
 
 ### Update History
+
+#### UPDATE 3.1.0
+06/19/2025
+- New Enemy: Unstable Mage
+- New Adventure: Cursed Mines
+- New Item: Wand of Heroes
+- New Feature: Items can now be upgraded
+
+#### _______________________________________
 
 #### UPDATE 3.0.1
 06/19/2025
