@@ -1150,6 +1150,7 @@ void output_level(string factor){ //show level player is on
     if(items[5] == 1){ cout << "       - Equipped: Cloak of Protection -\n";}
     if(items[6] == 1){ cout << "       - Equipped: Golden Talisman -\n";}
     if(items[7] == 1){ cout << "       - Equipped: Boots of the Elves -\n";}
+    if(items[8] == 1){ cout << "       - Equipped: Wand of Heroes -\n";}
     if(COMPANION != 0){
         cout << CYAN;
         if(COMPANION == 1){cout << "       - Companion: Fairy -\n";}
