@@ -2257,15 +2257,15 @@ void boon_menu(){ //controls player boons
         system("clear");
         cout << BLUE << "  - BOONS -\n" << RESET << endl;
         cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
-        cout << YELLOW << ITALIC << " Boons give a unique in-game buff\n" << RESET << endl;
+        cout << CYAN << ITALIC << " Boons give a unique in-game buff\n" << RESET << endl;
         cout << GREEN << " (1):" << RESET << " Boon of the Guardian: Enemies cannot crit";
-        if(boon1 == "no"){cout << CYAN << " (Unlock for 1500 coins)" << RESET;}
+        if(boon1 == "no"){cout << YELLOW << " (Unlock for 1500 coins)" << RESET;}
         if(BOON == 1){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (2):" << RESET << " Boon of the Warrior: Enemies cannot dodge";
-        if(boon2 == "no"){cout << CYAN << " (Unlock for 3000 coins)" << RESET;}
+        if(boon2 == "no"){cout << YELLOW << " (Unlock for 3000 coins)" << RESET;}
         if(BOON == 2){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (3):" << RESET << " Boon of the Trickster: Heal on crits";
-        if(boon3 == "no"){cout << CYAN << " (Unlock for 5000 coins)" << RESET;}
+        if(boon3 == "no"){cout << YELLOW << " (Unlock for 5000 coins)" << RESET;}
         if(BOON == 3){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (4):" << RESET << " Disable Boons\n";
         cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
@@ -2316,18 +2316,18 @@ void companion_menu(){ //controls player companions
         system("clear");
         cout << BLUE << "  - COMPANIONS -\n" << RESET << endl;
         cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
-        cout << YELLOW << ITALIC << " Companions assist you in battle\n" << RESET << endl;
+        cout << CYAN << ITALIC << " Companions assist you in battle\n" << RESET << endl;
         cout << GREEN << " (1):" << RESET << " Fairy: Heals your wounds"; //fairy
-        if(comp1 == "no"){cout << CYAN << " (Unlock for 1000 coins)" << RESET;}
+        if(comp1 == "no"){cout << YELLOW << " (Unlock for 1000 coins)" << RESET;}
         if(COMPANION == 1){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (2):" << RESET << " Imp: Attacks enemies"; //imp
-        if(comp2 == "no"){cout << CYAN << " (Unlock for 1000 coins)" << RESET;}
+        if(comp2 == "no"){cout << YELLOW << " (Unlock for 1000 coins)" << RESET;}
         if(COMPANION == 2){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (3):" << RESET << " Pixie: Can stun enemies"; //pixie
-        if(comp3 == "no"){cout << CYAN << " (Unlock for 2000 coins)" << RESET;}
+        if(comp3 == "no"){cout << YELLOW << " (Unlock for 2000 coins)" << RESET;}
         if(COMPANION == 3){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (4):" << RESET << " Gnome: Searches for treasure"; //gnome
-        if(comp4 == "no"){cout << CYAN << " (Unlock for 5000 coins)" << RESET;}
+        if(comp4 == "no"){cout << YELLOW << " (Unlock for 5000 coins)" << RESET;}
         if(COMPANION == 4){cout << MAGENTA << " [Equipped]" << RESET;}
         cout << GREEN << "\n (5):" << RESET << " Disable Companions\n";
         cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
@@ -2390,61 +2390,61 @@ void item_menu(){
         system("clear");
         cout << BLUE << "  - UPGRADE ITEMS -\n" << RESET << endl;
         cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
-        cout << YELLOW << ITALIC << " Level up items to increase their effects\n" << RESET << endl;
+        cout << CYAN << ITALIC << " Level up items to increase their effects\n" << RESET << endl;
 
         cout << GREEN << " (1):" << RESET << " Amulet of Undying: Level " << AoU.getLevel(); //AoU
-        if(AoU.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
-        else if(AoU.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
-        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        if(AoU.getLevel() == 1){cout << YELLOW << " (Upgrade for 250 coins)" << RESET;}
+        else if(AoU.getLevel() == 2){cout << YELLOW << " (Upgrade for 500 coins)" << RESET;}
+        else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
 
         cout << GREEN << "\n (2):" << RESET << " Ring of Life: Level " << RoL.getLevel(); //RoL
-        if(RoL.getLevel() == 1){cout << CYAN << " (Upgrade for 200 coins)" << RESET;}
-        else if(RoL.getLevel() == 2){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
-        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        if(RoL.getLevel() == 1){cout << YELLOW << " (Upgrade for 200 coins)" << RESET;}
+        else if(RoL.getLevel() == 2){cout << YELLOW << " (Upgrade for 400 coins)" << RESET;}
+        else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
 
         cout << GREEN << "\n (3):" << RESET << " Staff of Power: Level " << SoP.getLevel(); //SoP
-        if(SoP.getLevel() == 1){cout << CYAN << " (Upgrade for 200 coins)" << RESET;}
-        else if(SoP.getLevel() == 2){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
-        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        if(SoP.getLevel() == 1){cout << YELLOW << " (Upgrade for 200 coins)" << RESET;}
+        else if(SoP.getLevel() == 2){cout << YELLOW << " (Upgrade for 400 coins)" << RESET;}
+        else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
 
         cout << GREEN << "\n (4):" << RESET << " Gauntlets of Strength: Level " << GoS.getLevel(); //GoS
-        if(GoS.getLevel() == 1){cout << CYAN << " (Upgrade for 200 coins)" << RESET;}
-        else if(GoS.getLevel() == 2){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
-        else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+        if(GoS.getLevel() == 1){cout << YELLOW << " (Upgrade for 200 coins)" << RESET;}
+        else if(GoS.getLevel() == 2){cout << YELLOW << " (Upgrade for 400 coins)" << RESET;}
+        else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
 
         if(numItems > 0){
             cout << GREEN << "\n (5):" << RESET << " Rune of Death: Level " << RoD.getLevel(); //RoD
-            if(RoD.getLevel() == 1){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
-            else if(RoD.getLevel() == 2){cout << CYAN << " (Upgrade for 800 coins)" << RESET;}
-            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+            if(RoD.getLevel() == 1){cout << YELLOW << " (Upgrade for 400 coins)" << RESET;}
+            else if(RoD.getLevel() == 2){cout << YELLOW << " (Upgrade for 800 coins)" << RESET;}
+            else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
         }
 
         if(numItems > 1){
             cout << GREEN << "\n (6):" << RESET << " Cloak of Protection: Level " << CoP.getLevel(); //CoP
-            if(CoP.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
-            else if(CoP.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
-            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+            if(CoP.getLevel() == 1){cout << YELLOW << " (Upgrade for 250 coins)" << RESET;}
+            else if(CoP.getLevel() == 2){cout << YELLOW << " (Upgrade for 500 coins)" << RESET;}
+            else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
         }
 
         if(numItems > 2){
             cout << GREEN << "\n (7):" << RESET << " Golden Talisman: Level " << G_T.getLevel(); //G_T
-            if(G_T.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
-            else if(G_T.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
-            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+            if(G_T.getLevel() == 1){cout << YELLOW << " (Upgrade for 250 coins)" << RESET;}
+            else if(G_T.getLevel() == 2){cout << YELLOW << " (Upgrade for 500 coins)" << RESET;}
+            else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
         }
 
         if(numItems > 3){
             cout << GREEN << "\n (8):" << RESET << " Boots of the Elves: Level " << BotE.getLevel(); //BotE
-            if(BotE.getLevel() == 1){cout << CYAN << " (Upgrade for 250 coins)" << RESET;}
-            else if(BotE.getLevel() == 2){cout << CYAN << " (Upgrade for 500 coins)" << RESET;}
-            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+            if(BotE.getLevel() == 1){cout << YELLOW << " (Upgrade for 250 coins)" << RESET;}
+            else if(BotE.getLevel() == 2){cout << YELLOW << " (Upgrade for 500 coins)" << RESET;}
+            else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
         }
 
         if(numItems > 4){
             cout << GREEN << "\n (9):" << RESET << " Wand of Heroes: Level " << BotE.getLevel(); //WoH
-            if(WoH.getLevel() == 1){cout << CYAN << " (Upgrade for 400 coins)" << RESET;}
-            else if(WoH.getLevel() == 2){cout << CYAN << " (Upgrade for 800 coins)" << RESET;}
-            else{cout << CYAN << " (Fully Upgraded)" << RESET;}
+            if(WoH.getLevel() == 1){cout << YELLOW << " (Upgrade for 400 coins)" << RESET;}
+            else if(WoH.getLevel() == 2){cout << YELLOW << " (Upgrade for 800 coins)" << RESET;}
+            else{cout << MAGENTA << " (Fully Upgraded)" << RESET;}
         }
 
         cout << GREEN << "\n (0):" << RESET << " Back to Upgrades\n\n -> ";
