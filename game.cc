@@ -1,7 +1,7 @@
 /**
  * WIZARDS OF DESTINY
  * @author: Dominic Webster
- * @version: 3.0.1
+ * @version: 3.2.0
  * @brief: controls the main game
  */
 
@@ -41,6 +41,12 @@ RoD("Rune of Death", "Weaken enemy health", 0, 0), CoP("Cloak of Protection", "R
 G_T("Golden Talisman", "Boost crit chance", 0, 0), BotE("Boots of the Elves", "Boost dodge chance", 0, 0),
 WoH("Wand of Heroes", "Boost shield", 1, 1); 
 int items[9]; //keeps track of which items player is using
+
+//effects with * can have varying numbers
+//status effects: *bleed:0, *shield:1, *heal:2, drained:3
+int player_status[4]; //keeps track of status effects on player
+//status effects: *bleed:0, *shield:1, *heal:2
+int enemy_status[3]; //keeps track of status effects on enemy
 
 Spell CARD1, CARD2, CARD3;
 string X, eTYPE, store1, store2, eName, encounterType, t, boon1, boon2, boon3, comp1, comp2, comp3, comp4;
@@ -102,7 +108,7 @@ void menu(){ //game menu
         cout << GREEN << " (4):" << RESET << " Store" << endl;
         cout << GREEN << " (5):" << RESET << " How To Play" << endl;
         cout << GREEN << " (6):" << RESET << " Settings" << endl;
-        cout << GREEN << " (7):" << RESET << " Enemy Database" << endl;
+        cout << GREEN << " (7):" << RESET << " Databases" << endl;
         cout << GREEN << " (0):" << RESET << " [Exit Game]" << endl << endl;
         cout << " -> ";
         cin >> X;
@@ -148,6 +154,10 @@ void fight(string factor){ //fight function
     //set play stats equal to base stats (they can be modified without messing with base stats)
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0; level = 1;
     critc = CRITC; critd = CRITD; dodge = DODGE; luck = LUCK; shield = SHIELD; electric = ELECTRIC;
+
+    //sets all status effects to off
+    for(int i = 0; i < 4; i++){player_status[i] = 0;}
+    for(int i = 0; i < 3; i++){enemy_status[i] = 0;}
     
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -681,6 +691,20 @@ void player(string factor){ //player turn
     CARD1.get_card(health, damage, fire, ice, poison, electric, heal); //generate first spell
     CARD2.get_card(health, damage, fire, ice, poison, electric, heal); //generate second spell
     CARD3.get_card(health, damage, fire, ice, poison, electric, heal); //generate third spell
+
+    //reset any neccesary status effects
+    player_status[1] = 0; //shield
+
+    system("clear");
+    //start of turn status effects
+    if(player_status[2] != 0){ //heal
+        cout << ITALIC << GREEN << " You heal for " << player_status[2] << " health\n\n" << RESET;
+        this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+        tempHP += player_status[2];
+        if(tempHP > health){tempHP = health;}
+        player_status[2] = 0;
+    }
+
     do{
     system("clear");
     output_level(factor); //show level, enemy, and player info
@@ -689,18 +713,42 @@ void player(string factor){ //player turn
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
     cout << GREEN << " 1) " << RESET; show_card(CARD1); //these show the spells
     cout << GREEN << " 2) " << RESET; show_card(CARD2);
-    cout << GREEN << " 3) " << RESET; show_card(CARD3);
+    if(player_status[3] == 0){cout << GREEN << " 3) " << RESET; show_card(CARD3);} //weakened
     cout << "\n -> ";
     cin >> X;
     }while(X < "1" || X > "3"); //until player selects spell
     this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
     if(X == "1"){calculate(CARD1);} //calculate spell player chose
     else if(X == "2"){calculate(CARD2);}
-    else{calculate(CARD3);}
+    else if(X == "3"){calculate(CARD3);}
     this_thread::sleep_for(chrono::milliseconds(game_speed));
+
+    //end of turn status effects
+    system("clear");
+    if(player_status[0] != 0){ //bleed
+        cout << ITALIC << RED << " You bleed for " << player_status[0] << " damage\n" << RESET;
+        this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+        tempHP -= player_status[0];
+        player_status[0] = 0;
+    }
+
+    //reset any neccesary status effects
+    player_status[3] = 0; //drained
 }
 
 void enemy(string factor){ //enemy turn
+    //reset any neccesary status effects
+    enemy_status[1] = 0; //shield
+
+    system("clear");
+    //start of turn status effects
+    if(enemy_status[2] != 0){ //heal
+        cout << ITALIC << GREEN << " " << eName << " heals for " << enemy_status[2] << " health\n\n" << RESET;
+        this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+        eTempHP += enemy_status[2];
+        if(eTempHP > eHP){eTempHP = eHP;}
+        enemy_status[2] = 0;
+    }
     system("clear");
     output_level(factor); //show level, enemy, and player info
     this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -708,12 +756,25 @@ void enemy(string factor){ //enemy turn
     this_thread::sleep_for(chrono::milliseconds(game_speed));
     calculate_enemy(); //calculate what spell enemy casts
     this_thread::sleep_for(chrono::milliseconds(game_speed));
+
+    //end of turn status effects
+    system("clear");
+    if(enemy_status[0] != 0){ //bleed
+        cout << ITALIC << RED << " " << eName << " bleeds for " << enemy_status[0] << " damage\n" << RESET;
+        this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+        eTempHP -= enemy_status[0];
+        if(eTempHP < 1){eTempHP = 1; 
+            cout << ITALIC << RED << " Their wounds nearly kill them, but they survive\n\n" << RESET;
+            this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+        }
+        enemy_status[0] = 0;
+    }
 }
 
 void calculate(Spell card){ //calculate player spell results
     bool critted = false;
     t = card.getType(); e = card.getEffect();
-    if(t == "attack" || t == "fire" || t == "ice" || t == "poison" || t == "electric"){ //attack spell
+    if(t == "attack" || t == "fire" || t == "ice" || t == "poison" || t == "electric" || t == "poison-heal" || t == "atk-bleed"){ //attack spell
         if(t == "fire" && eTYPE == "Ice"){e+=fire;} //ice sorcerer is weak to fire
         if(t == "fire" && eTYPE == "Fire"){e-=fire;} //fire mage is fire resistant
         if(t == "ice" && eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
@@ -727,9 +788,13 @@ void calculate(Spell card){ //calculate player spell results
         if(rand()%100 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
+            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
             eTempHP -= e; //decrease enemy health
-            if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
+            if(t == "attack" || t == "atk-bleed"){cout << endl << " You deal " << e << " damage!\n";} //show results
+            else if(t == "poison-heal"){cout << endl << " You deal " << e << " poison damage!\n";} //show results
             else{cout << endl << " You deal " << e << " " << t << " damage!\n";}} //show results
+            if(t == "poison-heal"){player_status[2] = poison; if(poison == 0){player_status[2] = 1;}} //poison/heal spell
+            if(t == "atk-bleed"){enemy_status[0] = e;}
     }
     else if(t == "heal"){ //healing spell
         tempHP += e;
@@ -740,10 +805,17 @@ void calculate(Spell card){ //calculate player spell results
             cout << endl << " Enemy is stunned!\n"; TURN = 2;
         }
     }
+    else if(t == "heal-shield"){ //protective barrier spell
+        tempHP += e;
+        if(tempHP > health){tempHP = health;} //can't go over max
+        cout << endl << " You heal yourself for " << e << " health, and throw up a magic barrier!\n";
+        player_status[1] = e-1; if(e == 1){player_status[1] = 1;}
+    }
     else if(t == "atk-stun"){ //attack(stun) spell
         if(rand()%110 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
+            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
             eTempHP -= e; TURN = 2; //deal damage, trigger stun
             cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
@@ -751,6 +823,7 @@ void calculate(Spell card){ //calculate player spell results
         if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
+            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
             eTempHP -= e; //deal damage
             cout << endl << " You deal " << e << " ice damage!\n";
             if(rand()%4 == 0){this_thread::sleep_for(chrono::milliseconds(game_speed));
@@ -761,13 +834,21 @@ void calculate(Spell card){ //calculate player spell results
         if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;  
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
+            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
             eTempHP -= e; //deal damage
             cout << endl << " You deal " << e << " electric damage!\n";
             if(rand()%10 < 3){this_thread::sleep_for(chrono::milliseconds(game_speed));
                 TURN = 2; cout << "\n Enemy Stunned!\n";}
         }
     }
+    else if(t == "trick"){ //trickery spell
+        cout << endl << " Magic washes over you and your enemy!\n";
+        enemy_status[0] = e;
+        player_status[1] = e;
+        player_status[2] = e;
+    }
     else{ //drain spell
+        e -= enemy_status[1]; if(e < 1){e = 1;} //enemy shield status
         if(eTempHP < e){
             tempHP += eTempHP;
             eTempHP -= e;
@@ -839,18 +920,19 @@ void calculate_comp(){ //calculate companion effects
 }
 
 void calculate_enemy(){ //calculate what spell enemy casts
+    int tempDMG = eDMG - player_status[1]; if(tempDMG < 0){tempDMG = 0;} //player shield status
     if(eTYPE == "Wizard"){ //evil wizard
         efactor = rand()%11;
         if(efactor < 6){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";} //player dodges
-            else{tempHP -= eDMG;
+            else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; 
-                    cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
+                    cout << " " << eName << " deals " << e + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 7){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eFIRE);
+            else{tempHP -= (tempDMG + eFIRE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " <<
                     eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
@@ -859,7 +941,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
         else if(efactor < 8){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eICE);
+            else{tempHP -= (tempDMG + eICE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
@@ -868,7 +950,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
         else if(efactor < 9){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + ePOISON);
+            else{tempHP -= (tempDMG + ePOISON);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
@@ -877,7 +959,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
         else if(efactor < 10 || eTempHP == eHP){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eELECTRIC);
+            else{tempHP -= (tempDMG + eELECTRIC);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
@@ -894,14 +976,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         efactor = rand()%10;
         if(efactor < 3){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= eDMG;
+            else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 9 || eTempHP == eHP){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eFIRE);
+            else{tempHP -= (tempDMG + eFIRE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
@@ -918,14 +1000,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         efactor = rand()%10;
         if(efactor < 4){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= eDMG;
+            else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName << 
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else{ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eICE);
+            else{tempHP -= (tempDMG + eICE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
@@ -937,14 +1019,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         efactor = rand()%11;
         if(efactor < 1){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= eDMG;
+            else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 5){ //poison
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + ePOISON);
+            else{tempHP -= (tempDMG + ePOISON);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
@@ -957,8 +1039,8 @@ void calculate_enemy(){ //calculate what spell enemy casts
             cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
         }
         else{ //drain
-            tempHP -= (1 + ((eDMG + eHEAL) / 2));
-            eTempHP += (1 + ((eDMG + eHEAL) / 2));
+            tempHP -= (1 + ((tempDMG + eHEAL) / 2));
+            eTempHP += (1 + ((tempDMG + eHEAL) / 2));
             if(eTempHP > eHP){eTempHP = eHP;}
             cout << " " << eName << " drains " << (1 + ((eDMG + eHEAL) / 2)) << " life from you!\n";
         }
@@ -967,14 +1049,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
         efactor = rand()%11;
         if(efactor < 1){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= eDMG;
+            else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 2){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eFIRE);
+            else{tempHP -= (tempDMG + eFIRE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
@@ -983,7 +1065,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
         else if(efactor < 3){ //ice
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eICE);
+            else{tempHP -= (tempDMG + eICE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
@@ -997,7 +1079,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
         else if(efactor < 8){ //electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eELECTRIC);
+            else{tempHP -= (tempDMG + eELECTRIC);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
@@ -1005,24 +1087,24 @@ void calculate_enemy(){ //calculate what spell enemy casts
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //drain
-            tempHP -= (1 + ((eDMG + eHEAL) / 2));
-            eTempHP += (1 + ((eDMG + eHEAL) / 2));
+            tempHP -= (1 + ((tempDMG + eHEAL) / 2));
+            eTempHP += (1 + ((tempDMG + eHEAL) / 2));
             if(eTempHP > eHP){eTempHP = eHP;}
             cout << " " << eName << " drains " << (1 + ((eDMG + eHEAL) / 2)) << " life from you!\n";
         }
     }
-    else if(eTYPE == "Storm"){
+    else if(eTYPE == "Storm"){ //stormcaster
         efactor = rand()%10;
         if(efactor < 2){ //attack
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= eDMG;
+            else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 9){//electric
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eELECTRIC);
+            else{tempHP -= (tempDMG + eELECTRIC);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
@@ -1031,7 +1113,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
         }
         else{//stun
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-            else{tempHP -= (eDMG + eELECTRIC);
+            else{tempHP -= (tempDMG + eELECTRIC);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                     " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
@@ -1044,7 +1126,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
     }
     else if(eTYPE == "Unstable"){ //unstable mage
         if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
-        else{tempHP -= eDMG;
+        else{tempHP -= tempDMG;
             if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " << eName <<
                 " deals " << eDMG + eCRITD << " *critical* damage!\n";}
             else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
@@ -1056,22 +1138,57 @@ void calculate_enemy(){ //calculate what spell enemy casts
         cout << " They take " << unstable_damage << " damage\n";
         eTempHP -= unstable_damage;
     }
+
+    //fix any cloak of protection overheals
+    if(tempHP > health){tempHP = health;}
+
+    //enemy apply status effects
+    int stat_chance = 0;
+    if(eTYPE == "Wizard"){stat_chance = 6;}
+    else if(eTYPE == "Fire" || eTYPE == "Storm"){stat_chance = 2;}
+    else if(eTYPE == "Ice" || eTYPE == "Defend"){stat_chance = 3;}
+    else if(eTYPE == "Necro" || eTYPE == "Unstable"){stat_chance = 4;}
+
+    if(rand()%10 < stat_chance){
+        this_thread::sleep_for(chrono::milliseconds(game_speed));
+        int z = rand()%4;
+        if(z == 0){ //enemy heal
+            cout << "\n " << eName << " gains heal\n";
+            enemy_status[2] = rand()%eHEAL + 1;
+        }
+        else if(z == 1){ //enemy shield
+            cout << "\n " << eName << " gains shield\n";
+            enemy_status[1] = rand()%eHEAL + 1;
+        }
+        else if(z == 2){ //player bleed
+            cout << "\n " << eName << " applies bleed\n";
+            player_status[0] = rand()%eDMG + 1;
+        }
+        else{ //player weakened
+            cout << "\n " << eName << " applies drained\n";
+            player_status[3] = 1;
+        }
+    }
 }
 
 void show_card(Spell card){ //display spell
     string t = card.getType(); int e = card.getEffect();
     if(t == "fire"){cout << BOLD << RED;}
     else if(t == "ice" || t == "ice-stun"){cout << BLUE;}
-    else if(t == "poison"){cout << BOLD << MAGENTA;}
+    else if(t == "poison" || t == "poison-heal"){cout << BOLD << MAGENTA;}
     else if(t == "electric" || t == "electric-stun"){cout << CYAN;}
-    else if(t == "heal"){cout << BOLD << GREEN;}
+    else if(t == "heal" || t == "heal-shield"){cout << BOLD << GREEN;}
     else if(t == "drain"){cout << YELLOW;}
+    else if(t == "trick"){cout << ITALIC << YELLOW;}
     cout << card.getName() << RESET << ": ";
     if(t == "attack"){ //attack spell
         cout << "Deal " << e << " damage\n";
     }
     else if(t == "atk-stun"){ //atack(stun) spell
         cout << "Deal " << e << " damage and stun the enemy\n";
+    }
+    else if(t == "atk-bleed"){ //atack(stun) spell
+        cout << "Deal " << e << " damage and apply bleed\n";
     }
     else if(t == "fire"){ //fire spell
         cout << "Deal " << e << " fire damage\n";
@@ -1085,6 +1202,9 @@ void show_card(Spell card){ //display spell
     else if(t == "poison"){ //poison spell
         cout << "Deal " << e << " poison damage\n";
     }
+    else if(t == "poison-heal"){ //poison spell
+        cout << "Deal " << e << " poison damage and gain heal\n";
+    }
     else if(t == "electric"){ //electric spell
         cout << "Deal " << e << " electric damage\n";
     }
@@ -1094,6 +1214,12 @@ void show_card(Spell card){ //display spell
     else if(t == "heal"){ //healing spell
         cout << "Gain " << e << " health. " << GREEN << "50%" << RESET << " chance to stun enemy\n";
     } 
+    else if(t == "heal-shield"){ //protective barrier
+        cout << "Gain " << e << " health and gain shield\n";
+    }
+    else if(t == "trick"){
+        cout << "Gain and apply random status effects\n";
+    }
     else{ //drain spell
         cout << "Drain " << e << " health from enemy\n";
     }
@@ -1140,8 +1266,13 @@ void output_level(string factor){ //show level player is on
     else if(eTYPE == "Unstable"){cout << BOLD << RED << " - Unstable Mage: " << RESET;}
     else{cout << " - Defender: ";}
     cout << "[Health: "; if(eTempHP < eHP){cout << RED;} else{cout << GREEN;}
-    cout << eTempHP << RESET << "/" << GREEN << eHP << RESET << "]" << endl << endl; //show enemy health
-    cout << BOLD << BLUE;
+    cout << eTempHP << RESET << "/" << GREEN << eHP << RESET << "]" << endl; //show enemy health
+    cout << YELLOW << ITALIC << "  Status Effects:\n"; //enemy status effects
+    if(enemy_status[0] != 0){cout << RED << "   - Bleed " << enemy_status[0] << endl;}
+    if(enemy_status[1] != 0){cout << BLUE << "   - Shield " << enemy_status[1] << endl;}
+    if(enemy_status[2] != 0){cout << GREEN << "   - Heal " << enemy_status[2] << endl;}
+
+    cout << RESET << endl << BOLD << BLUE;
     if(items[0] == 1){ cout << "       - Equipped: Amulet of Undying -\n";}
     if(items[1] == 1){ cout << "       - Equipped: Ring of Life -\n";}
     if(items[2] == 1){ cout << "       - Equipped: Staff of Power -\n";}
@@ -1169,7 +1300,13 @@ void output_level(string factor){ //show level player is on
     cout << tempHP << RESET << "/" << GREEN << health << RESET << "] [Damage: " << damage << "] [Fire: " << fire <<
     "] [Ice: " << ice << "] [Poison: " << poison << "]" << endl <<" You:  [Electric: " << electric <<
     "] [Heal: " << heal << "] [Crit Chance: " << critc << "%] [Crit Damage: " << critd << "]" << endl <<
-    "       [Dodge: " << dodge << "%] [Shield: " << shield << "] [Luck: " << luck << "%]\n\n"; //player info
+    "       [Dodge: " << dodge << "%] [Shield: " << shield << "] [Luck: " << luck << "%]\n"; //player info
+    cout << YELLOW << ITALIC << "       Status Effects:\n"; //player status effects
+    if(player_status[0] != 0){cout << RED << "        - Bleed " << player_status[0] << endl;}
+    if(player_status[1] != 0){cout << BLUE << "        - Shield " << player_status[1] << endl;}
+    if(player_status[2] != 0){cout << GREEN << "        - Heal " << player_status[2] << endl;}
+    if(player_status[3] != 0){cout << RED << "        - Drained" << endl;}
+    cout << RESET << endl;
 }
 
 void make_enemy(string factor){ //generate enemy stats
@@ -1489,12 +1626,13 @@ void make_enemy(string factor){ //generate enemy stats
     //Endless mode
     if(factor == "X"){
         //get enemy type
-        int type = rand()%6;
+        int type = rand()%7;
         if(type == 0){eTYPE = "Wizard";} //evil wizard
         else if(type == 1){eTYPE = "Fire";} //fire mage
         else if(type == 2){eTYPE = "Ice";} //ice sorcerer
         else if(type == 3){eTYPE = "Necro";} //necromancer
         else if(type == 4){eTYPE = "Storm";} //stormcaster
+        else if(type == 5){eTYPE = "Unstable";} //stormcaster
         else{eTYPE = "Defend";} //defender
 
         //factor strength based off endless level
@@ -1520,11 +1658,15 @@ void make_enemy(string factor){ //generate enemy stats
         eELECTRIC = 3 + (rand() % endlessNum/10); 
         eHEAL = 3 + (rand() % endlessNum/3); 
         eCRITD = 2 + (rand() % endlessNum/5);
-        if(eTYPE == "Wizard"){eCRITC += 2;}
+        if(eTYPE == "Wizard" || eTYPE == "Unstable"){eCRITC += 2;}
         if(eTYPE == "Fire"){eFIRE += 1 + (rand() % endlessNum/10);}
         if(eTYPE == "Ice"){eICE += 1 + (rand() % endlessNum/10);}
         if(eTYPE == "Necro"){ePOISON += 1 + (rand() % endlessNum/10);}
         if(eTYPE == "Storm"){eELECTRIC += 1 + (rand() % endlessNum/10);}
+        if(eTYPE == "UNSTABLE"){
+            eDMG += 1 + (rand() % endlessNum/10);
+            eCRITD += 1 + (rand() % endlessNum/20);
+        }
         if(eTYPE == "Defend"){
             eHEAL += 1 + (rand() % endlessNum/10); 
             eHP += 3 + (rand() % endlessNum/5); 
@@ -1550,6 +1692,10 @@ void endless_mode(){ //endless game mode
     health = tempHP = HP; damage = DMG; fire = FIRE; ice = ICE; poison = POISON; heal = HEAL; TURN = 0; level = 1;
     critc = CRITC; critd = CRITD; dodge = DODGE; luck = LUCK; shield = SHIELD; electric = ELECTRIC; endlessNum = 1;
     
+    //sets all status effects to off
+    for(int i = 0; i < 4; i++){player_status[i] = 0;}
+    for(int i = 0; i < 3; i++){enemy_status[i] = 0;}
+
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
         health += RoL.getStat();
@@ -2759,28 +2905,53 @@ void too_poor(){ //function calls when players try to buy something too expensiv
     this_thread::sleep_for(chrono::seconds(1)); level_up();
 }
 
-void database(){ //enemy information
-    system("clear");
-    cout << BLUE << " - ENEMY DATABASE -\n\n" << RESET;
-    if(PROGRESS == 0){
-        cout << " No enemies unlocked yet\n\n";
+void database(){ //enemy and status information
+    do{
+        system("clear");
+        cout << BLUE << " - DATABASES -\n\n" << RESET;
+        cout << GREEN << " (1): " << RESET << "Enemy Database\n";
+        cout << GREEN << " (2): " << RESET << "Status Effect Database\n";
+        cout << GREEN << " (0): " << RESET << "Return to Menu\n -> ";
+        cin >> X;
+    }while(X < "0" || X > "2");
+    if(X == "0"){menu();}
+    else if(X == "1"){ //enemy database
+        system("clear");
+        cout << BLUE << " - ENEMY DATABASE -\n\n" << RESET;
+        if(PROGRESS == 0){
+            cout << " No enemies unlocked yet\n\n";
+        }
+        if(PROGRESS > 0){
+            cout << GREEN << " *" << RESET << " Evil Wizard - Crits more frequently, resistant to electric\n";
+            cout << GREEN << " *" << RESET << " Fire Mage - Resistant to fire, vunerable to ice\n";
+            cout << GREEN << " *" << RESET << " Ice Sorcerer - Resistant to ice, vulnerable to fire\n";
+        }
+        if(PROGRESS > 1){
+            cout << GREEN << " *" << RESET << " Necromancer - Resistant to poison, vulnerable to electric\n";
+        }
+        if(PROGRESS > 2){
+            cout << GREEN << " *" << RESET << " Defender - Dodges more frequently, vulnerable to poison\n";
+        }
+        if(PROGRESS > 3){
+            cout << GREEN << " *" << RESET << " Stormcaster - Can stun player, resistant to electric\n";
+        }
+        if(PROGRESS > 4){
+            cout << GREEN << " *" << RESET << " Unstable Mage - Deals high damage but injures themselves\n";
+        }
+        cout << RED << "\n [0]" << RESET << " Back to Databases\n\n -> ";
+        cin >> X; database();
     }
-    if(PROGRESS > 0){
-        cout << GREEN << " *" << RESET << " Evil Wizard - Crits more frequently, resistant to electric\n";
-        cout << GREEN << " *" << RESET << " Fire Mage - Resistant to fire, vunerable to ice\n";
-        cout << GREEN << " *" << RESET << " Ice Sorcerer - Resistant to ice, vulnerable to fire\n";
+    else{ //status database
+        system("clear");
+        cout << BLUE << " - ENEMY DATABASE -\n\n" << RESET;
+        cout << GREEN << " *" << RESET << " Bleed - Take damage at end of turn\n";
+        cout << GREEN << " *" << RESET << " Heal - Gain health at start of turn\n";
+        cout << GREEN << " *" << RESET << " Shield - Block some damage for a turn\n";
+        cout << GREEN << " *" << RESET << " Drained - Lose one spell option\n";
+        cout << RED << "\n [0]" << RESET << " Back to Databases\n\n -> ";
+        cin >> X; database();
     }
-    if(PROGRESS > 1){
-        cout << GREEN << " *" << RESET << " Necromancer - Resistant to poison, vulnerable to electric\n";
-    }
-    if(PROGRESS > 2){
-        cout << GREEN << " *" << RESET << " Defender - Dodges more frequently, vulnerable to poison\n";
-    }
-    if(PROGRESS > 3){
-        cout << GREEN << " *" << RESET << " Stormcaster - Can stun player, resistant to electric\n";
-    }
-    cout << RED << "\n [0]" << RESET << " Back to Menu\n\n -> ";
-    cin >> X; menu();
+
 }
 
 void encounter(){ //random encounters

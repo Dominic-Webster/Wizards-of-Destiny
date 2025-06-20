@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 3.1.0
+## Version 3.2.0
 
 ## THE EPIC SPELL-SLINGING ROGUELITE
 
@@ -26,6 +26,14 @@
 ---
 
 ### Update History
+
+#### UPDATE 3.2.0
+06/20/2025
+- New Feature: Status Effects
+- 4 Status Effects: Bleed, Heal, Shield, Drained
+- 4 New Spells: Trickery, Mystic Slash, Deadly Mist, Protective Barrier
+
+#### _______________________________________
 
 #### UPDATE 3.1.0
 06/19/2025
