@@ -729,6 +729,10 @@ void player(string factor){ //player turn
         cout << ITALIC << RED << " You bleed for " << player_status[0] << " damage\n" << RESET;
         this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
         tempHP -= player_status[0];
+        if(tempHP < 1){
+            cout << ITALIC << RED << " You succumb to your wounds\n" << RESET;
+            this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
+        }
         player_status[0] = 0;
     }
 
@@ -763,8 +767,8 @@ void enemy(string factor){ //enemy turn
         cout << ITALIC << RED << " " << eName << " bleeds for " << enemy_status[0] << " damage\n" << RESET;
         this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
         eTempHP -= enemy_status[0];
-        if(eTempHP < 1){eTempHP = 1; 
-            cout << ITALIC << RED << " Their wounds nearly kill them, but they survive\n\n" << RESET;
+        if(eTempHP < 1){
+            cout << ITALIC << RED << " They succumb to their wounds\n\n" << RESET;
             this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait
         }
         enemy_status[0] = 0;
