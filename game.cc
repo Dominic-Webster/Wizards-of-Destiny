@@ -797,8 +797,8 @@ void calculate(Spell card){ //calculate player spell results
             if(t == "attack" || t == "atk-bleed"){cout << endl << " You deal " << e << " damage!\n";} //show results
             else if(t == "poison-heal"){cout << endl << " You deal " << e << " poison damage!\n";} //show results
             else{cout << endl << " You deal " << e << " " << t << " damage!\n";}} //show results
-            if(t == "poison-heal"){player_status[2] = poison; if(poison == 0){player_status[2] = 1;}} //poison/heal spell
-            if(t == "atk-bleed"){enemy_status[0] = e;}
+            if(t == "poison-heal"){player_status[2] = poison; if(poison == 0){player_status[2] = 1;} //poison/heal spell
+            if(t == "atk-bleed"){enemy_status[0] = e;}}
     }
     else if(t == "heal"){ //healing spell
         tempHP += e;
