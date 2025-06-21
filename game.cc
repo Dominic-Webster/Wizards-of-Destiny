@@ -15,7 +15,7 @@
 
 void menu(); void battle(); void store(); void how_to();
 void fight(string factor); void database(); void endless_mode();
-void level_up(); void settings(); void update();
+void level_up(); void settings(); void update(); void reset_enemy_status();
 void make_enemy(string factor); void encounter();
 void output_level(string factor); int itemCount();
 void show_card(Spell card); void too_poor(); void boost_menu();
@@ -159,7 +159,7 @@ void fight(string factor){ //fight function
 
     //sets all status effects to off
     for(int i = 0; i < 4; i++){player_status[i] = 0;}
-    for(int i = 0; i < 3; i++){enemy_status[i] = 0;}
+    reset_enemy_status();
     
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -220,6 +220,7 @@ void fight(string factor){ //fight function
             }
             else{ //proceed to next level
                 system("clear");
+                reset_enemy_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
@@ -321,6 +322,7 @@ void fight(string factor){ //fight function
             }
             else{ //player beat level
                 system("clear");
+                reset_enemy_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
@@ -422,6 +424,7 @@ void fight(string factor){ //fight function
             }
             else{ //player defeated level
                 system("clear");
+                reset_enemy_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
@@ -523,6 +526,7 @@ void fight(string factor){ //fight function
             }
             else{ //player beat level
                 system("clear");
+                reset_enemy_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
@@ -621,6 +625,7 @@ void fight(string factor){ //fight function
             }
             else{ //player beat level
                 system("clear");
+                reset_enemy_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
                 if(items[0] == 1 && level != 20 && tempHP < health){ //Amulet of Undying
@@ -796,11 +801,13 @@ void calculate(Spell card){ //calculate player spell results
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
             e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
             eTempHP -= e; //decrease enemy health
-            if(t == "attack" || t == "atk-bleed"){cout << endl << " You deal " << e << " damage!\n";} //show results
+            if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
+            else if(t == "atk-bleed"){cout << endl << " You deal " << e << " damage and apply bleed!\n";} //show results
             else if(t == "poison-heal"){cout << endl << " You deal " << e << " poison damage!\n";} //show results
             else{cout << endl << " You deal " << e << " " << t << " damage!\n";}} //show results
-            if(t == "poison-heal"){player_status[2] = poison; if(poison == 0){player_status[2] = 1;} //poison/heal spell
-            if(t == "atk-bleed"){enemy_status[0] = e;}}
+
+            if(t == "poison-heal"){player_status[2] = poison; if(poison == 0){player_status[2] = 1;}} //poison/heal spell
+            if(t == "atk-bleed"){enemy_status[0] = 1 + rand()%e;} //mystic slash
     }
     else if(t == "heal"){ //healing spell
         tempHP += e;
@@ -1723,7 +1730,7 @@ void endless_mode(){ //endless game mode
     
     //sets all status effects to off
     for(int i = 0; i < 4; i++){player_status[i] = 0;}
-    for(int i = 0; i < 3; i++){enemy_status[i] = 0;}
+    reset_enemy_status();
 
     pick_item(); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -1799,6 +1806,7 @@ void endless_mode(){ //endless game mode
         }
         else{ //proceed to next level
             system("clear");
+            reset_enemy_status();
             cout << " Enemy defeated!\n" << endl;
             this_thread::sleep_for(chrono::milliseconds(game_speed));
             if(items[0] == 1 && tempHP < health){ //Amulet of Undying
@@ -2962,6 +2970,10 @@ void rebirth_menu(){ //controls player rebirth
 void too_poor(){ //function calls when players try to buy something too expensive
     system("clear"); cout << CYAN << "You don't have enough coins\n" << RESET;
     this_thread::sleep_for(chrono::seconds(1)); level_up();
+}
+
+void reset_enemy_status(){ //quickly set all enemy status to 0;
+    for(int i = 0; i < 3; i++){enemy_status[i] = 0;}
 }
 
 void database(){ //enemy and status information
