@@ -23,8 +23,10 @@ Boon: 0
 boon1: no
 boon2: no
 boon3: no
+boon4: no
 Companion: 0
 comp1: no
 comp2: no
 comp3: no
 comp4: no
+comp5: no

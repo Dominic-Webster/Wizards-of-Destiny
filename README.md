@@ -1,5 +1,5 @@
 # WIZARDS OF DESTINY
-## Version 3.2.0
+## Version 3.2.1
 
 ## THE EPIC SPELL-SLINGING ROGUELITE
 
@@ -26,6 +26,14 @@
 ---
 
 ### Update History
+
+#### UPDATE 3.2.1
+06/21/2025
+- New Boon: Strategist
+- New Companion: Lizard
+- Various bug fixes and balance changes
+
+#### _______________________________________
 
 #### UPDATE 3.2.0
 06/20/2025
