@@ -208,13 +208,13 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
-                cout << " Reward: " << level*5*REBIRTH << " coins!\n" << endl; //give player reward
+                cout << " Reward: " << YELLOW << level*5*REBIRTH << " coins!\n" << RESET << endl; //give player reward
                 COINS += (level*5*REBIRTH);
                 random = (rand() % 3); //player has chance to get a diamond
                 if(random == 0){DIAMONDS++;
-                cout << " You have found a diamond!\n";}
+                cout << CYAN << " You have found a diamond!\n\n" << RESET;}
                 this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
-                cout << "\n [1]: Return to Menu\n -> ";
+                cout << GREEN << "[1]:" << RESET << " Return to Menu\n\n -> ";
                 cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //back to play menu
             }
@@ -235,7 +235,7 @@ void fight(string factor){ //fight function
                     " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage++; cout << "\n Damage increased!\n\n";}
-                    else{health++; tempHP+=2; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
+                    else{health++; tempHP+=3; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 10){ //level 10 cleared stat boost
@@ -257,24 +257,24 @@ void fight(string factor){ //fight function
                     " 2) Health Boost (current: " << tempHP << "/" << health << ")\n\n -> ";
                     cin >> X;
                     if(X == "1"){damage += 2; cout << "\n Damage increased!\n\n";}
-                    else{health += 2; tempHP += 4; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
+                    else{health += 2; tempHP += 5; if(tempHP > health){tempHP = health;} cout << "\n Health increased!\n\n";}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                 }
                 if(level == 20){ //dungeon cleared
                     cout << "You've cleared the Misty Dungeon!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: " << 250*REBIRTH << " Coins\n" << endl; //completion reward
+                    cout << "Reward: " << YELLOW << 250*REBIRTH << " Coins\n" << RESET << endl; //completion reward
                     COINS += 250*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS++;
-                    cout << "You have found a diamond!\n" << endl;}
+                    cout << CYAN << "You have found a diamond!\n" << RESET << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 0){ //if first time completing
                         cout << "Ruined Castle: unlocked!\n" << endl;
                         PROGRESS = 1; //unlock ruined castle
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
-                    cout << "\n [1]: Return to Menu\n -> ";
+                    cout << GREEN << "\n [1]:" << RESET << " Return to Menu\n\n -> ";
                     cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and return to play menu
                 }
@@ -310,13 +310,13 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*10*REBIRTH << " coins!\n" << endl; //give reward
+                cout << " Reward: " << YELLOW << level*10*REBIRTH << " coins!\n" << RESET << endl; //give reward
                 COINS += (level*10*REBIRTH);
                 random = (rand() % 4); //diamond chance
                 if(random == 0){DIAMONDS++;
-                cout << " You have found a diamond!\n";}
+                cout << CYAN << " You have found a diamond!\n\n" << RESET;}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n [1]: Return to Menu\n -> ";
+                cout << GREEN << " [1]:" << RESET << " Return to Menu\n\n -> ";
                 cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
@@ -365,18 +365,18 @@ void fight(string factor){ //fight function
                 if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: " << 500*REBIRTH << "Coins\n" << endl; //player reward
+                    cout << "Reward: " << YELLOW << 500*REBIRTH << " Coins\n" << RESET << endl; //player reward
                     COINS += 500*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS += 2;
-                        cout << "You have found 2 diamonds!\n" << endl;}
+                        cout << CYAN << "You have found 2 diamonds!\n" << RESET << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 1){ //first time completed
                         cout << "Mountain of Despair: unlocked!\n" << endl;
                         PROGRESS = 2; //unlock mountain of despaiir
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
-                    cout << "\n [1]: Return to Menu\n -> ";
+                    cout << GREEN << "\n [1]:" << RESET << " Return to Menu\n\n -> ";
                     cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and exit to menu
                 }
@@ -412,13 +412,13 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*20*REBIRTH << " coins!\n" << endl; //player reward
+                cout << " Reward: " << YELLOW << level*20*REBIRTH << " coins!\n" << RESET << endl; //player reward
                 COINS += (level*20*REBIRTH);
                 random = (rand() % 4); //diamond chance
                 if(random == 0){DIAMONDS += 2;
-                cout << " You have found 2 diamonds\n";}
+                cout << CYAN << " You have found 2 diamonds\n\n" << RESET;}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n [1]: Return to Menu\n -> ";
+                cout << GREEN << " [1]:" << RESET << " Return to Menu\n\n -> ";
                 cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
@@ -467,18 +467,18 @@ void fight(string factor){ //fight function
                 if(level == 20){ //mountain cleared
                     cout << "You've cleared the Mountain of Despair!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: " << 750*REBIRTH << "Coins\n" << endl; //player reward
+                    cout << "Reward: " << YELLOW << 750*REBIRTH << " Coins\n" << RESET << endl; //player reward
                     COINS += 750*REBIRTH;
                     random = (rand() % 2);
                     if(random == 0){DIAMONDS += 2;
-                    cout << "You have found 2 diamonds!\n" << endl;}
+                    cout << CYAN << "You have found 2 diamonds!\n" << RESET << endl;}
                     if(PROGRESS == 2){
                         cout << "Desolate Wastes: unlocked!\n" << endl;
-                        PROGRESS = 3; //unlock mountain of despaiir
+                        PROGRESS = 3; //unlock desolate wastes
                         this_thread::sleep_for(chrono::milliseconds(game_speed));
                     } //if first time completed
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "\n [1]: Return to Menu\n -> ";
+                    cout << GREEN << "\n [1]:" << RESET << " Return to Menu\n\n -> ";
                     cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and go to menu
                 }
@@ -514,13 +514,13 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*40*REBIRTH << " coins!\n" << endl; //give reward
+                cout << " Reward: " << YELLOW << level*40*REBIRTH << " coins!\n" << RESET << endl; //give reward
                 COINS += (level*40*REBIRTH);
                 random = (rand() % 3); //diamond chance
                 if(random == 0){DIAMONDS += 2;
-                cout << " You have found 2 diamonds!\n";}
+                cout << CYAN << " You have found 2 diamonds!\n\n" << RESET;}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n [1]: Return to Menu\n -> ";
+                cout << GREEN << " [1]: " << RESET << "Return to Menu\n\n -> ";
                 cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
@@ -568,16 +568,18 @@ void fight(string factor){ //fight function
                 if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: " << 800*REBIRTH << "Coins\n" << endl; //player reward
+                    cout << "Reward: " << YELLOW << 800*REBIRTH << " Coins\n" << RESET << endl; //player reward
                     COINS += 800*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS += 3;
-                        cout << "You have found 3 diamonds!\n" << endl;}
+                        cout << CYAN << "You have found 3 diamonds!\n" << RESET << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 3){ //first time completed
-                        PROGRESS = 4; //unlock next?
+                        cout << "Cursed Mines: unlocked!\n" << endl;
+                        PROGRESS = 4; //unlock cursed mines
+                        this_thread::sleep_for(chrono::milliseconds(game_speed));
                     }
-                    cout << "\n [1]: Return to Menu\n -> ";
+                    cout << GREEN << "\n [1]:" << RESET << " Return to Menu\n\n -> ";
                     cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and exit to menu
                 }
@@ -613,13 +615,13 @@ void fight(string factor){ //fight function
                 system("clear");
                 cout << " You have been defeated\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << " Reward: " << level*50*REBIRTH << " coins!\n" << endl; //give reward
+                cout << " Reward: " << YELLOW << level*50*REBIRTH << RESET << " coins!\n" << endl; //give reward
                 COINS += (level*50*REBIRTH);
                 random = (rand() % 3); //diamond chance
                 if(random == 0){DIAMONDS += 2;
-                cout << " You have found 2 diamonds!\n";}
+                cout << CYAN << " You have found 2 diamonds!\n\n" << RESET;}
                 this_thread::sleep_for(chrono::milliseconds(game_speed));
-                cout << "\n [1]: Return to Menu\n -> ";
+                cout << GREEN << "\n [1]:" << RESET << " Return to Menu\n\n -> ";
                 cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                 update(); battle(); //save and return to menu
             }
@@ -667,16 +669,16 @@ void fight(string factor){ //fight function
                 if(level == 20){ //castle cleared
                     cout << "You've cleared the Ruined Castle!\n" << endl;
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
-                    cout << "Reward: " << 900*REBIRTH << "Coins\n" << endl; //player reward
+                    cout << "Reward: " << YELLOW << 900*REBIRTH << " Coins\n" << RESET << endl; //player reward
                     COINS += 900*REBIRTH;
                     random = (rand() % 2); //diamond chance
                     if(random == 0){DIAMONDS += 3;
-                        cout << "You have found 3 diamonds!\n" << endl;}
+                        cout << CYAN << "You have found 3 diamonds!\n" << RESET << endl;}
                     this_thread::sleep_for(chrono::milliseconds(game_speed));
                     if(PROGRESS == 4){ //first time completed
                         PROGRESS = 5; //unlock next?
                     }
-                    cout << "\n [1]: Return to Menu\n -> ";
+                    cout << GREEN << "\n [1]:" << RESET << " Return to Menu\n\n -> ";
                     cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
                     update(); battle(); //save and exit to menu
                 }
@@ -803,7 +805,7 @@ void calculate(Spell card){ //calculate player spell results
             eTempHP -= e; //decrease enemy health
             if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
             else if(t == "atk-bleed"){cout << endl << " You deal " << e << " damage and apply bleed!\n";} //show results
-            else if(t == "poison-heal"){cout << endl << " You deal " << e << " poison damage!\n";} //show results
+            else if(t == "poison-heal"){cout << endl << " You deal " << e << " poison damage and gain heal!\n";} //show results
             else{cout << endl << " You deal " << e << " " << t << " damage!\n";}} //show results
 
             if(t == "poison-heal"){player_status[2] = poison; if(poison == 0){player_status[2] = 1;}} //poison/heal spell
@@ -958,14 +960,14 @@ void calculate_enemy(){ //calculate what spell enemy casts
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";} //player dodges
             else{tempHP -= tempDMG;
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; 
-                    cout << " " << eName << " deals " << e + eCRITD << " *critical* damage!\n";}
+                    cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
         }
         else if(efactor < 7){ //fire
             if(rand()%100 < dodge+5){cout << " You dodge an attack!\n";}
             else{tempHP -= (tempDMG + eFIRE);
                 if(rand()%100 < eCRITC && BOON != 1){tempHP -= eCRITD; cout << " " <<
-                    eName << " deals " << eDMG + eCRITD + eFIRE << " *critiacl* fire damage!\n";}
+                    eName << " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
                 else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
             if(items[5] == 1){tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
@@ -1207,13 +1209,16 @@ void calculate_enemy(){ //calculate what spell enemy casts
 
 void show_card(Spell card){ //display spell
     string t = card.getType(); int e = card.getEffect();
+    cout << RESET;
     if(t == "fire"){cout << BOLD << RED;}
     else if(t == "ice" || t == "ice-stun"){cout << BLUE;}
-    else if(t == "poison" || t == "poison-heal"){cout << BOLD << MAGENTA;}
+    else if(t == "poison"){cout << BOLD << MAGENTA;}
+    else if(t == "poison-heal"){cout << BOLD << ITALIC << MAGENTA;}
     else if(t == "electric" || t == "electric-stun"){cout << CYAN;}
     else if(t == "heal" || t == "heal-shield"){cout << BOLD << GREEN;}
     else if(t == "drain"){cout << YELLOW;}
     else if(t == "trick"){cout << ITALIC << YELLOW;}
+    else if(t == "atk-bleed"){cout << ITALIC;}
     cout << card.getName() << RESET << ": ";
     if(t == "attack"){ //attack spell
         cout << "Deal " << e << " damage\n";
@@ -1781,26 +1786,27 @@ void endless_mode(){ //endless game mode
             this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
             if(endlessNum > ENDLESS){ENDLESS = endlessNum;}
             cout << " Level Reached: " << endlessNum << endl;
-            cout << " Record: " << ENDLESS << endl << endl;
+            cout << ITALIC << " Record: " << ENDLESS << RESET << endl << endl;
             this_thread::sleep_for(chrono::milliseconds(game_speed*2)); //wait briefly
             //give player reward
             if(endlessNum < 25){
-                cout << " Reward: " << endlessNum*5*REBIRTH << " coins!\n" << endl; 
+                cout << " Reward: " << YELLOW << endlessNum*5*REBIRTH << " coins!\n" << endl; 
                 COINS += (endlessNum*5*REBIRTH);
             }
             else if(endlessNum < 50){
-                cout << " Reward: " << endlessNum*10*REBIRTH << " coins!\n" << endl; 
+                cout << " Reward: " << YELLOW << endlessNum*10*REBIRTH << " coins!\n" << endl; 
                 COINS += (endlessNum*10*REBIRTH);
             }
             else{
-                cout << " Reward: " << endlessNum*15*REBIRTH << " coins!\n" << endl; 
+                cout << " Reward: " << YELLOW << endlessNum*15*REBIRTH << " coins!\n" << endl; 
                 COINS += (endlessNum*15*REBIRTH);
             }
+            cout << RESET;
             random = (rand() % 3); //player has chance to get a diamond
             if(random == 0){DIAMONDS++;
-            cout << " You have found a diamond!\n";}
+            cout << CYAN << " You have found a diamond!\n\n" << RESET;}
             this_thread::sleep_for(chrono::milliseconds(game_speed)); //wait briefly
-            cout << "\n [1]: Return to Menu\n -> ";
+            cout << GREEN << " [1]:" << RESET << " Return to Menu\n\n -> ";
             cin >> X; this_thread::sleep_for(chrono::milliseconds(game_speed));
             update(); battle(); //back to play menu
         }
@@ -2598,7 +2604,7 @@ void companion_menu(){ //controls player companions
     else{COMPANION = 0; companion_menu();}
 }
 
-void item_menu(){
+void item_menu(){ //upgrade item menu
     do{
         system("clear");
         cout << BLUE << "  - UPGRADE ITEMS -\n" << RESET << endl;
@@ -2943,8 +2949,8 @@ void rebirth_menu(){ //controls player rebirth
         system("clear");
         cout << BLUE << "  - REBIRTH (Level: " << REBIRTH << ") -\n" << RESET << endl;
         cout << " COINS: " << YELLOW << COINS << RESET << endl << endl;
-        cout << YELLOW << ITALIC << " Rebirth resets all your stats and progress, but increases your coin income\n" << endl;
-        cout << RESET << GREEN << " (1):" << RESET << " Rebirth (" << 1000 * pow(2, REBIRTH-1) << " Coins)\n";
+        cout << CYAN << ITALIC << " Rebirth resets all your stats and progress, but increases your coin income\n" << endl;
+        cout << RESET << GREEN << " (1):" << RESET << " Rebirth " << YELLOW << "(" << 1000 * pow(2, REBIRTH-1) << " Coins)\n" << RESET;
         cout << GREEN << " (0):" << RESET << " Back to Upgrades\n\n -> ";
         cin >> X;
     }while(X < "0" || X > "1");
