@@ -791,13 +791,13 @@ void calculate(Spell card){ //calculate player spell results
         if(t == "fire" && eTYPE == "Ice"){e+=fire;} //ice sorcerer is weak to fire
         if(t == "fire" && eTYPE == "Fire"){e-=fire;} //fire mage is fire resistant
         if(t == "ice" && eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
-        if(t == "ice-stun" && eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
         if(t == "ice" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
-        if(t == "ice-stun" && eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(t == "poison" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
+        if(t == "poison-heal" && eTYPE == "Necro"){e-=poison;} //Necro is poison resistant
         if(t == "poison" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
+        if(t == "poison-heal" && eTYPE == "Defend"){e+=poison;} //defender is weak to poison
         if(t == "electric" && eTYPE == "Wizard"){e-=electric;} //Wizard is electric resistant
-        if(t == "electric" && eTYPE == "Necro"){e+=electric;} //Necro is weak to poison
+        if(t == "electric" && eTYPE == "Necro"){e+=electric;} //Necro is weak to electric
         if(rand()%100 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
@@ -835,6 +835,8 @@ void calculate(Spell card){ //calculate player spell results
             cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
     else if(t == "ice-stun"){ //ice(stun) spell
+        if(eTYPE == "Fire"){e+=ice;} //fire mage is weak to ice
+        if(eTYPE == "Ice"){e-=ice;} //ice sorcerer is ice resistant
         if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
@@ -846,6 +848,8 @@ void calculate(Spell card){ //calculate player spell results
         }
     }
     else if(t == "electric-stun"){ //electric(stun) spell
+        if(eTYPE == "Necro"){e+=electric;} //Necro is weak to electric
+        if(eTYPE == "Wizard"){e-=electric;} //Wizard is electric resistant
         if(rand()%105 < eDODGE && BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < critc+5){e += critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;  
                 this_thread::sleep_for(chrono::milliseconds(game_speed));} //crits
@@ -1182,7 +1186,7 @@ void calculate_enemy(){ //calculate what spell enemy casts
     else if(eTYPE == "Ice" || eTYPE == "Defend"){stat_chance = 3;}
     else if(eTYPE == "Necro" || eTYPE == "Unstable"){stat_chance = 4;}
 
-    if(rand()%10 < stat_chance){
+    if(rand()%10 < stat_chance){ //applies stats
         this_thread::sleep_for(chrono::milliseconds(game_speed));
         int z = rand()%4;
         if(z == 0 && BOON != 4){ //enemy heal
