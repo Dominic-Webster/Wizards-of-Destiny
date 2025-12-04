@@ -22,17 +22,8 @@ void show_card(Spell card); void too_poor(); void boost_menu();
 void player(string factor); void item_shop(); void calculate_comp();
 void enemy(string factor); void reset_items(); void item_menu();
 void calculate(Spell card); void calculate_enemy();
-void enemy_name(); void pick_item(); void update_items();
+string enemy_name(); void pick_item(); void update_items();
 void boon_menu(); void companion_menu(); void rebirth_menu();
-
-string FNAME[25] = {"Yarno", "Belloc", "Soma", "Yeen", "Marcuus", "Liol", "Quand", "Jurno", "Corsto", "Kaimo", "Lord Denna", "Hubert",
-"Wernda", "Helena", "Astan", "Lucia", "Ferdinand", "Orp", "Oogga", "Ray", "Rendolf", "Portian", "Billis", "Quamm", "Foxy"};
-string LNAME[25] = {"Hellfire", "Wedlok", "Hona", "Perf", "Orelius", "The Slayer", "The Butcher", "Doombringer", "The Savage", "The Destroyer", "The Loser", "The Fox",
-"Hogtie", "Far-Wanderer", "Oathbreaker", "Kindy", "Wok", "Erp", "King Killer", "Nightwalker", "Pain-Bringer", "Xondoloxa", "Of The Forest", "Of The Warlords", "The Annoying"};
-string FNAME2[25] = {"Holga", "Waine", "Harkken", "Folda", "Swinn", "Varis", "Galdaf", "Halfdan", "Eldar", "Roirand", "Keet", "Wet Sod",
-"Germaine", "Zandar", "Kieran", "Noss", "Theoran", "Juju", "Yymigg", "Deathman", "Cildas", "Inhilla", "Harper", "Jermalline", "Biggo"};
-string LNAME2[25] = {"Westbound", "The Dead", "The Lost", "The Old", "The Young", "Gillian", "The Fallen", "Bell", "Jund", "Ungundo", "Jojo", "Kiwi",
-"The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu", "The Small", "The Chum", "Of The Wolves"};
 
 //0, 1, 2, 3, 4, 5, 6, 7, 8
 Item AoU("Amulet of Undying", "Regain life after each battle", 0, 0), RoL("Ring of Life", "Boost health", 0, 0), 
@@ -190,7 +181,7 @@ void fight(string factor){ //fight function
     if(factor == "1"){
         while(level < 21){ //runs through dungeon
             make_enemy(factor); //create this level's enemy
-            enemy_name(); //create the enemy name
+            eName = enemy_name(); //create the enemy name
             eTempHP = eHP; //set enemy temp health
             while(tempHP > 0 && eTempHP > 0){ //runs through battle
                 if(TURN == 0){ //player turn
@@ -292,7 +283,7 @@ void fight(string factor){ //fight function
     if(factor == "2"){
         while(level < 21){ //runs until reaches end
             make_enemy(factor); //create enemy for the level
-            enemy_name(); //enemy name
+            eName = enemy_name(); //enemy name
             eTempHP = eHP; //set temp health
             while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
@@ -394,7 +385,7 @@ void fight(string factor){ //fight function
     if(factor == "3"){
         while(level < 21){ //runs to end of adventure
             make_enemy(factor); //create enemy for level
-            enemy_name(); //enemy name
+            eName = enemy_name(); //enemy name
             eTempHP = eHP; //set enemy temp helth
             while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
@@ -496,7 +487,7 @@ void fight(string factor){ //fight function
     if(factor == "4"){
         while(level < 21){ //runs until reaches end
             make_enemy(factor); //create enemy for the level
-            enemy_name(); //enemy name
+            eName = enemy_name(); //enemy name
             eTempHP = eHP; //set temp health
             while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
@@ -597,7 +588,7 @@ void fight(string factor){ //fight function
     if(factor == "5"){
         while(level < 21){ //runs until reaches end
             make_enemy(factor); //create enemy for the level
-            enemy_name(); //enemy name
+            eName = enemy_name(); //enemy name
             eTempHP = eHP; //set temp health
             while(tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
@@ -1768,7 +1759,7 @@ void endless_mode(){ //endless game mode
 
     while(tempHP > 0){
         make_enemy("X"); //create this level's enemy
-        enemy_name(); //create the enemy name
+        eName = enemy_name(); //create the enemy name
         eTempHP = eHP; //set enemy temp health
     
         while(tempHP > 0 && eTempHP > 0){ //runs through battle
@@ -2301,28 +2292,23 @@ void reset_items(){ //reset item data
     update_items();
 }
 
-void enemy_name(){ //generate enemy name
-    eName = "";
-    int random;
-    random = (rand() % 2);
-    if(random == 0){ //first first name list
-        random = (rand() % 25);
-        eName += FNAME[random];
-    }
-    else{ //second first name list
-        random = (rand() % 25);
-        eName += FNAME2[random];
-    }
-    eName += " ";
-    random = (rand() % 2);
-    if(random == 0){ //first last name list
-        random = (rand() % 25);
-        eName += LNAME[random];
-    }
-    else{ //second last name list
-        random = (rand() % 25);
-        eName += LNAME2[random];
-    }
+string enemy_name(){ //generate enemy name
+    string f_name[50] = {"Yarno", "Belloc", "Soma", "Yeen", "Marcuus", "Liol", "Quand", "Jurno", "Corsto", "Kaimo", "Lord Denna", "Hubert",
+"Wernda", "Helena", "Astan", "Lucia", "Ferdinand", "Orp", "Oogga", "Ray", "Rendolf", "Portian", "Billis", "Quamm", "Foxy", "Holga", "Waine", 
+"Harkken", "Folda", "Swinn", "Varis", "Galdaf", "Halfdan", "Eldar", "Roirand", "Keet", "Wet Sod", "Germaine", "Zandar", "Kieran", "Noss", 
+"Theoran", "Juju", "Yymigg", "Deathman", "Cildas", "Inhilla", "Harper", "Jermalline", "Biggo"};
+    string l_name[50] = {"Hellfire", "Wedlok", "Hona", "Perf", "Orelius", "The Slayer", "The Butcher", "Doombringer", "The Savage", "The Destroyer", 
+"The Loser", "The Fox", "Hogtie", "Far-Wanderer", "Oathbreaker", "Kindy", "Wok", "Erp", "King Killer", "Nightwalker", "Pain-Bringer", "Xondoloxa", 
+"Of The Forest", "Of The Warlords", "The Annoying", "Westbound", "The Dead", "The Lost", "The Old", "The Young", "Gillian", "The Fallen", "Bell", 
+"Jund", "Ungundo", "Jojo", "Kiwi", "The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu", 
+"The Small", "The Chum", "Of The Wolves"};
+
+    string enemy_name;
+    int random = (rand() % 50);
+    enemy_name = f_name[random] + " ";
+    random = (rand() % 50);
+    enemy_name += l_name[random];
+    return enemy_name;
 }
 
 void pick_item(){ //get new item
