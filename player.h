@@ -7,6 +7,7 @@
 struct Player{
     Player();
     void update();
+    void reset_status();
 
     //variables
     Spell CARD1, CARD2, CARD3;
@@ -20,7 +21,7 @@ struct Player{
     int health, tempHP, damage, fire, ice, poison, electric, shield, heal, luck, critc, critd, dodge;
     //effects with * can have varying numbers
     //status effects: *bleed:0, *shield:1, *heal:2, drained:3
-    int player_status[4]; //keeps track of status effects on player
+    int status[4]; //keeps track of status effects on player
 };
 
 #endif

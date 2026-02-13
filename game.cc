@@ -6,6 +6,7 @@
  */
 
 #include "player.h"
+#include "enemy.h"
 #include "colors.h"
 #include "item.h"
 #include <ctime>
@@ -16,15 +17,15 @@
 void battle(Player player); 
 void boon_menu(Player player); 
 void boost_menu(Player player);
-void calculate(Spell card, Player player); 
-void calculate_comp(Player player); 
-void calculate_enemy(Player player);
+void calculate(Spell card, Player player, Enemy enemy); 
+void calculate_comp(Player player, Enemy enemy); 
+void calculate_enemy(Player player, Enemy enemy);
 void companion_menu(Player player); 
 void database(Player player); 
 void encounter(Player player, int levNum);
 void endless_mode(Player player);
 string enemy_name(); 
-void enemy_turn(string factor, Player player, int levNum); 
+void enemy_turn(string factor, Player player, Enemy enemy, int levNum); 
 void fight(string factor, Player player); 
 void how_to(Player player);
 int itemCount();
@@ -33,9 +34,9 @@ void item_shop(Player player);
 void level_up(Player player); 
 void make_enemy(string factor, Player player, int levNum); 
 void menu(Player player); 
-void output_level(string factor, Player player, int levNum); 
+void output_level(string factor, Player player, Enemy enemy, int levNum); 
 void pick_item(Player player);
-void player_turn(string factor, Player player, int levNum); 
+void player_turn(string factor, Player player, Enemy enemy, int levNum); 
 void rebirth_menu(Player player);
 void reset_enemy_status();
 void reset_items();
@@ -57,12 +58,8 @@ BotE("Boots of the Elves", "Boost dodge chance", 0, 0),
 WoH("Wand of Heroes", "Boost shield", 1, 1); 
 int items[9]; //keeps track of which items player is using
 
-//effects with * can have varying numbers
-//status effects: *bleed:0, *shield:1, *heal:2
-int enemy_status[3]; //keeps track of status effects on enemy
-
-string eTYPE, eName, encounterType, t;
-int eHP, eTempHP, eDMG, TURN, eFIRE, eICE, ePOISON, eHEAL, eCRITC, eCRITD, eDODGE, eELECTRIC, e, efactor;
+string encounterType, t;
+int TURN, e, efactor;
 
 int main(int argc, char const *argv[]){
     srand(time(0)); //seeds random to time
@@ -145,13 +142,14 @@ void battle(Player player){ //adventure menu
 void fight(string factor, Player player){ //fight function
     int random, level = 1;
     string X;
+    Enemy enemy;
     //set play stats equal to base stats (they can be modified without messing with base stats)
     player.health = player.tempHP = player.HP; player.damage = player.DMG; player.fire = player.FIRE; player.ice = player.ICE; player.poison = player.POISON; player.heal = player.HEAL; TURN = 0;
     player.critc = player.CRITC; player.critd = player.CRITD; player.dodge = player.DODGE; player.luck = player.LUCK; player.shield = player.SHIELD; player.electric = player.ELECTRIC;
 
     //sets all status effects to off
-    for(int i = 0; i < 4; i++){player.player_status[i] = 0;}
-    reset_enemy_status();
+    player.reset_status();
+    enemy.reset_status();
     
     pick_item(player); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -181,17 +179,20 @@ void fight(string factor, Player player){ //fight function
     //Misty Dungeon
     if(factor == "1"){
         while(level < 21){ //runs through dungeon
-            make_enemy(factor, player, 0); //create this level's enemy
-            eName = enemy_name(); //create the enemy name
-            eTempHP = eHP; //set enemy temp health
-            while(player.tempHP > 0 && eTempHP > 0){ //runs through battle
+            enemy.make_enemy(factor, player, level); //create this level's enemy
+
+            if(items[4] == 1){enemy.health -= RoD.getStat();} //rune of death
+            if(enemy.health < 1){enemy.health = 1;}
+
+            enemy.tempHP = enemy.health; //set enemy temp health
+            while(player.tempHP > 0 && enemy.tempHP > 0){ //runs through battle
                 if(TURN == 0){ //player turn
-                    player_turn(factor, player, level);
+                    player_turn(factor, player, enemy, level);
                     if(TURN == 2){TURN = 0;} //when enemy is stunned
                     else{TURN = 1;}
                 }
                 else{ //enemy turn
-                    enemy_turn(factor, player, level);
+                    enemy_turn(factor, player, enemy, level);
                     if(TURN == 3){TURN = 1;} //when player is stunned
                     else{TURN = 0;}
                 }
@@ -212,7 +213,7 @@ void fight(string factor, Player player){ //fight function
             }
             else{ //proceed to next level
                 system("clear");
-                reset_enemy_status();
+                enemy.reset_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 if(items[0] == 1 && level != 20 && player.tempHP < player.health){ //Amulet of Undying
@@ -286,17 +287,20 @@ void fight(string factor, Player player){ //fight function
     //Ruined Castle
     if(factor == "2"){
         while(level < 21){ //runs until reaches end
-            make_enemy(factor, player, 0); //create enemy for the level
-            eName = enemy_name(); //enemy name
-            eTempHP = eHP; //set temp health
-            while(player.tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+            enemy.make_enemy(factor, player, level); //create this level's enemy
+
+            if(items[4] == 1){enemy.health -= RoD.getStat();} //rune of death
+            if(enemy.health < 1){enemy.health = 1;}
+            
+            enemy.tempHP = enemy.health; //set enemy temp health
+            while(player.tempHP > 0 && enemy.tempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
-                    player_turn(factor, player, level);
+                    player_turn(factor, player, enemy, level);
                     if(TURN == 2){TURN = 0;} //enemy stunned
                     else{TURN = 1;}
                 }
                 else{ //enemy turn
-                    enemy_turn(factor, player, level);
+                    enemy_turn(factor, player, enemy, level);
                     if(TURN == 3){TURN = 1;} //player stunned
                     else{TURN = 0;}
                 }
@@ -317,7 +321,7 @@ void fight(string factor, Player player){ //fight function
             }
             else{ //player beat level
                 system("clear");
-                reset_enemy_status();
+                enemy.reset_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 if(items[0] == 1 && level != 20 && player.tempHP < player.health){ //Amulet of Undying
@@ -390,17 +394,20 @@ void fight(string factor, Player player){ //fight function
     //Mountain of Despair
     if(factor == "3"){
         while(level < 21){ //runs to end of adventure
-            make_enemy(factor, player, 0); //create enemy for level
-            eName = enemy_name(); //enemy name
-            eTempHP = eHP; //set enemy temp helth
-            while(player.tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+            enemy.make_enemy(factor, player, level); //create this level's enemy
+
+            if(items[4] == 1){enemy.health -= RoD.getStat();} //rune of death
+            if(enemy.health < 1){enemy.health = 1;}
+            
+            enemy.tempHP = enemy.health; //set enemy temp health
+            while(player.tempHP > 0 && enemy.tempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
-                    player_turn(factor, player,level);
+                    player_turn(factor, player, enemy, level);
                     if(TURN == 2){TURN = 0;} //enemy stunned
                     else{TURN = 1;}
                 }
                 else{ //enemy turn
-                    enemy_turn(factor, player, level);
+                    enemy_turn(factor, player, enemy, level);
                     if(TURN == 3){TURN = 1;} //player stunned
                     else{TURN = 0;}
                 }
@@ -421,7 +428,7 @@ void fight(string factor, Player player){ //fight function
             }
             else{ //player defeated level
                 system("clear");
-                reset_enemy_status();
+                enemy.reset_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 if(items[0] == 1 && level != 20 && player.tempHP < player.health){ //Amulet of Undying
@@ -496,17 +503,20 @@ void fight(string factor, Player player){ //fight function
     //Desolate Wastes
     if(factor == "4"){
         while(level < 21){ //runs until reaches end
-            make_enemy(factor, player, 0); //create enemy for the level
-            eName = enemy_name(); //enemy name
-            eTempHP = eHP; //set temp health
-            while(player.tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+            enemy.make_enemy(factor, player, level); //create this level's enemy
+
+            if(items[4] == 1){enemy.health -= RoD.getStat();} //rune of death
+            if(enemy.health < 1){enemy.health = 1;}
+            
+            enemy.tempHP = enemy.health; //set enemy temp health
+            while(player.tempHP > 0 && enemy.tempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
-                    player_turn(factor, player, level);
+                    player_turn(factor, player, enemy, level);
                     if(TURN == 2){TURN = 0;} //enemy stunned
                     else{TURN = 1;}
                 }
                 else{ //enemy turn
-                    enemy_turn(factor, player, level);
+                    enemy_turn(factor, player, enemy, level);
                     if(TURN == 3){TURN = 1;} //player stunned
                     else{TURN = 0;}
                 }
@@ -527,7 +537,7 @@ void fight(string factor, Player player){ //fight function
             }
             else{ //player beat level
                 system("clear");
-                reset_enemy_status();
+                enemy.reset_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 if(items[0] == 1 && level != 20 && player.tempHP < player.health){ //Amulet of Undying
@@ -602,17 +612,20 @@ void fight(string factor, Player player){ //fight function
     //Cursed Mines
     if(factor == "5"){
         while(level < 21){ //runs until reaches end
-            make_enemy(factor, player, 0); //create enemy for the level
-            eName = enemy_name(); //enemy name
-            eTempHP = eHP; //set temp health
-            while(player.tempHP > 0 && eTempHP > 0){ //runs till someone is defeated
+            enemy.make_enemy(factor, player, level); //create this level's enemy
+
+            if(items[4] == 1){enemy.health -= RoD.getStat();} //rune of death
+            if(enemy.health < 1){enemy.health = 1;}
+            
+            enemy.tempHP = enemy.health; //set enemy temp health
+            while(player.tempHP > 0 && enemy.tempHP > 0){ //runs till someone is defeated
                 if(TURN == 0){ //player turn
-                    player_turn(factor, player, level);
+                    player_turn(factor, player, enemy, level);
                     if(TURN == 2){TURN = 0;} //enemy stunned
                     else{TURN = 1;}
                 }
                 else{ //enemy turn
-                    enemy_turn(factor, player, level);
+                    enemy_turn(factor, player, enemy, level);
                     if(TURN == 3){TURN = 1;} //player stunned
                     else{TURN = 0;}
                 }
@@ -633,7 +646,7 @@ void fight(string factor, Player player){ //fight function
             }
             else{ //player beat level
                 system("clear");
-                reset_enemy_status();
+                enemy.reset_status();
                 cout << " Enemy defeated!\n" << endl;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 if(items[0] == 1 && level != 20 && player.tempHP < player.health){ //Amulet of Undying
@@ -707,121 +720,121 @@ void fight(string factor, Player player){ //fight function
 
 }
 
-void player_turn(string factor, Player player, int levNum){ //player turn
+void player_turn(string factor, Player player, Enemy enemy, int levNum){ //player turn
     string X;
     player.CARD1.get_card(player.health, player.damage, player.fire, player.ice, player.poison, player.electric, player.heal); //generate first spell
     player.CARD2.get_card(player.health, player.damage, player.fire, player.ice, player.poison, player.electric, player.heal); //generate second spell
     player.CARD3.get_card(player.health, player.damage, player.fire, player.ice, player.poison, player.electric, player.heal); //generate third spell
 
     //reset any neccesary status effects
-    player.player_status[1] = 0; //shield
+    player.status[1] = 0; //shield
 
     system("clear");
     //start of turn status effects
-    if(player.player_status[2] != 0){ //heal
-        cout << ITALIC << GREEN << " You heal for " << player.player_status[2] << " health\n\n" << RESET;
+    if(player.status[2] != 0){ //heal
+        cout << ITALIC << GREEN << " You heal for " << player.status[2] << " health\n\n" << RESET;
         this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
-        player.tempHP += player.player_status[2];
+        player.tempHP += player.status[2];
         if(player.tempHP > player.health){player.tempHP = player.health;}
-        player.player_status[2] = 0;
+        player.status[2] = 0;
     }
 
     do{
     system("clear");
-    output_level(factor, player, levNum); //show level, enemy, and player info
+    output_level(factor, player, enemy, levNum); //show level, enemy, and player info
     this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
     cout << " Your turn\n" << endl;
     this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
     cout << GREEN << " 1) " << RESET; show_card(player.CARD1); //these show the spells
     cout << GREEN << " 2) " << RESET; show_card(player.CARD2);
-    if(player.player_status[3] == 0){cout << GREEN << " 3) " << RESET; show_card(player.CARD3);} //weakened
+    if(player.status[3] == 0){cout << GREEN << " 3) " << RESET; show_card(player.CARD3);} //weakened
     cout << "\n -> ";
     cin >> X;
     }while(X < "1" || X > "3"); //until player selects spell
     this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
-    if(X == "1"){calculate(player.CARD1, player);} //calculate spell player chose
-    else if(X == "2"){calculate(player.CARD2, player);}
-    else if(X == "3"){calculate(player.CARD3, player);}
+    if(X == "1"){calculate(player.CARD1, player, enemy);} //calculate spell player chose
+    else if(X == "2"){calculate(player.CARD2, player, enemy);}
+    else if(X == "3"){calculate(player.CARD3, player, enemy);}
     this_thread::sleep_for(chrono::milliseconds(player.game_speed));
 
     //end of turn status effects
     system("clear");
-    if(player.player_status[0] != 0){ //bleed
-        cout << ITALIC << RED << " You bleed for " << player.player_status[0] << " damage\n" << RESET;
+    if(player.status[0] != 0){ //bleed
+        cout << ITALIC << RED << " You bleed for " << player.status[0] << " damage\n" << RESET;
         this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
-        player.tempHP -= player.player_status[0];
+        player.tempHP -= player.status[0];
         if(player.tempHP < 1){
             cout << ITALIC << RED << " You succumb to your wounds\n" << RESET;
             this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
         }
-        player.player_status[0] = 0;
+        player.status[0] = 0;
     }
 
     //reset any neccesary status effects
-    player.player_status[3] = 0; //drained
+    player.status[3] = 0; //drained
 }
 
-void enemy_turn(string factor, Player player, int levNum){ //enemy turn
+void enemy_turn(string factor, Player player, Enemy enemy, int levNum){ //enemy turn
     //reset any neccesary status effects
-    enemy_status[1] = 0; //shield
+    enemy.status[1] = 0; //shield
 
     system("clear");
     //start of turn status effects
-    if(enemy_status[2] != 0){ //heal
-        cout << ITALIC << GREEN << " " << eName << " heals for " << enemy_status[2] << " health\n\n" << RESET;
+    if(enemy.status[2] != 0){ //heal
+        cout << ITALIC << GREEN << " " << enemy.name << " heals for " << enemy.status[2] << " health\n\n" << RESET;
         this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
-        eTempHP += enemy_status[2];
-        if(eTempHP > eHP){eTempHP = eHP;}
-        enemy_status[2] = 0;
+        enemy.tempHP += enemy.status[2];
+        if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+        enemy.status[2] = 0;
     }
     system("clear");
-    output_level(factor, player, levNum); //show level, enemy, and player info
+    output_level(factor, player, enemy, levNum); //show level, enemy, and player info
     this_thread::sleep_for(chrono::milliseconds(player.game_speed));
     cout << " Enemy's turn\n" << endl;
     this_thread::sleep_for(chrono::milliseconds(player.game_speed));
-    calculate_enemy(player); //calculate what spell enemy casts
+    calculate_enemy(player, enemy); //calculate what spell enemy casts
     this_thread::sleep_for(chrono::milliseconds(player.game_speed));
 
     //end of turn status effects
     system("clear");
-    if(enemy_status[0] != 0){ //bleed
-        cout << ITALIC << RED << " " << eName << " bleeds for " << enemy_status[0] << " damage\n" << RESET;
+    if(enemy.status[0] != 0){ //bleed
+        cout << ITALIC << RED << " " << enemy.name << " bleeds for " << enemy.status[0] << " damage\n" << RESET;
         this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
-        eTempHP -= enemy_status[0];
-        if(eTempHP < 1){
+        enemy.tempHP -= enemy.status[0];
+        if(enemy.tempHP < 1){
             cout << ITALIC << RED << " They succumb to their wounds\n\n" << RESET;
             this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait
         }
-        enemy_status[0] = 0;
+        enemy.status[0] = 0;
     }
 }
 
-void calculate(Spell card, Player player){ //calculate player spell results
+void calculate(Spell card, Player player, Enemy enemy){ //calculate player spell results
     bool critted = false;
     t = card.getType(); e = card.getEffect();
     if(t == "attack" || t == "fire" || t == "ice" || t == "poison" || t == "electric" || t == "poison-heal" || t == "atk-bleed"){ //attack spell
-        if(t == "fire" && eTYPE == "Ice"){e+=player.fire;} //ice sorcerer is weak to fire
-        if(t == "fire" && eTYPE == "Fire"){e-=player.fire;} //fire mage is fire resistant
-        if(t == "ice" && eTYPE == "Fire"){e+=player.ice;} //fire mage is weak to ice
-        if(t == "ice" && eTYPE == "Ice"){e-=player.ice;} //ice sorcerer is ice resistant
-        if(t == "poison" && eTYPE == "Necro"){e-=player.poison;} //Necro is poison resistant
-        if(t == "poison-heal" && eTYPE == "Necro"){e-=player.poison;} //Necro is poison resistant
-        if(t == "poison" && eTYPE == "Defend"){e+=player.poison;} //defender is weak to poison
-        if(t == "poison-heal" && eTYPE == "Defend"){e+=player.poison;} //defender is weak to poison
-        if(t == "electric" && eTYPE == "Wizard"){e-=player.electric;} //Wizard is electric resistant
-        if(t == "electric" && eTYPE == "Necro"){e+=player.electric;} //Necro is weak to electric
-        if(rand()%100 < eDODGE && player.BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(t == "fire" && enemy.type == "Ice"){e+=player.fire;} //ice sorcerer is weak to fire
+        if(t == "fire" && enemy.type == "Fire"){e-=player.fire;} //fire mage is fire resistant
+        if(t == "ice" && enemy.type == "Fire"){e+=player.ice;} //fire mage is weak to ice
+        if(t == "ice" && enemy.type == "Ice"){e-=player.ice;} //ice sorcerer is ice resistant
+        if(t == "poison" && enemy.type == "Necro"){e-=player.poison;} //Necro is poison resistant
+        if(t == "poison-heal" && enemy.type == "Necro"){e-=player.poison;} //Necro is poison resistant
+        if(t == "poison" && enemy.type == "Defend"){e+=player.poison;} //defender is weak to poison
+        if(t == "poison-heal" && enemy.type == "Defend"){e+=player.poison;} //defender is weak to poison
+        if(t == "electric" && enemy.type == "Wizard"){e-=player.electric;} //Wizard is electric resistant
+        if(t == "electric" && enemy.type == "Necro"){e+=player.electric;} //Necro is weak to electric
+        if(rand()%100 < enemy.dodge && player.BOON != 2){cout << "\n " << enemy.name << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < player.critc+5){e += player.critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));} //crits
-            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
-            eTempHP -= e; //decrease enemy health
+            e -= enemy.status[1]; if(e < 0){e = 0;} //enemy shield status
+            enemy.tempHP -= e; //decrease enemy health
             if(t == "attack"){cout << endl << " You deal " << e << " damage!\n";} //show results
             else if(t == "atk-bleed"){cout << endl << " You deal " << e << " damage and apply bleed!\n";} //show results
             else if(t == "poison-heal"){cout << endl << " You deal " << e << " poison damage and gain heal!\n";} //show results
             else{cout << endl << " You deal " << e << " " << t << " damage!\n";}} //show results
 
-            if(t == "poison-heal"){player.player_status[2] = player.poison; if(player.poison == 0){player.player_status[2] = 1;}} //poison/heal spell
-            if(t == "atk-bleed"){enemy_status[0] = 1 + rand()%e;} //mystic slash
+            if(t == "poison-heal"){player.status[2] = player.poison; if(player.poison == 0){player.status[2] = 1;}} //poison/heal spell
+            if(t == "atk-bleed"){enemy.status[0] = 1 + rand()%e;} //mystic slash
     }
     else if(t == "heal"){ //healing spell
         player.tempHP += e;
@@ -836,37 +849,37 @@ void calculate(Spell card, Player player){ //calculate player spell results
         player.tempHP += e;
         if(player.tempHP > player.health){player.tempHP = player.health;} //can't go over max
         cout << endl << " You heal yourself for " << e << " health, and throw up a magic barrier!\n";
-        player.player_status[1] = e-1; if(e == 1){player.player_status[1] = 1;}
+        player.status[1] = e-1; if(e == 1){player.status[1] = 1;}
     }
     else if(t == "atk-stun"){ //attack(stun) spell
-        if(rand()%110 < eDODGE && player.BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(rand()%110 < enemy.dodge && player.BOON != 2){cout << "\n " << enemy.name << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < player.critc+5){e += player.critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));} //crits
-            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
-            eTempHP -= e; TURN = 2; //deal damage, trigger stun
+            e -= enemy.status[1]; if(e < 0){e = 0;} //enemy shield status
+            enemy.tempHP -= e; TURN = 2; //deal damage, trigger stun
             cout << endl << " You stun your enemy, dealing " << e << " damage!\n";}
     }
     else if(t == "ice-stun"){ //ice(stun) spell
-        if(eTYPE == "Fire"){e+=player.ice;} //fire mage is weak to ice
-        if(eTYPE == "Ice"){e-=player.ice;} //ice sorcerer is ice resistant
-        if(rand()%105 < eDODGE && player.BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(enemy.type == "Fire"){e+=player.ice;} //fire mage is weak to ice
+        if(enemy.type == "Ice"){e-=player.ice;} //ice sorcerer is ice resistant
+        if(rand()%105 < enemy.dodge && player.BOON != 2){cout << "\n " << enemy.name << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < player.critc+5){e += player.critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));} //crits
-            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
-            eTempHP -= e; //deal damage
+            e -= enemy.status[1]; if(e < 0){e = 0;} //enemy shield status
+            enemy.tempHP -= e; //deal damage
             cout << endl << " You deal " << e << " ice damage!\n";
             if(rand()%4 == 0){this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 TURN = 2; cout << "\n Enemy Stunned!\n";}
         }
     }
     else if(t == "electric-stun"){ //electric(stun) spell
-        if(eTYPE == "Necro"){e+=player.electric;} //Necro is weak to electric
-        if(eTYPE == "Wizard"){e-=player.electric;} //Wizard is electric resistant
-        if(rand()%105 < eDODGE && player.BOON != 2){cout << "\n " << eName << " dodges your attack!\n";} //enemy dodge
+        if(enemy.type == "Necro"){e+=player.electric;} //Necro is weak to electric
+        if(enemy.type == "Wizard"){e-=player.electric;} //Wizard is electric resistant
+        if(rand()%105 < enemy.dodge && player.BOON != 2){cout << "\n " << enemy.name << " dodges your attack!\n";} //enemy dodge
         else{if(rand()%100 < player.critc+5){e += player.critd; cout << "\n * CRITICAL HIT! *\n"; critted = true;  
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));} //crits
-            e -= enemy_status[1]; if(e < 0){e = 0;} //enemy shield status
-            eTempHP -= e; //deal damage
+            e -= enemy.status[1]; if(e < 0){e = 0;} //enemy shield status
+            enemy.tempHP -= e; //deal damage
             cout << endl << " You deal " << e << " electric damage!\n";
             if(rand()%10 < 3){this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 TURN = 2; cout << "\n Enemy Stunned!\n";}
@@ -874,20 +887,20 @@ void calculate(Spell card, Player player){ //calculate player spell results
     }
     else if(t == "trick"){ //trickery spell
         cout << endl << " Magic washes over you and your enemy!\n";
-        enemy_status[0] = e;
-        player.player_status[1] = e;
-        player.player_status[2] = e;
+        enemy.status[0] = e;
+        player.status[1] = e;
+        player.status[2] = e;
     }
     else{ //drain spell
-        e -= enemy_status[1]; if(e < 1){e = 1;} //enemy shield status
-        if(eTempHP < e){
-            player.tempHP += eTempHP;
-            eTempHP -= e;
+        e -= enemy.status[1]; if(e < 1){e = 1;} //enemy shield status
+        if(enemy.tempHP < e){
+            player.tempHP += enemy.tempHP;
+            enemy.tempHP -= e;
             if(player.tempHP > player.health){player.tempHP = player.health;} //can't go over max
             cout << endl << " You drain the life from your enemy!\n";
         }
         else{
-            eTempHP -= e; //damage
+            enemy.tempHP -= e; //damage
             player.tempHP += e; //heal
             if(player.tempHP > player.health){player.tempHP = player.health;} //can't go over max
             cout << endl << " You drain " << e << " life from the enemy!\n";
@@ -905,10 +918,10 @@ void calculate(Spell card, Player player){ //calculate player spell results
         }
     }
 
-    if(player.COMPANION != 0){calculate_comp(player);} //companions
+    if(player.COMPANION != 0){calculate_comp(player, enemy);} //companions
 }
 
-void calculate_comp(Player player){ //calculate companion effects
+void calculate_comp(Player player, Enemy enemy){ //calculate companion effects
     if(player.COMPANION == 1){ //fairy
         if(player.tempHP < player.health){
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
@@ -920,15 +933,15 @@ void calculate_comp(Player player){ //calculate companion effects
         }
     }
     else if(player.COMPANION == 2){ //imp
-        if(eTempHP > 0){
+        if(enemy.tempHP > 0){
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
             cout << "\n Imp strikes at your enemy\n";
-            eTempHP -= player.damage/2;
+            enemy.tempHP -= player.damage/2;
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
         }
     }
     else if(player.COMPANION == 3){ //pixie
-        if(eTempHP > 0 && TURN != 2){
+        if(enemy.tempHP > 0 && TURN != 2){
             if(rand()%5 == 0){
                 this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Pixie stuns your enemy\n"; TURN = 2;
@@ -951,13 +964,13 @@ void calculate_comp(Player player){ //calculate companion effects
     else{ //lizard
         if(rand()%3 == 0){
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
-            if(rand()%2 == 0 && enemy_status[0] == 0){
+            if(rand()%2 == 0 && enemy.status[0] == 0){
                 cout << CYAN << "\n Lizard bites at the enemy, applying bleed!\n" << RESET;
-                enemy_status[0] = (rand()%player.damage) + 1;
+                enemy.status[0] = (rand()%player.damage) + 1;
             }
-            else if(player.player_status[2] == 0){
+            else if(player.status[2] == 0){
                 cout << "\n Lizard grants you heal\n";
-                player.player_status[2] = (rand()%(player.heal + 1)) + 1;
+                player.status[2] = (rand()%(player.heal + 1)) + 1;
             }
             else{
                 cout << "\n Lizard scurries around your feet. +2 health\n";
@@ -968,204 +981,204 @@ void calculate_comp(Player player){ //calculate companion effects
     }
 }
 
-void calculate_enemy(Player player){ //calculate what spell enemy casts
-    int tempDMG = eDMG - player.player_status[1]; if(tempDMG < 0){tempDMG = 0;} //player shield status
-    if(eTYPE == "Wizard"){ //evil wizard
+void calculate_enemy(Player player, Enemy enemy){ //calculate what spell enemy casts
+    int tempDMG = enemy.damage - player.status[1]; if(tempDMG < 0){tempDMG = 0;} //player shield status
+    if(enemy.type == "Wizard"){ //evil wizard
         efactor = rand()%11;
         if(efactor < 6){ //attack
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";} //player dodges
             else{player.tempHP -= tempDMG;
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; 
-                    cout << " " << eName << " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; 
+                    cout << " " << enemy.name << " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}}
         }
         else if(efactor < 7){ //fire
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eFIRE);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " <<
-                    eName << " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.fire);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " <<
+                   enemy.name << " deals " << enemy.damage + enemy.critd + enemy.fire << " *critical* fire damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.fire << " fire damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 8){ //ice
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eICE);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eCRITD + eICE << " *critical* ice damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.ice);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.critd + enemy.ice << " *critical* ice damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.ice << " ice damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 9){ //poison
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + ePOISON);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + ePOISON + eCRITD << " *critical* poison damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.poison);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.poison + enemy.critd << " *critical* poison damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.poison << " poison damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
-        else if(efactor < 10 || eTempHP == eHP){ //electric
+        else if(efactor < 10 || enemy.tempHP == enemy.health){ //electric
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eELECTRIC);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.electric);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.electric + enemy.critd << " *critical* electric damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.electric << " electric damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //heal
-            eTempHP += eHEAL;
-            if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
+            enemy.tempHP += enemy.heal;
+            if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+            cout << " " << enemy.name << " heals themself for " << enemy.heal << " health!\n";
         }
     }
-    else if(eTYPE == "Fire"){ //fire mage
+    else if(enemy.type == "Fire"){ //fire mage
         efactor = rand()%10;
         if(efactor < 3){ //attack
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
             else{player.tempHP -= tempDMG;
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}}
         }
-        else if(efactor < 9 || eTempHP == eHP){ //fire
+        else if(efactor < 9 || enemy.tempHP == enemy.health){ //fire
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eFIRE);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eCRITD + eFIRE << " *critical* fire damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.fire);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.critd + enemy.fire << " *critical* fire damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.fire << " fire damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //heal
-            eTempHP += eHEAL;
-            if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
+            enemy.tempHP += enemy.heal;
+            if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+            cout << " " << enemy.name << " heals themself for " << enemy.heal << " health!\n";
         }
     }
-    else if(eTYPE == "Ice"){ //ice sorcerer
+    else if(enemy.type == "Ice"){ //ice sorcerer
         efactor = rand()%10;
         if(efactor < 4){ //attack
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
             else{player.tempHP -= tempDMG;
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName << 
-                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name << 
+                    " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}}
         }
         else{ //ice
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eICE);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eICE + eDMG + eCRITD << " *critical* ice damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.ice);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.ice + enemy.damage + enemy.critd << " *critical* ice damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.ice << " ice damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
     }
-    else if(eTYPE == "Necro"){ //necromancer
+    else if(enemy.type == "Necro"){ //necromancer
         efactor = rand()%11;
         if(efactor < 1){ //attack
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
             else{player.tempHP -= tempDMG;
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}}
         }
         else if(efactor < 5){ //poison
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + ePOISON);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << ePOISON + eDMG + eCRITD << " *critical* poison damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + ePOISON << " poison damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.poison);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.poison + enemy.damage + enemy.critd << " *critical* poison damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.poison << " poison damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
-        else if(efactor < 6 || eTempHP == eHP){ //heal
-            eTempHP += eHEAL;
-            if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
+        else if(efactor < 6 || enemy.tempHP == enemy.health){ //heal
+            enemy.tempHP += enemy.heal;
+            if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+            cout << " " << enemy.name << " heals themself for " << enemy.heal << " health!\n";
         }
         else{ //drain
-            player.tempHP -= (1 + ((tempDMG + eHEAL) / 2));
-            eTempHP += (1 + ((tempDMG + eHEAL) / 2));
-            if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " drains " << (1 + ((eDMG + eHEAL) / 2)) << " life from you!\n";
+            player.tempHP -= (1 + ((tempDMG + enemy.heal) / 2));
+            enemy.tempHP += (1 + ((tempDMG + enemy.heal) / 2));
+            if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+            cout << " " << enemy.name << " drains " << (1 + ((enemy.damage + enemy.heal) / 2)) << " life from you!\n";
         }
     }
-    else if(eTYPE == "Defend"){ //defender
+    else if(enemy.type == "Defend"){ //defender
         efactor = rand()%11;
         if(efactor < 1){ //attack
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
             else{player.tempHP -= tempDMG;
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}}
         }
         else if(efactor < 2){ //fire
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eFIRE);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eFIRE + eCRITD << " *critical* fire damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eFIRE << " fire damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.fire);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.fire + enemy.critd << " *critical* fire damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.fire << " fire damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                  cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else if(efactor < 3){ //ice
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eICE);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eICE + eCRITD << " *critical* ice damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eICE << " ice damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.ice);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.ice + enemy.critd << " *critical* ice damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.ice << " ice damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
-        else if(efactor < 7 && eTempHP < eHP){ //heal
-            eTempHP += eHEAL;
-            if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " heals themself for " << eHEAL << " health!\n";
+        else if(efactor < 7 && enemy.tempHP < enemy.health){ //heal
+            enemy.tempHP += enemy.heal;
+            if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+            cout << " " << enemy.name << " heals themself for " << enemy.heal << " health!\n";
         }
         else if(efactor < 8){ //electric
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eELECTRIC);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.electric);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.electric + enemy.critd << " *critical* electric damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.electric << " electric damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{ //drain
-            player.tempHP -= (1 + ((tempDMG + eHEAL) / 2));
-            eTempHP += (1 + ((tempDMG + eHEAL) / 2));
-            if(eTempHP > eHP){eTempHP = eHP;}
-            cout << " " << eName << " drains " << (1 + ((eDMG + eHEAL) / 2)) << " life from you!\n";
+            player.tempHP -= (1 + ((tempDMG + enemy.heal) / 2));
+            enemy.tempHP += (1 + ((tempDMG + enemy.heal) / 2));
+            if(enemy.tempHP > enemy.health){enemy.tempHP = enemy.health;}
+            cout << " " << enemy.name << " drains " << (1 + ((enemy.damage + enemy.heal) / 2)) << " life from you!\n";
         }
     }
-    else if(eTYPE == "Storm"){ //stormcaster
+    else if(enemy.type == "Storm"){ //stormcaster
         efactor = rand()%10;
         if(efactor < 2){ //attack
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
             else{player.tempHP -= tempDMG;
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG << " damage!\n";}}
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}}
         }
         else if(efactor < 9){//electric
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eELECTRIC);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.electric);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.electric + enemy.critd << " *critical* electric damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.electric << " electric damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";}} //cloak of protection
         }
         else{//stun
             if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
-            else{player.tempHP -= (tempDMG + eELECTRIC);
-                if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                    " deals " << eDMG + eELECTRIC + eCRITD << " *critical* electric damage!\n";}
-                else{cout << " " << eName << " deals " << eDMG + eELECTRIC << " electric damage!\n";}
+            else{player.tempHP -= (tempDMG + enemy.electric);
+                if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                    " deals " << enemy.damage + enemy.electric + enemy.critd << " *critical* electric damage!\n";}
+                else{cout << " " << enemy.name << " deals " << enemy.damage + enemy.electric << " electric damage!\n";}
             if(items[5] == 1){player.tempHP+=CoP.getStat(); this_thread::sleep_for(chrono::milliseconds(player.game_speed));
                 cout << "\n Cloak of Protection activates\n";} //cloak of protection
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
@@ -1173,19 +1186,19 @@ void calculate_enemy(Player player){ //calculate what spell enemy casts
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));}
         }    
     }
-    else if(eTYPE == "Unstable"){ //unstable mage
+    else if(enemy.type == "Unstable"){ //unstable mage
         if(rand()%100 < player.dodge+5){cout << " You dodge an attack!\n";}
         else{player.tempHP -= tempDMG;
-            if(rand()%100 < eCRITC && player.BOON != 1){player.tempHP -= eCRITD; cout << " " << eName <<
-                " deals " << eDMG + eCRITD << " *critical* damage!\n";}
-            else{cout << " " << eName << " deals " << eDMG << " damage!\n";}
+            if(rand()%100 < enemy.critc && player.BOON != 1){player.tempHP -= enemy.critd; cout << " " << enemy.name <<
+                " deals " << enemy.damage + enemy.critd << " *critical* damage!\n";}
+            else{cout << " " << enemy.name << " deals " << enemy.damage << " damage!\n";}
         }
         //mage takes damage
         this_thread::sleep_for(chrono::milliseconds(player.game_speed));
-        int unstable_damage = rand() % (eDMG + eCRITD) + 1;
-        cout << "\n " << eName << " injuress themselves with their unstable magic!\n";
+        int unstable_damage = rand() % (enemy.damage + enemy.critd) + 1;
+        cout << "\n " << enemy.name << " injuress themselves with their unstable magic!\n";
         cout << " They take " << unstable_damage << " damage\n";
-        eTempHP -= unstable_damage;
+        enemy.tempHP -= unstable_damage;
     }
 
     //fix any cloak of protection overheals
@@ -1193,32 +1206,32 @@ void calculate_enemy(Player player){ //calculate what spell enemy casts
 
     //enemy apply status effects
     int stat_chance = 0;
-    if(eTYPE == "Wizard"){stat_chance = 6;}
-    else if(eTYPE == "Fire" || eTYPE == "Storm"){stat_chance = 2;}
-    else if(eTYPE == "Ice" || eTYPE == "Defend"){stat_chance = 3;}
-    else if(eTYPE == "Necro" || eTYPE == "Unstable"){stat_chance = 4;}
+    if(enemy.type == "Wizard"){stat_chance = 6;}
+    else if(enemy.type == "Fire" || enemy.type == "Storm"){stat_chance = 2;}
+    else if(enemy.type == "Ice" || enemy.type == "Defend"){stat_chance = 3;}
+    else if(enemy.type == "Necro" || enemy.type == "Unstable"){stat_chance = 4;}
 
     if(rand()%10 < stat_chance){ //applies stats
         this_thread::sleep_for(chrono::milliseconds(player.game_speed));
         int z = rand()%4;
         if(z == 0 && player.BOON != 4){ //enemy heal
-            cout << "\n " << eName << " gains heal\n";
-            enemy_status[2] = rand()%eHEAL + 1;
+            cout << "\n " << enemy.name << " gains heal\n";
+            enemy.status[2] = rand()%enemy.heal + 1;
         }
         else if(z == 1 && player.BOON != 4){ //enemy shield
-            cout << "\n " << eName << " gains shield\n";
-            enemy_status[1] = rand()%eHEAL + 1;
+            cout << "\n " << enemy.name << " gains shield\n";
+            enemy.status[1] = rand()%enemy.heal + 1;
         }
         else if(z == 2){ //player bleed
-            cout << "\n " << eName << " applies bleed\n";
-            player.player_status[0] = rand()%eDMG + 1;
+            cout << "\n " << enemy.name << " applies bleed\n";
+            player.status[0] = rand()%enemy.damage + 1;
         }
         else if(z == 3){ //player weakened
-            cout << "\n " << eName << " applies drained\n";
-            player.player_status[3] = 1;
+            cout << "\n " << enemy.name << " applies drained\n";
+            player.status[3] = 1;
         }
         else{ //fails to apply any stauts effects
-            cout << "\n " << eName << " yells an insult at you\n";
+            cout << "\n " << enemy.name << " yells an insult at you\n";
         }
     }
 }
@@ -1280,7 +1293,7 @@ void show_card(Spell card){ //display spell
     }
 }
 
-void output_level(string factor, Player player, int levNum){ //show level player is on
+void output_level(string factor, Player player, Enemy enemy, int levNum){ //show level player is on
     if(factor == "X"){ //endless mode
         cout << BOLD << BLUE << "    - ENDLESS MODE: LEVEL " << levNum << " (Record: " << player.ENDLESS << ") -\n" << RESET << endl;
         if(levNum%50 == 0){cout << "  - Demigod -\n";}
@@ -1312,20 +1325,20 @@ void output_level(string factor, Player player, int levNum){ //show level player
         if(levNum == 10){cout << "  - Captain of the Depths -\n";}
         if(levNum == 20){cout << "  - Ruler of the Deep -\n";}
     }
-    cout << BOLD << "  " << eName << RESET; //show enemy name
-    if(eTYPE == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
-    else if(eTYPE == "Fire"){cout << RED << " - Fire Mage: " << RESET;}
-    else if(eTYPE == "Ice"){cout << BLUE << " - Ice Sorcerer: " << RESET;}
-    else if(eTYPE == "Necro"){cout << MAGENTA << " - Necromancer: " << RESET;}
-    else if(eTYPE == "Storm"){cout << YELLOW << " - Stormcaster: " << RESET;}
-    else if(eTYPE == "Unstable"){cout << BOLD << RED << " - Unstable Mage: " << RESET;}
+    cout << BOLD << "  " << enemy.name << RESET; //show enemy name
+    if(enemy.type == "Wizard"){cout << " - Evil Wizard: ";} //these show enemy type
+    else if(enemy.type == "Fire"){cout << RED << " - Fire Mage: " << RESET;}
+    else if(enemy.type == "Ice"){cout << BLUE << " - Ice Sorcerer: " << RESET;}
+    else if(enemy.type == "Necro"){cout << MAGENTA << " - Necromancer: " << RESET;}
+    else if(enemy.type == "Storm"){cout << YELLOW << " - Stormcaster: " << RESET;}
+    else if(enemy.type == "Unstable"){cout << BOLD << RED << " - Unstable Mage: " << RESET;}
     else{cout << " - Defender: ";}
-    cout << "[Health: "; if(eTempHP < eHP){cout << RED;} else{cout << GREEN;}
-    cout << eTempHP << RESET << "/" << GREEN << eHP << RESET << "]" << endl; //show enemy health
+    cout << "[Health: "; if(enemy.tempHP < enemy.health){cout << RED;} else{cout << GREEN;}
+    cout << enemy.tempHP << RESET << "/" << GREEN << enemy.health << RESET << "]" << endl; //show enemy health
     cout << YELLOW << ITALIC << "  Status Effects:\n"; //enemy status effects
-    if(enemy_status[0] != 0){cout << RED << "   - Bleed " << enemy_status[0] << endl;}
-    if(enemy_status[1] != 0){cout << BLUE << "   - Shield " << enemy_status[1] << endl;}
-    if(enemy_status[2] != 0){cout << GREEN << "   - Heal " << enemy_status[2] << endl;}
+    if(enemy.status[0] != 0){cout << RED << "   - Bleed " << enemy.status[0] << endl;}
+    if(enemy.status[1] != 0){cout << BLUE << "   - Shield " << enemy.status[1] << endl;}
+    if(enemy.status[2] != 0){cout << GREEN << "   - Heal " << enemy.status[2] << endl;}
 
     cout << RESET << endl << BOLD << BLUE;
     if(items[0] == 1){ cout << "       - Equipped: Amulet of Undying -\n";}
@@ -1359,393 +1372,17 @@ void output_level(string factor, Player player, int levNum){ //show level player
     "] [Heal: " << player.heal << "] [Crit Chance: " << player.critc << "%] [Crit Damage: " << player.critd << "]" << endl <<
     "       [Dodge: " << player.dodge << "%] [Shield: " << player.shield << "] [Luck: " << player.luck << "%]\n"; //player info
     cout << YELLOW << ITALIC << "       Status Effects:\n"; //player status effects
-    if(player.player_status[0] != 0){cout << RED << "        - Bleed " << player.player_status[0] << endl;}
-    if(player.player_status[1] != 0){cout << BLUE << "        - Shield " << player.player_status[1] << endl;}
-    if(player.player_status[2] != 0){cout << GREEN << "        - Heal " << player.player_status[2] << endl;}
-    if(player.player_status[3] != 0){cout << RED << "        - Drained" << endl;}
+    if(player.status[0] != 0){cout << RED << "        - Bleed " << player.status[0] << endl;}
+    if(player.status[1] != 0){cout << BLUE << "        - Shield " << player.status[1] << endl;}
+    if(player.status[2] != 0){cout << GREEN << "        - Heal " << player.status[2] << endl;}
+    if(player.status[3] != 0){cout << RED << "        - Drained" << endl;}
     cout << RESET << endl;
-}
-
-void make_enemy(string factor, Player player, int levNum){ //generate enemy stats
-    //Misty Dungeon
-    if(factor == "1"){
-        //get enemy type
-        int type = (rand() % 4);
-        if(type < 2){eTYPE = "Wizard";} //evil wizard
-        else if(type == 2){eTYPE = "Fire";} //fire mage 
-        else{eTYPE = "Ice";} //ice sorcerer
-        eCRITC = 10; //crit chance
-        eDODGE = 5; //dodge chance
-
-        //set stats based on adventure level
-        if(levNum < 5){ //levels 1-4
-            eHP = 4 + (rand() % 5); eDMG = 1 + (rand() % 2);
-            eICE = 0; eFIRE = 0; ePOISON = 0; eELECTRIC = 0; eHEAL = 1; eCRITD = 1;
-            if(eTYPE == "Fire"){eFIRE = 1;} //fire mage buff
-            if(eTYPE == "Ice"){eICE = 1;} //ice sorcerer buff
-        }
-        else if(levNum < 10){ //levels 5-9
-            eHP = 8 + (rand() % 6); eDMG = 1 + (rand() % 3);
-            eICE = (rand() % 2); eFIRE = (rand() % 2); 
-            ePOISON = 1; eELECTRIC = 1; eHEAL = 2; eCRITD = 1;
-            if(eTYPE == "Fire"){eFIRE += 1;} //fire mage buff
-            if(eTYPE == "Ice"){eICE += 1;} //ice sorcerer buff
-        }
-        else if(levNum == 10){ //level 10 mini boss
-            eHP = 15 + (rand() % 6); eDMG = 3 + (rand() % 3);
-            eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eELECTRIC = 3; eHEAL = 5; eCRITD = 2; eCRITC += 5;
-            if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
-            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
-        }
-        else if(levNum < 15){ //levels 11-14
-            eHP = 12 + (rand() % 6); eDMG = 2 + (rand() % 3);
-            eICE = 1 + (rand() % 2); eFIRE = 1 + (rand() % 2); 
-            ePOISON = 2; eELECTRIC = 2; eHEAL = 4; eCRITD = 2;
-            if(eTYPE == "Fire"){eFIRE += 2;} //fire mage buff
-            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
-        }
-        else if(levNum < 20){ //levels 15-19
-            eHP = 15 + (rand() % 7); eDMG = 3 + (rand() % 3);
-            eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eELECTRIC = 3; eHEAL = 5; eCRITD = 3;
-            if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
-            if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
-        }
-        else{ //level 20 final boss
-            eHP = 22 + (rand() % 10); eDMG = 4 + (rand() % 3);
-            eICE = 2 + (rand() % 2); eFIRE = 2 + (rand() % 2); 
-            ePOISON = 3; eELECTRIC = 3; eHEAL = 7; eCRITD = 4; eCRITC += 5;
-            if(eTYPE == "Fire"){eFIRE += 3;} //fire mage buff
-            if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
-        }
-    }
-
-    //Ruined Castle
-    if(factor == "2"){
-        //get enemy type
-        int type = (rand() % 20);
-        if(type < 8){eTYPE = "Wizard";} //evil wizard
-        else if(type < 13){eTYPE = "Fire";} //fire mage
-        else if(type < 18){eTYPE = "Ice";} //ice sorcerer
-        else{eTYPE = "Necro";} //necromancer
-
-        if(eTYPE == "Wizard"){eCRITC = 15;} //crit chance
-        else{eCRITC = 10;}
-        eDODGE = 7; //dodge chance
-
-        //set stats
-        if(levNum < 5){ //levels 1-4
-            eHP = 8 + (rand() % 5); eDMG = 2 + (rand() % 3);
-            eICE = 1; eFIRE = 1; ePOISON = 1; eELECTRIC = 1; eHEAL = 4; eCRITD = 1;
-            if(eTYPE == "Fire"){eFIRE = 2;} //fire mage buff
-            if(eTYPE == "Ice"){eICE = 2;} //ice sorcerer buff
-            if(eTYPE == "Necro"){ePOISON = 2;} //necromancer buff
-        }
-        else if(levNum < 10){ //levels 5-9
-            eHP = 12 + (rand() % 8); eDMG = 3 + (rand() % 3);
-            eICE = (rand() % 3); eFIRE = (rand() % 3); 
-            ePOISON = (rand() % 3); eELECTRIC = 1; eHEAL = 5; eCRITD = 2;
-            if(eTYPE == "Fire"){eFIRE += 1;}
-            if(eTYPE == "Ice"){eICE += 1;}
-            if(eTYPE == "Necro"){ePOISON += 1;}
-        }
-        else if(levNum == 10){ //level 10 mini boss
-            eHP = 20 + (rand() % 8); eDMG = 3 + (rand() % 4);
-            eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eELECTRIC = 3; eHEAL = 8; eCRITD = 3; eCRITC += 5;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-        }
-        else if(levNum < 15){ //levels 11-14
-            eHP = 16 + (rand() % 6); eDMG = 3 + (rand() % 3);
-            eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eELECTRIC = 2; eHEAL = 6; eCRITD = 3;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-        }
-        else if(levNum < 20){ //levels 15-19
-            eHP = 20 + (rand() % 7); eDMG = 4 + (rand() % 3);
-            eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eELECTRIC = 3; eHEAL = 7; eCRITD = 4;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-        }
-        else{ //level 20 final boss
-            eHP = 30 + (rand() % 10); eDMG = 4 + (rand() % 5);
-            eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eELECTRIC = 4; eHEAL = 9; eCRITD = 5; eCRITC += 3;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Ice"){eICE += 3;}
-            if(eTYPE == "Necro"){ePOISON += 3;}
-        }
-    }
-
-    //Mountain of Despair
-    if(factor == "3"){
-        //get enemy type
-        int type = (rand() % 20);
-        if(type < 2){eTYPE = "Wizard";} //evil wizard
-        else if(type < 6){eTYPE = "Fire";} //fire mage
-        else if(type < 10){eTYPE = "Ice";} //ice sorcerer
-        else if(type < 15){eTYPE = "Necro";} //necromancer
-        else{eTYPE = "Defend";} //defender
-
-        if(eTYPE == "Wizard"){eCRITC = 20;} //crit chance
-        else{eCRITC = 12;}
-        if(eTYPE == "Defend"){eDODGE = 15;} //dodge chance
-        else{eDODGE = 10;}
-
-        //set stats
-        if(levNum < 5){ //levels 1-4
-            eHP = 20 + (rand() % 6); eDMG = 3 + (rand() % 4);
-            eICE = 2; eFIRE = 2; ePOISON = 2; eELECTRIC = 2; eHEAL = 4; eCRITD = 2;
-            if(eTYPE == "Fire"){eFIRE = 3;} //fire mage buff
-            if(eTYPE == "Ice"){eICE = 3;} //ice sorcerer buff
-            if(eTYPE == "Necro"){ePOISON = 3;} //necromancer buff
-            if(eTYPE == "Defend"){eHEAL = 8; eHP += 5; eDMG -= 2;} //defender buff
-        }
-        else if(levNum < 10){ //levels 5-9
-            eHP = 24 + (rand() % 7); eDMG = 4 + (rand() % 3);
-            eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eELECTRIC = 2; eHEAL = 6; eCRITD = 3;
-            if(eTYPE == "Fire"){eFIRE += 1;}
-            if(eTYPE == "Ice"){eICE += 1;}
-            if(eTYPE == "Necro"){ePOISON += 1;}
-            if(eTYPE == "Defend"){eHEAL = 10; eHP += 7; eDMG-= 2;}
-        }
-        else if(levNum == 10){ //level 10 mini boss
-            eHP = 35 + (rand() % 8); eDMG = 5 + (rand() % 5);
-            eICE = 1 + (rand() % 4); eFIRE = 1 + (rand() % 4); 
-            ePOISON = 1 + (rand() % 4); eELECTRIC = 3; eHEAL = 10; eCRITD = 4; eCRITC += 3;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 14; eHP += 8; eDMG -= 1;}
-        }
-        else if(levNum < 15){ //levels 11-14
-            eHP = 28 + (rand() % 6); eDMG = 4 + (rand() % 3);
-            eICE = 1 + (rand() % 3); eFIRE = 1 + (rand() % 3); 
-            ePOISON = 1 + (rand() % 3); eELECTRIC = 3; eHEAL = 8; eCRITD = 4;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 10; eHP += 9; eDMG -= 1;}
-        }
-        else if(levNum < 20){ //levels 15-19
-            eHP = 32 + (rand() % 7); eDMG = 4 + (rand() % 4);
-            eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 2 + (rand() % 3); eELECTRIC = 4; eHEAL = 10; eCRITD = 5;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 12; eHP += 10; eDMG -= 1;}
-        }
-        else{ //level 20 final boss
-            eHP = 45 + (rand() % 11); eDMG = 4 + (rand() % 5);
-            eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            ePOISON = 3 + (rand() % 3); eELECTRIC = 6; eHEAL = 12; eCRITD = 6; eCRITC += 3;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Ice"){eICE += 2;}
-            if(eTYPE == "Necro"){ePOISON += 2;}
-            if(eTYPE == "Defend"){eHEAL = 15; eHP += 15; eDMG -= 2;}
-        }
-    }
-
-    //Desolate Wastes
-    if(factor == "4"){
-        //get enemy type
-        int type = (rand() % 3);
-        if(type == 0){eTYPE = "Fire";} //fire mage
-        else if(type == 1){eTYPE = "Defend";} //defender
-        else{eTYPE = "Storm";} //stormcaster
-
-        eCRITC = 15; //crit chance
-        if(eTYPE == "Defend"){eDODGE = 18;} //dodge chance
-        else{eDODGE = 12;}
-
-        //set stats
-        if(levNum < 5){ //levels 1-4
-            eHP = 25 + (rand() % 6); eDMG = 4 + (rand() % 4);
-            eICE = 3; eFIRE = 3; ePOISON = 3; eELECTRIC = 3; eHEAL = 7; eCRITD = 3;
-            if(eTYPE == "Fire"){eFIRE = 5;} //fire mage buff
-            if(eTYPE == "Defend"){eHEAL = 9; eHP += 5; eDMG -= 2;} //defender buff
-            if(eTYPE == "Storm"){eELECTRIC = 5;} //stormcaster buff
-        }
-        else if(levNum < 10){ //levels 5-9
-            eHP = 30 + (rand() % 7); eDMG = 4 + (rand() % 5);
-            eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            ePOISON = 4; eELECTRIC = 2 + (rand() % 3); eHEAL = 9; eCRITD = 5;
-            if(eTYPE == "Fire"){eFIRE += 2;}
-            if(eTYPE == "Storm"){eELECTRIC += 2;}
-            if(eTYPE == "Defend"){eHEAL = 12; eHP += 8; eDMG-= 2;}
-        }
-        else if(levNum == 10){ //level 10 mini boss
-            eHP = 50 + (rand() % 11); eDMG = 5 + (rand() % 6);
-            eICE = 2 + (rand() % 4); eFIRE = 2 + (rand() % 4); 
-            eELECTRIC = 1 + (rand() % 4); ePOISON = 4; eHEAL = 12; eCRITD = 7; eCRITC += 5;
-            if(eTYPE == "Fire"){eFIRE += 4;}
-            if(eTYPE == "Storm"){eELECTRIC += 4;}
-            if(eTYPE == "Defend"){eHEAL = 15; eHP += 10; eDMG -= 1;}
-        }
-        else if(levNum < 15){ //levels 11-14
-            eHP = 40 + (rand() % 6); eDMG = 4 + (rand() % 6);
-            eICE = 2 + (rand() % 3); eFIRE = 2 + (rand() % 3); 
-            eELECTRIC = 2 + (rand() % 3); ePOISON = 4; eHEAL = 10; eCRITD = 5;
-            if(eTYPE == "Fire"){eFIRE += 3;}
-            if(eTYPE == "Storm"){eELECTRIC += 3;}
-            if(eTYPE == "Defend"){eHEAL = 13; eHP += 9; eDMG -= 1;}
-        }
-        else if(levNum < 20){ //levels 15-19
-            eHP = 50 + (rand() % 7); eDMG = 5 + (rand() % 6);
-            eICE = 2 + (rand() % 4); eFIRE = 2 + (rand() % 4); 
-            eELECTRIC = 2 + (rand() % 4); ePOISON = 4; eHEAL = 12; eCRITD = 6;
-            if(eTYPE == "Fire"){eFIRE += 4;}
-            if(eTYPE == "Storm"){eELECTRIC += 4;}
-            if(eTYPE == "Defend"){eHEAL = 15; eHP += 10; eDMG -= 1;}
-        }
-        else{ //level 20 final boss
-            eHP = 75 + (rand() % 11); eDMG = 6 + (rand() % 5);
-            eICE = 3 + (rand() % 3); eFIRE = 3 + (rand() % 3); 
-            eELECTRIC = 3 + (rand() % 3); ePOISON = 6; eHEAL = 20; eCRITD = 8; eCRITC += 10;
-            if(eTYPE == "Fire"){eFIRE += 4;}
-            if(eTYPE == "Storm"){eELECTRIC += 4;}
-            if(eTYPE == "Defend"){eHEAL = 15; eHP += 15; eDMG -= 1;}
-        }
-    }
-
-    //Cursed Mines
-    if(factor == "5"){
-        //get enemy type
-        int type = (rand() % 4);
-        if(type == 0){eTYPE = "Wizard";} //evil wizard
-        else if(type == 1){eTYPE = "Ice";} //ice sorcerer
-        else if(type == 2){eTYPE = "Unstable";} //unstable mage
-        else{eTYPE = "Necro";} //necromancer
-
-        if(eTYPE == "Wizard" || eTYPE == "Unstable"){eCRITC = 20;} //improved crit chance
-        else{eCRITC = 15;} //basic crit chance
-        eDODGE = 13; //dodge
-
-        //set stats
-        if(levNum < 5){ //levels 1-4
-            eHP = 40 + (rand() % 10); eDMG = 5 + (rand() % 5);
-            eICE = 3; eFIRE = 3; ePOISON = 3; eELECTRIC = 3; eHEAL = 8; eCRITD = 5;
-            if(eTYPE == "Ice"){eICE = 5;} //ice sorcerer buff
-            if(eTYPE == "Unstable"){eDMG += 5;} //unstable mage buff
-            if(eTYPE == "Necro"){ePOISON = 5;} //necromancer buff
-        }
-        else if(levNum < 10){ //levels 5-9
-            eHP = 50 + (rand() % 7); eDMG = 5 + (rand() % 5);
-            eICE = 3 + (rand() % 3); eFIRE = 4; 
-            ePOISON = 3 + (rand() % 3); eELECTRIC = 4; eHEAL = 9; eCRITD = 5;
-            if(eTYPE == "Ice"){eICE += 2;} //ice sorcerer buff
-            if(eTYPE == "Unstable"){eDMG += 5;} //unstable mage buff
-            if(eTYPE == "Necro"){ePOISON += 2;} //necromancer buff
-        }
-        else if(levNum == 10){ //level 10 mini boss
-            eHP = 65 + (rand() % 10); eDMG = 6 + (rand() % 6);
-            eICE = 4 + (rand() % 4); eFIRE = 5; 
-            eELECTRIC = 5; ePOISON = 4 + (rand() % 4); eHEAL = 15; eCRITD = 8; eCRITC += 5;
-            if(eTYPE == "Ice"){eICE += 5;} //ice sorcerer buff
-            if(eTYPE == "Unstable"){eDMG += 10;} //unstable mage buff
-            if(eTYPE == "Necro"){ePOISON += 5;} //necromancer buff
-        }
-        else if(levNum < 15){ //levels 11-14
-            eHP = 60 + (rand() % 6); eDMG = 6 + (rand() % 4);
-            eICE = 4 + (rand() % 3); eFIRE = 5; 
-            eELECTRIC = 5; ePOISON = 4 + (rand() % 3); eHEAL = 12; eCRITD = 7;
-            if(eTYPE == "Ice"){eICE += 3;} //ice sorcerer buff
-            if(eTYPE == "Unstable"){eDMG += 7;} //unstable mage buff
-            if(eTYPE == "Necro"){ePOISON += 3;} //necromancer buff
-        }
-        else if(levNum < 20){ //levels 15-19
-            eHP = 70 + (rand() % 5); eDMG = 6 + (rand() % 6);
-            eICE = 4 + (rand() % 4); eFIRE = 5; 
-            eELECTRIC = 5; ePOISON = 4 + (rand() % 4); eHEAL = 15; eCRITD = 8;
-            if(eTYPE == "Ice"){eICE += 4;} //ice sorcerer buff
-            if(eTYPE == "Unstable"){eDMG += 9;} //unstable mage buff
-            if(eTYPE == "Necro"){ePOISON += 4;} //necromancer buff
-        }
-        else{ //level 20 final boss
-            eHP = 90 + (rand() % 11); eDMG = 7 + (rand() % 5);
-            eICE = 5 + (rand() % 3); eFIRE = 6; 
-            eELECTRIC = 6; ePOISON = 5 + (rand() % 3); eHEAL = 25; eCRITD = 10; eCRITC += 10;
-            if(eTYPE == "Ice"){eICE += 5;} //ice sorcerer buff
-            if(eTYPE == "Unstable"){eDMG += 12;} //unstable mage buff
-            if(eTYPE == "Necro"){ePOISON += 5;} //necromancer buff
-        }
-    }
-
-    //Endless mode
-    if(factor == "X"){
-        //get enemy type
-        int type = rand()%7;
-        if(type == 0){eTYPE = "Wizard";} //evil wizard
-        else if(type == 1){eTYPE = "Fire";} //fire mage
-        else if(type == 2){eTYPE = "Ice";} //ice sorcerer
-        else if(type == 3){eTYPE = "Necro";} //necromancer
-        else if(type == 4){eTYPE = "Storm";} //stormcaster
-        else if(type == 5){eTYPE = "Unstable";} //stormcaster
-        else{eTYPE = "Defend";} //defender
-
-        //factor strength based off endless level
-        if(levNum < 10){eCRITC = 5; eDODGE = 5;}
-        else if(levNum < 100){eCRITC = 10; eDODGE = 10;}
-        else if(levNum < 250){eCRITC = 20; eDODGE = 15;}
-        else if(levNum < 500){eCRITC = 30; eDODGE = 20;}
-        else if(levNum < 1000){eCRITC = 40; eDODGE = 25;}
-        else{eCRITC = 45; eDODGE = 30;}
-        //boss
-        if(levNum%10 == 0){
-            eHP += rand()%(levNum/5); eDMG += 5;
-            eHEAL += rand()%(levNum/10); eCRITD += 5;
-            eCRITC += 5; eDODGE += 2;
-        }
-
-        //set stats
-        eHP = 4 + (rand() % levNum); 
-        eDMG = 2 + (rand() % levNum/4);
-        eICE = 3 + (rand() % levNum/10); 
-        eFIRE = 3 + (rand() % levNum/10); 
-        ePOISON = 3 + (rand() % levNum/10); 
-        eELECTRIC = 3 + (rand() % levNum/10); 
-        eHEAL = 3 + (rand() % levNum/3); 
-        eCRITD = 2 + (rand() % levNum/5);
-        if(eTYPE == "Wizard" || eTYPE == "Unstable"){eCRITC += 2;}
-        if(eTYPE == "Fire"){eFIRE += 1 + (rand() % levNum/10);}
-        if(eTYPE == "Ice"){eICE += 1 + (rand() % levNum/10);}
-        if(eTYPE == "Necro"){ePOISON += 1 + (rand() % levNum/10);}
-        if(eTYPE == "Storm"){eELECTRIC += 1 + (rand() % levNum/10);}
-        if(eTYPE == "UNSTABLE"){
-            eDMG += 1 + (rand() % levNum/10);
-            eCRITD += 1 + (rand() % levNum/20);
-        }
-        if(eTYPE == "Defend"){
-            eHEAL += 1 + (rand() % levNum/10); 
-            eHP += 3 + (rand() % levNum/5); 
-            eDMG -= (rand() % levNum/10);
-            eDODGE +=3;
-        }
-
-        //check that stats will work (health/damage)
-        if(eHP < (levNum - 40)){eHP = levNum - 40;}
-        if(eDMG < (levNum - 150)){eHP = levNum - 150;}
-        if(eDMG < 1){eDMG = 10;} //in unlikely chance defender dmg drops below 1, sets to a base dmg
-    }
-
-    if(items[4] == 1){eHP -= RoD.getStat();} //rune of death
-    if(eHP < 1){eHP = 1;}
-    if((eDMG - player.shield) < 0){eDMG = 0;} //apply shield
-    else{eDMG -= player.shield;}
 }
 
 void endless_mode(Player player){ //endless game mode
     int random, endlessNum = 1;
     string X;
+    Enemy enemy;
     //set play stats equal to base stats (they can be modified without messing with base stats)
     player.health = player.tempHP = player.HP; player.damage = player.DMG; player.fire = player.FIRE; 
     player.ice = player.ICE; player.poison = player.POISON; player.heal = player.HEAL; TURN = 0;
@@ -1753,8 +1390,8 @@ void endless_mode(Player player){ //endless game mode
     player.shield = player.SHIELD; player.electric = player.ELECTRIC;
     
     //sets all status effects to off
-    for(int i = 0; i < 4; i++){player.player_status[i] = 0;}
-    reset_enemy_status();
+    player.reset_status();
+    enemy.reset_status();
 
     pick_item(player); //get starting item
     if(items[1] == 1){ //Ring of Life
@@ -1782,18 +1419,20 @@ void endless_mode(Player player){ //endless game mode
     this_thread::sleep_for(chrono::milliseconds(player.game_speed)); //wait briefly
 
     while(player.tempHP > 0){
-        make_enemy("X", player, endlessNum); //create this level's enemy
-        eName = enemy_name(); //create the enemy name
-        eTempHP = eHP; //set enemy temp health
-    
-        while(player.tempHP > 0 && eTempHP > 0){ //runs through battle
+        enemy.make_enemy("X", player, endlessNum); //create this level's enemy
+
+        if(items[4] == 1){enemy.health -= RoD.getStat();} //rune of death
+        if(enemy.health < 1){enemy.health = 1;}
+
+        enemy.tempHP = enemy.health; //set enemy temp health
+        while(player.tempHP > 0 && enemy.tempHP > 0){ //runs through battle
             if(TURN == 0){ //player turn
-                player_turn("X", player, endlessNum);
+                player_turn("X", player, enemy, endlessNum);
                 if(TURN == 2){TURN = 0;} //when enemy is stunned
                 else{TURN = 1;}
             }
             else{ //enemy turn
-                enemy_turn("X", player, endlessNum);
+                enemy_turn("X", player, enemy, endlessNum);
                 if(TURN == 3){TURN = 1;} //when player is stunned
                 else{TURN = 0;}
             }
@@ -1831,7 +1470,7 @@ void endless_mode(Player player){ //endless game mode
         }
         else{ //proceed to next level
             system("clear");
-            reset_enemy_status();
+            enemy.reset_status();
             cout << " Enemy defeated!\n" << endl;
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
             if(items[0] == 1 && player.tempHP < player.health){ //Amulet of Undying
@@ -2306,25 +1945,6 @@ void reset_items(){ //reset item data
     BotE.setStat(10); BotE.setLevel(1);
     WoH.setStat(1); WoH.setLevel(1);
     update_items();
-}
-
-string enemy_name(){ //generate enemy name
-    string f_name[50] = {"Yarno", "Belloc", "Soma", "Yeen", "Marcuus", "Liol", "Quand", "Jurno", "Corsto", "Kaimo", "Lord Denna", "Hubert",
-"Wernda", "Helena", "Astan", "Lucia", "Ferdinand", "Orp", "Oogga", "Ray", "Rendolf", "Portian", "Billis", "Quamm", "Foxy", "Holga", "Waine", 
-"Harkken", "Folda", "Swinn", "Varis", "Galdaf", "Halfdan", "Eldar", "Roirand", "Keet", "Wet Sod", "Germaine", "Zandar", "Kieran", "Noss", 
-"Theoran", "Juju", "Yymigg", "Deathman", "Cildas", "Inhilla", "Harper", "Jermalline", "Biggo"};
-    string l_name[50] = {"Hellfire", "Wedlok", "Hona", "Perf", "Orelius", "The Slayer", "The Butcher", "Doombringer", "The Savage", "The Destroyer", 
-"The Loser", "The Fox", "Hogtie", "Far-Wanderer", "Oathbreaker", "Kindy", "Wok", "Erp", "King Killer", "Nightwalker", "Pain-Bringer", "Xondoloxa", 
-"Of The Forest", "Of The Warlords", "The Annoying", "Westbound", "The Dead", "The Lost", "The Old", "The Young", "Gillian", "The Fallen", "Bell", 
-"Jund", "Ungundo", "Jojo", "Kiwi", "The Wise", "The Hopeless", "Hungerer", "Aaros", "Qi", "Theros", "Queen Lover", "Flesh Eater", "Swedle", "Zikolthu", 
-"The Small", "The Chum", "Of The Wolves"};
-
-    string enemy_name;
-    int random = (rand() % 50);
-    enemy_name = f_name[random] + " ";
-    random = (rand() % 50);
-    enemy_name += l_name[random];
-    return enemy_name;
 }
 
 void pick_item(Player player){ //get new item
@@ -2990,10 +2610,6 @@ void rebirth_menu(Player player){ //controls player rebirth
 void too_poor(Player player){ //function calls when players try to buy something too expensive
     system("clear"); cout << CYAN << "You don't have enough coins\n" << RESET;
     this_thread::sleep_for(chrono::seconds(1)); level_up(player);
-}
-
-void reset_enemy_status(){ //quickly set all enemy status to 0;
-    for(int i = 0; i < 3; i++){enemy_status[i] = 0;}
 }
 
 void database(Player player){ //enemy and status information

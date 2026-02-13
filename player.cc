@@ -60,3 +60,7 @@ void Player::update(){
     "comp3: " << comp3 << endl << "comp4: " << comp4 << endl << "comp5: " << comp5 << endl;
     outfile.close();
 }
+
+void Player::reset_status(){
+    for(int i = 0; i < 4; i++){status[i] = 0;}
+}
