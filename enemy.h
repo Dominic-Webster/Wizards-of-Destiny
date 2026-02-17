@@ -6,7 +6,7 @@
 
 struct Enemy{
     Enemy();
-    Enemy make_enemy(std::string, Player player, int levNum);
+    void make_enemy(std::string, Player &player, int levNum);
     void generate_name();
     void reset_status();
 

@@ -14,36 +14,35 @@
 #include <fstream>
 #include <thread>
 
-void battle(Player player); 
-void boon_menu(Player player); 
-void boost_menu(Player player);
-void calculate(Spell card, Player player, Enemy enemy); 
-void calculate_comp(Player player, Enemy enemy); 
-void calculate_enemy(Player player, Enemy enemy);
-void companion_menu(Player player); 
-void database(Player player); 
-void encounter(Player player, int levNum);
-void endless_mode(Player player);
-string enemy_name(); 
-void enemy_turn(string factor, Player player, Enemy enemy, int levNum); 
-void fight(string factor, Player player); 
-void how_to(Player player);
+void battle(Player &player); 
+void boon_menu(Player &player); 
+void boost_menu(Player &player);
+void calculate(Spell card, Player &player, Enemy &enemy); 
+void calculate_comp(Player &player, Enemy &enemy); 
+void calculate_enemy(Player &player, Enemy &enemy);
+void companion_menu(Player &player); 
+void database(Player &player); 
+void encounter(Player &player, int levNum);
+void endless_mode(Player &player); 
+void enemy_turn(string factor, Player &player, Enemy &enemy, int levNum); 
+void fight(string factor, Player &player); 
+void how_to(Player &player);
 int itemCount();
-void item_menu(Player player);
-void item_shop(Player player); 
-void level_up(Player player); 
-void make_enemy(string factor, Player player, int levNum); 
-void menu(Player player); 
+void item_menu(Player &player);
+void item_shop(Player &player); 
+void level_up(Player &player); 
+void make_enemy(string factor, Player &player, int levNum); 
+void menu(Player &player); 
 void output_level(string factor, Player player, Enemy enemy, int levNum); 
-void pick_item(Player player);
-void player_turn(string factor, Player player, Enemy enemy, int levNum); 
-void rebirth_menu(Player player);
+void pick_item(Player &player);
+void player_turn(string factor, Player &player, Enemy &enemy, int levNum); 
+void rebirth_menu(Player &player);
 void reset_enemy_status();
 void reset_items();
-void settings(Player player);
+void settings(Player &player);
 void show_card(Spell card); 
-void store(Player player); 
-void too_poor(Player player);
+void store(Player &player); 
+void too_poor(Player &player);
 void update_items();
 
 //0, 1, 2, 3, 4, 5, 6, 7, 8
@@ -85,7 +84,7 @@ int main(int argc, char const *argv[]){
     menu(player);
 }
 
-void menu(Player player){ //game menu
+void menu(Player &player){ //game menu
     string X;
     system("clear");
     do{
@@ -114,7 +113,7 @@ void menu(Player player){ //game menu
     else{player.update(); update_items(); exit(0);} //save and exit
 }
 
-void battle(Player player){ //adventure menu
+void battle(Player &player){ //adventure menu
     string X;
     do{
         system("clear");
@@ -139,7 +138,7 @@ void battle(Player player){ //adventure menu
     else if(X == "6" && player.PROGRESS > 3){fight("5", player);} //cursed mines
 }
 
-void fight(string factor, Player player){ //fight function
+void fight(string factor, Player &player){ //fight function
     int random, level = 1;
     string X;
     Enemy enemy;
@@ -720,7 +719,7 @@ void fight(string factor, Player player){ //fight function
 
 }
 
-void player_turn(string factor, Player player, Enemy enemy, int levNum){ //player turn
+void player_turn(string factor, Player &player, Enemy &enemy, int levNum){ //player turn
     string X;
     player.CARD1.get_card(player.health, player.damage, player.fire, player.ice, player.poison, player.electric, player.heal); //generate first spell
     player.CARD2.get_card(player.health, player.damage, player.fire, player.ice, player.poison, player.electric, player.heal); //generate second spell
@@ -774,7 +773,7 @@ void player_turn(string factor, Player player, Enemy enemy, int levNum){ //playe
     player.status[3] = 0; //drained
 }
 
-void enemy_turn(string factor, Player player, Enemy enemy, int levNum){ //enemy turn
+void enemy_turn(string factor, Player &player, Enemy &enemy, int levNum){ //enemy turn
     //reset any neccesary status effects
     enemy.status[1] = 0; //shield
 
@@ -809,7 +808,7 @@ void enemy_turn(string factor, Player player, Enemy enemy, int levNum){ //enemy 
     }
 }
 
-void calculate(Spell card, Player player, Enemy enemy){ //calculate player spell results
+void calculate(Spell card, Player &player, Enemy &enemy){ //calculate player spell results
     bool critted = false;
     t = card.getType(); e = card.getEffect();
     if(t == "attack" || t == "fire" || t == "ice" || t == "poison" || t == "electric" || t == "poison-heal" || t == "atk-bleed"){ //attack spell
@@ -921,7 +920,7 @@ void calculate(Spell card, Player player, Enemy enemy){ //calculate player spell
     if(player.COMPANION != 0){calculate_comp(player, enemy);} //companions
 }
 
-void calculate_comp(Player player, Enemy enemy){ //calculate companion effects
+void calculate_comp(Player &player, Enemy &enemy){ //calculate companion effects
     if(player.COMPANION == 1){ //fairy
         if(player.tempHP < player.health){
             this_thread::sleep_for(chrono::milliseconds(player.game_speed));
@@ -981,7 +980,7 @@ void calculate_comp(Player player, Enemy enemy){ //calculate companion effects
     }
 }
 
-void calculate_enemy(Player player, Enemy enemy){ //calculate what spell enemy casts
+void calculate_enemy(Player &player, Enemy &enemy){ //calculate what spell enemy casts
     int tempDMG = enemy.damage - player.status[1]; if(tempDMG < 0){tempDMG = 0;} //player shield status
     if(enemy.type == "Wizard"){ //evil wizard
         efactor = rand()%11;
@@ -1379,7 +1378,7 @@ void output_level(string factor, Player player, Enemy enemy, int levNum){ //show
     cout << RESET << endl;
 }
 
-void endless_mode(Player player){ //endless game mode
+void endless_mode(Player &player){ //endless game mode
     int random, endlessNum = 1;
     string X;
     Enemy enemy;
@@ -1529,7 +1528,7 @@ void endless_mode(Player player){ //endless game mode
     }
 }
 
-void level_up(Player player){ //level up menu
+void level_up(Player &player){ //level up menu
     system("clear");
     string X;
     do{
@@ -1726,7 +1725,7 @@ void level_up(Player player){ //level up menu
         }
         else{
             system("clear"); cout << "This stat is maxed out\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up(player);
+            this_thread::sleep_for(chrono::seconds(1)); return level_up(player);
         }
     }
     else if(X == "9"){ //crit damage
@@ -1758,7 +1757,7 @@ void level_up(Player player){ //level up menu
         }
         else{
             system("clear"); cout << "This stat is maxed out\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up(player);
+            this_thread::sleep_for(chrono::seconds(1)); return level_up(player);
         }
     }
     else if(X == "11"){ //shield
@@ -1772,7 +1771,7 @@ void level_up(Player player){ //level up menu
         }
         else{
             system("clear"); cout << "This stat is maxed out\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up(player);
+            this_thread::sleep_for(chrono::seconds(1)); return level_up(player);
         }
     }
     else if(X == "12"){ //luck
@@ -1782,14 +1781,14 @@ void level_up(Player player){ //level up menu
         }
         else{
             system("clear"); cout << "This stat is maxed out\n";
-            this_thread::sleep_for(chrono::seconds(1)); level_up(player);
+            this_thread::sleep_for(chrono::seconds(1)); return level_up(player);
         }
     }
-    else{menu(player);}
-    level_up(player);
+    else{return menu(player);}
+    return level_up(player);
 }
 
-void how_to(Player player){ //game instructions
+void how_to(Player &player){ //game instructions
     system("clear");
     string X;
     cout << BOLD << YELLOW << " WIZARDS OF DESTINY\n" << RESET << endl;
@@ -1809,7 +1808,7 @@ void how_to(Player player){ //game instructions
     menu(player);
 }
 
-void store(Player player){ //store menu
+void store(Player &player){ //store menu
     string X;
     do{
         system("clear");
@@ -1872,7 +1871,7 @@ void store(Player player){ //store menu
     else{menu(player);}
 }
 
-void settings(Player player){ //settings menu
+void settings(Player &player){ //settings menu
     string X;
     do{
         system("clear");
@@ -1947,7 +1946,7 @@ void reset_items(){ //reset item data
     update_items();
 }
 
-void pick_item(Player player){ //get new item
+void pick_item(Player &player){ //get new item
     string X;
     for(int i = 0; i < 9; i++){ //reset items
         items[i] = 0;
@@ -2004,7 +2003,7 @@ void pick_item(Player player){ //get new item
     }
 }
 
-void item_shop(Player player){ //buy items
+void item_shop(Player &player){ //buy items
     string X;
     do{
         system("clear");
@@ -2051,7 +2050,7 @@ void item_shop(Player player){ //buy items
     else{store(player);}
 }
 
-void boost_menu(Player player){ //boons, companions, item upgrades, and rebirth
+void boost_menu(Player &player){ //boons, companions, item upgrades, and rebirth
     string X;
     do{
         system("clear");
@@ -2070,7 +2069,7 @@ void boost_menu(Player player){ //boons, companions, item upgrades, and rebirth
     else{rebirth_menu(player);}
 }
 
-void boon_menu(Player player){ //controls player boons
+void boon_menu(Player &player){ //controls player boons
     string X;
     do{
         system("clear");
@@ -2145,7 +2144,7 @@ void boon_menu(Player player){ //controls player boons
     else{player.BOON = 0; boon_menu(player);}
 }
 
-void companion_menu(Player player){ //controls player companions
+void companion_menu(Player &player){ //controls player companions
     string X;
     do{
         system("clear");
@@ -2235,7 +2234,7 @@ void companion_menu(Player player){ //controls player companions
     else{player.COMPANION = 0; companion_menu(player);}
 }
 
-void item_menu(Player player){ //upgrade item menu
+void item_menu(Player &player){ //upgrade item menu
     string X;
     do{
         system("clear");
@@ -2576,7 +2575,7 @@ void item_menu(Player player){ //upgrade item menu
     else{item_menu(player);} //in case of errors
 }
 
-void rebirth_menu(Player player){ //controls player rebirth
+void rebirth_menu(Player &player){ //controls player rebirth
     string X;
     do{
         system("clear");
@@ -2607,12 +2606,12 @@ void rebirth_menu(Player player){ //controls player rebirth
     }
 }
 
-void too_poor(Player player){ //function calls when players try to buy something too expensive
+void too_poor(Player &player){ //function calls when players try to buy something too expensive
     system("clear"); cout << CYAN << "You don't have enough coins\n" << RESET;
     this_thread::sleep_for(chrono::seconds(1)); level_up(player);
 }
 
-void database(Player player){ //enemy and status information
+void database(Player &player){ //enemy and status information
     string X;
     do{
         system("clear");
@@ -2662,7 +2661,7 @@ void database(Player player){ //enemy and status information
 
 }
 
-void encounter(Player player, int levNum){ //random encounters
+void encounter(Player &player, int levNum){ //random encounters
     string X;
     int factor = rand()%20; //get encounter type
     if(factor < 5){encounterType = "trap";} //25%
